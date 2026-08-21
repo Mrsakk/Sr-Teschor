@@ -24,6 +24,9 @@ $app = require_once __DIR__ . '/../bootstrap/app.php';
 
 $app->useStoragePath($tmpStorage);
 
+// Ensure Laravel matches /api/* routes accurately on Vercel Serverless
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+
 $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle(
     $request = Request::capture()
