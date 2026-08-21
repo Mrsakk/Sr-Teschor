@@ -15,7 +15,7 @@ export default function ConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200 notranslate" translate="no">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
         <button
           onClick={onCancel}
@@ -38,11 +38,11 @@ export default function ConfirmDialog({
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white leading-snug">{title}</h3>
+            <h3 className="text-lg font-bold text-white leading-snug"><span>{title}</span></h3>
           </div>
         </div>
 
-        <p className="text-sm text-slate-400 mb-6 leading-relaxed">{message}</p>
+        <p className="text-sm text-slate-400 mb-6 leading-relaxed"><span>{message}</span></p>
 
         <div className="flex items-center justify-end gap-3">
           <button
@@ -51,7 +51,7 @@ export default function ConfirmDialog({
             disabled={isLoading}
             className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 text-sm font-medium transition-colors"
           >
-            {cancelText}
+            <span>{cancelText}</span>
           </button>
           <button
             type="button"
@@ -68,7 +68,7 @@ export default function ConfirmDialog({
             {isLoading && (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             )}
-            {confirmText}
+            <span>{confirmText}</span>
           </button>
         </div>
       </div>

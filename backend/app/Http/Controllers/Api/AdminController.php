@@ -742,6 +742,13 @@ class AdminController extends Controller
 
         $destination = Destination::findOrFail($id);
         $name = $destination->name;
+
+        // Clean up related items to prevent foreign key errors
+        DestinationImage::where('destination_id', $destination->id)->delete();
+        \App\Models\TripItem::where('destination_id', $destination->id)->delete();
+        \App\Models\Favorite::where('favoritable_type', Destination::class)->where('favoritable_id', $destination->id)->delete();
+        \App\Models\Review::where('reviewable_type', Destination::class)->where('reviewable_id', $destination->id)->delete();
+
         $destination->delete();
 
         AdminActivityLog::log('Deleted Destination', 'destinations', $name);
