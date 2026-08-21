@@ -1,0 +1,39 @@
+# Root GitIgnore for Tes Chor (KE)
+
+# Dependencies
+/backend/vendor/
+/backend/node_modules/
+/frontend/node_modules/
+node_modules/
+
+# Environment Variables & Secrets
+/backend/.env
+/backend/.env.backup
+/backend/.env.production
+/frontend/.env.local
+/frontend/.env.*.local
+*.env
+
+# Build outputs & caches
+/frontend/dist/
+/frontend/dist-ssr/
+/backend/public/build/
+/backend/public/hot/
+/backend/public/storage
+/backend/storage/*.key
+/backend/storage/pail/
+/backend/storage/logs/*.log
+/backend/.phpunit.cache/
+/backend/.phpunit.result.cache
+*.log
+
+# IDE & Editor Files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

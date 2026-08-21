@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tes Chor — Discover More. Travel Better. | Siem Reap Tourism</title>
+    <meta name="description" content="Tes Chor is the premier tourism discovery & local business platform for Siem Reap, Cambodia. Discover ancient temples, hotels, restaurants, hidden gems, and travel experiences." />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+      /* Hide default Google Translate element entirely */
+      #google_translate_element { display: none !important; }
+      .goog-te-banner-frame.skiptranslate { display: none !important; }
+      body { top: 0px !important; }
+      
+      /* Hide tooltips aggressively with high specificity */
+      body .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; border: none !important; }
+      body font { background: transparent !important; background-color: transparent !important; box-shadow: none !important; } 
+      body #goog-gt-tt, body .goog-te-balloon-frame, body #goog-gt-vt { display: none !important; opacity: 0 !important; visibility: hidden !important; }
+      body .goog-tooltip { display: none !important; }
+      body .goog-tooltip:hover { display: none !important; }
+      body .VIpgJd-ZVi9od-ORHb-OEVmcd, body .VIpgJd-ZVi9od-aZ2wEe-wOHMyf, body .VIpgJd-ZVi9od-aZ2wEe-wOHMyf-ti6hGc { display: none !important; }
+      body .VIpgJd-yAWNEb-hvhVDb { display: none !important; }
+      
+      /* Target any dynamically appended popup boxes by google translate */
+      body > div[style*="z-index: 10000"] { display: none !important; }
+      body > iframe[src*="translate"] { display: none !important; }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased font-sans selection:bg-amber-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Auto Default to Khmer (KM) if no language cookie is set -->
+    <script type="text/javascript">
+      (function() {
+        if (!document.cookie.includes('googtrans=')) {
+          document.cookie = 'googtrans=/en/km; path=/';
+          document.cookie = 'googtrans=/en/km; domain=' + window.location.hostname + '; path=/';
+        }
+      })();
+    </script>
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        if (window.google && window.google.translate) {
+          try {
+            new window.google.translate.TranslateElement({
+              pageLanguage: 'en',
+              includedLanguages: 'km,en,zh-CN,fr,ko,ja,th,vi',
+              autoDisplay: false
+            }, 'google_translate_element');
+          } catch (e) {
+            // Graceful fallback if translate is blocked by client
+          }
+        }
+      }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
+  </body>
+</html>
