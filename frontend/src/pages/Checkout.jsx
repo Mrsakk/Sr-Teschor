@@ -201,8 +201,8 @@ export default function Checkout() {
   }
 
   return (
-    <div className="pt-28 pb-24 bg-slate-50/60 min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 bg-slate-50/60 min-h-screen">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Top Breadcrumb & Title */}
         <div className="mb-8">

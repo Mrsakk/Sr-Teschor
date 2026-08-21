@@ -148,7 +148,7 @@ export default function Pricing() {
   const roiPct = Math.round((netProfit / (billingCycle === 'annual' ? 8 : 10)) * 100);
 
   return (
-    <div className="pt-28 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+    <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-10 sm:space-y-16">
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">

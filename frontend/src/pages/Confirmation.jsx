@@ -77,8 +77,8 @@ export default function Confirmation() {
   const { booking, receipt_number, platform, issued_at } = receiptData;
 
   return (
-    <div className="pt-28 pb-24 bg-slate-50/60 min-h-screen">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 bg-slate-50/60 min-h-screen">
+      <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         
         {/* Top Success Banner */}
         <div className="text-center space-y-3">

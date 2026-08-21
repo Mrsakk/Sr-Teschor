@@ -36,8 +36,8 @@ export default function TravelPackages() {
   }, []);
 
   return (
-    <div className="pt-28 pb-24 bg-slate-50/60 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 bg-slate-50/60 min-h-screen">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         
         {/* Header Hero Banner */}
         <div className="text-center max-w-3xl mx-auto space-y-4">

@@ -40,7 +40,7 @@ export default function EmergencyWeatherWidget() {
         </div>
 
         {/* Sunrise & Sunset Times */}
-        <div className="flex items-center gap-3 text-xs bg-white/90 px-3.5 py-2 rounded-2xl border border-orange-100 shadow-2xs">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs bg-white/90 px-3.5 py-2 rounded-2xl border border-orange-100 shadow-2xs">
           <div className="flex items-center gap-1.5 text-orange-700 font-bold">
             <Sun className="w-3.5 h-3.5 text-amber-500" />
             <span>ថ្ងៃរះ (Sunrise): 05:45 AM</span>
