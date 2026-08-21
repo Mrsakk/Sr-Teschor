@@ -27,6 +27,7 @@ import AITripPlannerModal from '../components/common/AITripPlannerModal';
 import EmergencyWeatherWidget from '../components/common/EmergencyWeatherWidget';
 import AdBanner from '../components/ads/AdBanner';
 import TouristToolsHub from '../components/tourist/TouristToolsHub';
+import { getFullImageUrl } from '../utils/imageUrl';
 
 export default function Home({ onOpenSearch }) {
   const [categories, setCategories] = useState([]);
@@ -115,9 +116,13 @@ export default function Home({ onOpenSearch }) {
         {/* Background Image with Dark & Golden Overlays */}
         <div className="absolute inset-0 z-0 bg-slate-950">
           <img
-            src={settings.site_banner || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&auto=format&fit=crop&q=85"}
+            src={getFullImageUrl(settings.site_banner, "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&auto=format&fit=crop&q=85")}
             alt="Hero Background"
             className="w-full h-full object-cover scale-105 animate-pulse duration-10000"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&auto=format&fit=crop&q=85";
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-black/40" />
           <div className="absolute inset-0 bg-radial-at-c from-transparent via-transparent to-black/70" />
@@ -305,9 +310,13 @@ export default function Home({ onOpenSearch }) {
               className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-slate-900 shadow-sm hover:shadow-xl transition-all duration-300 card-hover-effect"
             >
               <img
-                src={category.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80'}
+                src={getFullImageUrl(category.image, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80')}
                 alt={category.name}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-75 group-hover:opacity-60"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80';
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               
