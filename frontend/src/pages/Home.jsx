@@ -63,19 +63,24 @@ export default function Home({ onOpenSearch }) {
         if (!isMounted) return;
 
         if (catsRes.status === 'fulfilled') {
-          setCategories(Array.isArray(catsRes.value?.data) ? catsRes.value.data : []);
+          const raw = catsRes.value?.data;
+          setCategories(Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []));
         }
         if (destsRes.status === 'fulfilled') {
-          setPopularDestinations(destsRes.value?.data?.data || destsRes.value?.data || []);
+          const raw = destsRes.value?.data;
+          setPopularDestinations(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw) ? raw : []));
         }
         if (gemsRes.status === 'fulfilled') {
-          setHiddenGems(gemsRes.value?.data?.data || gemsRes.value?.data || []);
+          const raw = gemsRes.value?.data;
+          setHiddenGems(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw) ? raw : []));
         }
         if (bizRes.status === 'fulfilled') {
-          setFeaturedBusinesses(bizRes.value?.data?.data || bizRes.value?.data || []);
+          const raw = bizRes.value?.data;
+          setFeaturedBusinesses(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw) ? raw : []));
         }
         if (promoRes.status === 'fulfilled') {
-          setPromotions(promoRes.value?.data?.data || promoRes.value?.data || []);
+          const raw = promoRes.value?.data;
+          setPromotions(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw?.promotions) ? raw.promotions : (Array.isArray(raw) ? raw : [])));
         }
         if (systemRes.status === 'fulfilled') {
           setSettings(systemRes.value?.data || {});

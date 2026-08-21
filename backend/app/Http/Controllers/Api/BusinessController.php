@@ -69,7 +69,7 @@ class BusinessController extends Controller
                 break;
             case 'featured':
             default:
-                $query->orderByRaw("FIELD(subscription_plan, 'premium', 'pro', 'free') ASC")
+                $query->orderByRaw("CASE subscription_plan WHEN 'premium' THEN 1 WHEN 'pro' THEN 2 ELSE 3 END ASC")
                       ->orderBy('is_featured', 'desc')
                       ->orderBy('rating', 'desc');
                 break;
