@@ -37,6 +37,8 @@ import LocationQrModal from '../components/common/LocationQrModal';
 import { useFavoriteStore } from '../store/useFavoriteStore';
 import { useAuthStore } from '../store/useAuthStore';
 
+import { getFullImageUrl } from '../utils/imageUrl';
+
 export default function DestinationDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -98,7 +100,7 @@ export default function DestinationDetail() {
 
   const images = destination.images || [];
   const favorited = isFavorited('destination', destination.id);
-  const allImages = images.map(img => img.image).filter(Boolean);
+  const allImages = images.map(img => getFullImageUrl(img.image)).filter(Boolean);
   const heroImage = allImages[activeImageIndex] || allImages[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&auto=format&fit=crop&q=80';
 
   const handleShare = () => {

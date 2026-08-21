@@ -29,12 +29,14 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useFavoriteStore } from '../../store/useFavoriteStore';
 import { notificationApi, systemApi } from '../../api/endpoints';
 import UserAvatar from './UserAvatar';
+import { getFullImageUrl } from '../../utils/imageUrl';
 
 export default function Navbar({ onOpenSearch }) {
   const { user, isAuthenticated, logout } = useAuthStore();
   const { destinationIds, businessIds } = useFavoriteStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [settings, setSettings] = useState({});
+  const [logoError, setLogoError] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -172,9 +174,14 @@ export default function Navbar({ onOpenSearch }) {
 
             {/* ── BRAND LOGO ── */}
             <Link to="/" className="flex items-center gap-3 shrink-0 group">
-              {settings.site_logo ? (
+              {settings.site_logo && !logoError ? (
                 <div className="relative h-9 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-300">
-                  <img src={settings.site_logo} alt="Logo" className="h-full w-auto object-contain" />
+                  <img 
+                    src={getFullImageUrl(settings.site_logo)} 
+                    alt="Logo" 
+                    className="h-full w-auto object-contain" 
+                    onError={() => setLogoError(true)}
+                  />
                 </div>
               ) : (
                 <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center shadow-md shadow-orange-400/30 group-hover:scale-105 transition-all duration-300 shrink-0 overflow-hidden">

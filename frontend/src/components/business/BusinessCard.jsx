@@ -6,6 +6,8 @@ import Badge from '../common/Badge';
 import { useFavoriteStore } from '../../store/useFavoriteStore';
 import { useAuthStore } from '../../store/useAuthStore';
 
+import { getFullImageUrl } from '../../utils/imageUrl';
+
 export default function BusinessCard({ business, onRequireAuth, onQuickBook }) {
   const { isFavorited, toggleFavorite } = useFavoriteStore();
   const { isAuthenticated } = useAuthStore();
@@ -32,9 +34,8 @@ export default function BusinessCard({ business, onRequireAuth, onQuickBook }) {
   };
 
   const activePromo = business.promotions?.[0];
-  const coverImg = business.cover_image 
-    || (business.gallery_images && business.gallery_images[0])
-    || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80';
+  const rawCover = business.cover_image || (business.gallery_images && business.gallery_images[0]);
+  const coverImg = getFullImageUrl(rawCover, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80');
 
   return (
     <div className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full card-hover-effect">
@@ -46,6 +47,10 @@ export default function BusinessCard({ business, onRequireAuth, onQuickBook }) {
           alt={business.name}
           className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
           loading="lazy"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-80" />
 

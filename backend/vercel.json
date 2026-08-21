@@ -9,6 +9,16 @@
   ],
   "routes": [
     {
+      "src": "/storage/(.*)",
+      "dest": "/storage/$1",
+      "check": true
+    },
+    {
+      "src": "/build/(.*)",
+      "dest": "/build/$1",
+      "check": true
+    },
+    {
       "src": "/(.*)",
       "dest": "/api/index.php"
     }
