@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   Image as ImageIcon,
   Plus,
@@ -157,9 +158,13 @@ export default function AdminMedia() {
             >
               <div className="h-28 relative overflow-hidden bg-slate-950">
                 <img
-                  src={item.file_path}
+                  src={getFullImageUrl(item.file_path, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400')}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400';
+                  }}
                 />
                 <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button

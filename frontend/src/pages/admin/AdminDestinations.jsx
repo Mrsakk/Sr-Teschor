@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { adminApi, businessApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   MapPin,
   Search,
@@ -491,7 +492,8 @@ export default function AdminDestinations() {
                 </tr>
               ) : (
                 destinations.map((dest) => {
-                  const primaryImg = dest.images?.[0]?.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=100&auto=format&fit=crop&q=80';
+                  const rawImg = dest.images?.[0]?.image || dest.primary_image?.image;
+                  const primaryImg = getFullImageUrl(rawImg, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=100&auto=format&fit=crop&q=80');
 
                   return (
                     <tr key={dest.id} className="hover:bg-slate-800/50 transition-colors">
@@ -502,6 +504,10 @@ export default function AdminDestinations() {
                             src={primaryImg}
                             alt={dest.name}
                             className="w-12 h-10 rounded-xl object-cover border border-slate-700 shrink-0"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=100&auto=format&fit=crop&q=80';
+                            }}
                           />
                           <div>
                             <span className="font-bold text-white block text-sm">{dest.name}</span>
@@ -920,7 +926,15 @@ export default function AdminDestinations() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
                     {formData.images.map((img, idx) => (
                       <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-700 h-24 bg-slate-950">
-                        <img src={img} alt={`Destination ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img 
+                          src={getFullImageUrl(img)} 
+                          alt={`Destination ${idx + 1}`} 
+                          className="w-full h-full object-cover" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80';
+                          }}
+                        />
                         {idx === 0 && (
                           <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-emerald-600 text-[9px] font-bold text-white shadow-md">
                             Cover

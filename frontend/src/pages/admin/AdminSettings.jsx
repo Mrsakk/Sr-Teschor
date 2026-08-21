@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   Sliders,
   Save,
@@ -143,7 +144,15 @@ export default function AdminSettings() {
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
                     {formData.site_logo ? (
-                      <img src={formData.site_logo} alt="Logo" className="w-full h-full object-contain" />
+                      <img 
+                        src={getFullImageUrl(formData.site_logo)} 
+                        alt="Logo" 
+                        className="w-full h-full object-contain" 
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=100';
+                        }}
+                      />
                     ) : (
                       <Globe className="w-6 h-6 text-slate-500" />
                     )}
@@ -172,7 +181,15 @@ export default function AdminSettings() {
                 <div className="flex items-start gap-4">
                   <div className="w-24 h-16 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
                     {formData.site_banner ? (
-                      <img src={formData.site_banner} alt="Banner" className="w-full h-full object-cover" />
+                      <img 
+                        src={getFullImageUrl(formData.site_banner)} 
+                        alt="Banner" 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600';
+                        }}
+                      />
                     ) : (
                       <Globe className="w-6 h-6 text-slate-500" />
                     )}

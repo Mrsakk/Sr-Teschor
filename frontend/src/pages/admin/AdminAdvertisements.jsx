@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   Megaphone,
   Plus,
@@ -136,9 +137,13 @@ export default function AdminAdvertisements() {
             >
               <div className="h-32 relative overflow-hidden">
                 <img
-                  src={ad.image || 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200'}
+                  src={getFullImageUrl(ad.image, 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200')}
                   alt={ad.title || 'Ad'}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
                 <div className="absolute top-3 left-3 flex items-center gap-1.5">

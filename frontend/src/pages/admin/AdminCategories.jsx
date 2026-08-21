@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   Tag,
   Plus,
@@ -173,9 +174,13 @@ export default function AdminCategories() {
             >
               <div className="h-28 relative overflow-hidden">
                 <img
-                  src={cat.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&auto=format&fit=crop&q=80'}
+                  src={getFullImageUrl(cat.image, 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&auto=format&fit=crop&q=80')}
                   alt={cat.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&auto=format&fit=crop&q=80';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
                 <div className="absolute top-3 right-3 flex items-center gap-1">

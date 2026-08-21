@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   Building2,
   Search,
@@ -271,9 +272,13 @@ export default function AdminBusinesses() {
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <img
-                            src={biz.logo || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80'}
+                            src={getFullImageUrl(biz.logo, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80')}
                             alt={biz.name}
                             className="w-10 h-10 rounded-xl object-cover border border-slate-700"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80';
+                            }}
                           />
                           <div>
                             <span className="font-bold text-white block text-sm">{biz.name}</span>
@@ -417,9 +422,13 @@ export default function AdminBusinesses() {
 
             <div className="flex items-center gap-4 pb-4 border-b border-slate-800">
               <img
-                src={selectedBiz.logo || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80'}
+                src={getFullImageUrl(selectedBiz.logo, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80')}
                 alt={selectedBiz.name}
                 className="w-14 h-14 rounded-2xl object-cover border border-slate-700"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80';
+                }}
               />
               <div>
                 <h3 className="text-lg font-bold text-white">{selectedBiz.name}</h3>

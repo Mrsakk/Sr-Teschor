@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   Package,
   Plus,
@@ -367,9 +368,13 @@ export default function AdminPackages() {
                   {/* Image Banner */}
                   <div className="h-44 relative overflow-hidden bg-slate-950">
                     <img
-                      src={pkg.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800'}
+                      src={getFullImageUrl(pkg.image, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800')}
                       alt={pkg.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800';
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
                     
