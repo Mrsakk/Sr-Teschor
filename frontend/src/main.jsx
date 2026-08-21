@@ -11,15 +11,37 @@ if (typeof Node === 'function' && Node.prototype) {
     if (referenceNode && referenceNode.parentNode !== this) {
       return this.appendChild(newNode);
     }
-    return originalInsertBefore.apply(this, arguments);
+    try {
+      return originalInsertBefore.apply(this, arguments);
+    } catch (e) {
+      return this.appendChild(newNode);
+    }
   };
 
   const originalRemoveChild = Node.prototype.removeChild;
   Node.prototype.removeChild = function (child) {
     if (child && child.parentNode !== this) {
+      if (child && child.parentNode) {
+        try {
+          return child.parentNode.removeChild(child);
+        } catch (e) {
+          return child;
+        }
+      }
       return child;
     }
-    return originalRemoveChild.apply(this, arguments);
+    try {
+      return originalRemoveChild.apply(this, arguments);
+    } catch (e) {
+      if (child && child.parentNode) {
+        try {
+          return child.parentNode.removeChild(child);
+        } catch (err) {
+          return child;
+        }
+      }
+      return child;
+    }
   };
 }
 

@@ -119,7 +119,9 @@ export default function TouristToolsHub() {
     JPY: { rate: 155.0, symbol: '¥', name: 'Japanese Yen' }
   };
 
-  const convertedValue = (amountUSD * (rates[targetCurrency]?.rate || 1)).toLocaleString(undefined, {
+  const safeAmount = isNaN(amountUSD) || amountUSD === '' ? 0 : Number(amountUSD);
+  const currentRateObj = rates[targetCurrency] || rates.KHR;
+  const convertedValue = (safeAmount * (currentRateObj?.rate || 1)).toLocaleString(undefined, {
     maximumFractionDigits: targetCurrency === 'KHR' || targetCurrency === 'JPY' ? 0 : 2
   });
 
@@ -198,7 +200,7 @@ export default function TouristToolsHub() {
 
       {/* ── TAB 1: SUNRISE & SUNSET TRACKER ── */}
       {activeTab === 'sunrise' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch animate-in fade-in duration-300">
+        <div key="tab-sunrise" className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch animate-in fade-in duration-300">
           {/* Location Select Buttons */}
           <div className="space-y-2.5">
             <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
@@ -309,7 +311,7 @@ export default function TouristToolsHub() {
 
       {/* ── TAB 2: TUK-TUK & TRANSPORT FARE ESTIMATOR ── */}
       {activeTab === 'tuktuk' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch animate-in fade-in duration-300">
+        <div key="tab-tuktuk" className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch animate-in fade-in duration-300">
           
           {/* Pick-up / Drop-off Selectors */}
           <div className="space-y-4 bg-slate-950/60 p-5 rounded-3xl border border-slate-800">
@@ -428,7 +430,7 @@ export default function TouristToolsHub() {
 
       {/* ── TAB 3: BAKONG KHQR GUIDE & CURRENCY CONVERTER ── */}
       {activeTab === 'currency' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center animate-in fade-in duration-300">
+        <div key="tab-currency" className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center animate-in fade-in duration-300">
           
           {/* Currency Converter */}
           <div className="bg-slate-950/60 p-6 rounded-3xl border border-slate-800 space-y-5">
@@ -549,7 +551,7 @@ export default function TouristToolsHub() {
 
       {/* ── TAB 4: TEMPLE ETIQUETTE & CODE OF CONDUCT ── */}
       {activeTab === 'etiquette' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 animate-in fade-in duration-300">
+        <div key="tab-etiquette" className="grid grid-cols-1 md:grid-cols-3 gap-5 animate-in fade-in duration-300">
           
           <div className="bg-slate-950/60 p-5 rounded-3xl border border-slate-800 space-y-3">
             <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
