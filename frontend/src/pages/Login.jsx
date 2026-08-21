@@ -55,21 +55,21 @@ export default function Login() {
           <div className="grid grid-cols-3 gap-1.5 text-[11px] font-bold">
             <button
               type="button"
-              onClick={() => handleQuickLogin('admin@teschor.com', 'password123')}
+              onClick={() => handleQuickLogin('admin@teschor.com', 'password')}
               className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl border border-purple-200 transition-colors flex items-center justify-center gap-1"
             >
               <ShieldCheck className="w-3 h-3" /> Admin
             </button>
             <button
               type="button"
-              onClick={() => handleQuickLogin('owner@angkorresort.com', 'password123')}
+              onClick={() => handleQuickLogin('owner@angkorresort.com', 'password')}
               className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl border border-emerald-200 transition-colors flex items-center justify-center gap-1"
             >
               <Building2 className="w-3 h-3" /> Business
             </button>
             <button
               type="button"
-              onClick={() => handleQuickLogin('emma.travels@gmail.com', 'password123')}
+              onClick={() => handleQuickLogin('emma.travels@gmail.com', 'password')}
               className="py-1.5 px-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-xl border border-orange-200 transition-colors flex items-center justify-center gap-1"
             >
               <User className="w-3 h-3" /> Tourist
