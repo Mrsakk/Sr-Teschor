@@ -125,7 +125,7 @@ export default function AITravelConciergeWidget() {
   return (
     <>
       {/* Floating Trigger Button */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-40">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
@@ -146,7 +146,7 @@ export default function AITravelConciergeWidget() {
 
       {/* Interactive Chat Window Modal */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[94vw] sm:w-[420px] max-h-[620px] h-[570px] bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed bottom-20 lg:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[420px] max-h-[calc(100vh-140px)] sm:max-h-[620px] h-[540px] bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
           
           {/* Header */}
           <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 p-4 text-white flex items-center justify-between shrink-0 shadow-md">
