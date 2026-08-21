@@ -1,23 +1,25 @@
 /**
  * Resolves any image URL ensuring it loads securely over HTTPS from the live backend
- * and replaces any local development URLs (localhost:8000).
+ * and replaces any local development URLs (localhost:8000) or missing storage prefixes.
  */
 export function getFullImageUrl(url, fallback = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80') {
   if (!url) return fallback;
   if (typeof url !== 'string') return fallback;
 
-  const liveBackend = 'https://sr-teschor-api.vercel.app';
+  const liveStorage = 'https://sr-teschor-api.vercel.app/api/storage';
 
-  // Replace any hardcoded localhost:8000 or 127.0.0.1:8000
   let resolved = url
-    .replace(/http:\/\/localhost:8000/g, liveBackend)
-    .replace(/http:\/\/127\.0\.0\.1:8000/g, liveBackend);
+    .replace(/http:\/\/localhost:8000\/storage/g, liveStorage)
+    .replace(/http:\/\/127\.0\.0\.1:8000\/storage/g, liveStorage)
+    .replace(/http:\/\/localhost:8000/g, 'https://sr-teschor-api.vercel.app')
+    .replace(/https:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage);
 
-  // If it's a relative path starting with /storage
-  if (resolved.startsWith('/storage/')) {
-    resolved = `${liveBackend}${resolved}`;
+  if (resolved.startsWith('/api/storage/')) {
+    resolved = `https://sr-teschor-api.vercel.app${resolved}`;
+  } else if (resolved.startsWith('/storage/')) {
+    resolved = `${liveStorage}${resolved.replace('/storage', '')}`;
   } else if (resolved.startsWith('uploads/') || resolved.startsWith('businesses/')) {
-    resolved = `${liveBackend}/storage/${resolved}`;
+    resolved = `${liveStorage}/${resolved}`;
   }
 
   return resolved;

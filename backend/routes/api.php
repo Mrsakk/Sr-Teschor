@@ -29,6 +29,19 @@ use Illuminate\Support\Facades\Route;
 Route::post('/payments/khqr/generate', [PaymentController::class, 'generateKhqr']);
 Route::get('/invoices/{reference}', [PaymentController::class, 'getInvoice']);
 
+Route::get('/storage/{path}', function ($path) {
+    $filePath = public_path('storage/' . $path);
+    if (file_exists($filePath) && !is_dir($filePath)) {
+        $mime = mime_content_type($filePath) ?: 'image/jpeg';
+        return response()->file($filePath, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+            'Access-Control-Allow-Origin' => '*',
+        ]);
+    }
+    return redirect('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80');
+})->where('path', '.*');
+
 // Authentication
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
