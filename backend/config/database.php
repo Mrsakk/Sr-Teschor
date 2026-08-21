@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -86,16 +86,16 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', 'ep-morning-snow-azhuvbrg.c-3.ap-southeast-1.aws.neon.tech'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'neondb'),
             'username' => env('DB_USERNAME', 'neondb_owner'),
-            'password' => env('DB_PASSWORD', ''),
+            'password' => env('DB_PASSWORD', 'npg_sbwq8LQ9uaZg'),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'sslmode' => env('DB_SSLMODE', "require;options='endpoint=ep-morning-snow-azhuvbrg'"),
         ],
 
         'sqlsrv' => [
