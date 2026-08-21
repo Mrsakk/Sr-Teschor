@@ -308,11 +308,11 @@ export default function Navbar({ onOpenSearch }) {
                 <Search className="w-[18px] h-[18px]" />
               </button>
 
-              {/* Favorites Heart */}
+              {/* Favorites Heart (Hidden on small mobile, present in BottomNav) */}
               <Link
                 to="/favorites"
                 title="Saved Favorites"
-                className={`relative p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
+                className={`hidden sm:flex relative p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
                   transparent
                     ? 'text-white hover:bg-white/10'
                     : 'text-slate-500 hover:text-rose-500 hover:bg-rose-50'
@@ -511,20 +511,20 @@ export default function Navbar({ onOpenSearch }) {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                   <Link
                     to="/login"
-                    className={`text-xs font-bold px-4 py-2 rounded-xl transition-all duration-200 ${
+                    className={`text-xs font-bold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-200 whitespace-nowrap ${
                       transparent
-                        ? 'text-white hover:bg-white/10'
-                        : 'text-slate-700 hover:text-orange-600 hover:bg-slate-50'
+                        ? 'text-white hover:bg-white/10 border border-white/20'
+                        : 'text-slate-700 hover:text-orange-600 hover:bg-slate-50 border border-slate-200 sm:border-transparent'
                     }`}
                   >
                     Log In
                   </Link>
                   <Link
                     to="/register"
-                    className="text-xs font-extrabold px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-400/30 hover:from-orange-600 hover:to-amber-600 hover:shadow-orange-500/40 hover:scale-105 transition-all duration-200"
+                    className="hidden sm:inline-flex text-xs font-extrabold px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-400/30 hover:from-orange-600 hover:to-amber-600 hover:shadow-orange-500/40 hover:scale-105 transition-all duration-200 whitespace-nowrap"
                   >
                     Sign Up Free
                   </Link>
