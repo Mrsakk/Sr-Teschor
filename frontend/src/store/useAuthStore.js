@@ -1,12 +1,30 @@
 import { create } from 'zustand';
 import { authApi } from '../api/endpoints';
 
-const storedUser = localStorage.getItem('teschor_user');
-const storedToken = localStorage.getItem('teschor_token');
+let storedUser = null;
+let storedToken = null;
+
+try {
+  const rawUser = localStorage.getItem('teschor_user');
+  if (rawUser && rawUser !== 'undefined' && rawUser !== 'null') {
+    storedUser = JSON.parse(rawUser);
+  }
+} catch (e) {
+  localStorage.removeItem('teschor_user');
+}
+
+try {
+  const rawToken = localStorage.getItem('teschor_token');
+  if (rawToken && rawToken !== 'undefined' && rawToken !== 'null') {
+    storedToken = rawToken;
+  }
+} catch (e) {
+  localStorage.removeItem('teschor_token');
+}
 
 export const useAuthStore = create((set, get) => ({
-  user: storedUser ? JSON.parse(storedUser) : null,
-  token: storedToken || null,
+  user: storedUser,
+  token: storedToken,
   isAuthenticated: !!storedToken,
   isLoading: false,
   error: null,

@@ -16,6 +16,8 @@ export default class ErrorBoundary extends React.Component {
   }
 
   handleReload = () => {
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.reload();
   };
 
@@ -35,8 +37,13 @@ export default class ErrorBoundary extends React.Component {
             <div className="space-y-2">
               <h2 className="text-xl font-black text-white font-heading">Something went wrong</h2>
               <p className="text-xs text-slate-400 leading-relaxed">
-                An unexpected interface error occurred. Please reload the page or return to home.
+                An unexpected interface error occurred. You can reset local session or return to home.
               </p>
+              {this.state.error?.message && (
+                <div className="p-3 bg-rose-950/40 border border-rose-800/40 rounded-xl text-[11px] text-rose-300 text-left overflow-auto max-h-24 font-mono">
+                  {this.state.error.message}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-center gap-3 pt-2">
@@ -45,7 +52,7 @@ export default class ErrorBoundary extends React.Component {
                 className="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-600/25 flex items-center gap-2 transition-all cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
-                <span>Reload Page</span>
+                <span>Reset & Reload</span>
               </button>
               <button
                 onClick={this.handleGoHome}
