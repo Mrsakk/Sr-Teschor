@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { searchApi } from '../api/endpoints';
 import RatingStars from '../components/common/RatingStars';
+import { getFullImageUrl } from '../utils/imageUrl';
 
 // Custom Map Marker Icons using Leaflet DivIcon
 const destinationIcon = new L.DivIcon({
@@ -233,66 +234,84 @@ export default function MapExplorer() {
           </div>
 
           {/* Destinations */}
-          {visibleDestinations.map((d) => (
-            <button
-              key={`dest-${d.id}`}
-              onClick={() => setSelectedPlace([Number(d.latitude), Number(d.longitude)])}
-              className="w-full p-3 rounded-2xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/50 flex items-center gap-3 text-left transition-all group cursor-pointer"
-            >
-              <img
-                src={d.primary_image?.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200&auto=format&fit=crop&q=80'}
-                alt={d.name}
-                className="w-12 h-12 rounded-xl object-cover shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-[10px] font-bold text-orange-600 uppercase">
-                    {d.category?.name}
-                  </span>
-                  {d.distance && (
-                    <span className="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">
-                      {d.distance} km
+          {visibleDestinations.map((d) => {
+            const rawImg = d.primary_image?.image || d.images?.[0]?.image;
+            const destImg = getFullImageUrl(rawImg, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200&auto=format&fit=crop&q=80');
+
+            return (
+              <button
+                key={`dest-${d.id}`}
+                onClick={() => setSelectedPlace([Number(d.latitude), Number(d.longitude)])}
+                className="w-full p-3 rounded-2xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/50 flex items-center gap-3 text-left transition-all group cursor-pointer"
+              >
+                <img
+                  src={destImg}
+                  alt={d.name}
+                  className="w-12 h-12 rounded-xl object-cover shrink-0"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200&auto=format&fit=crop&q=80';
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[10px] font-bold text-orange-600 uppercase">
+                      {d.category?.name}
                     </span>
-                  )}
+                    {d.distance && (
+                      <span className="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">
+                        {d.distance} km
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-xs text-slate-900 truncate group-hover:text-orange-600">
+                    {d.name}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 truncate">{d.address}</p>
                 </div>
-                <h4 className="font-bold text-xs text-slate-900 truncate group-hover:text-orange-600">
-                  {d.name}
-                </h4>
-                <p className="text-[11px] text-slate-500 truncate">{d.address}</p>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
 
           {/* Businesses */}
-          {visibleBusinesses.map((b) => (
-            <button
-              key={`biz-${b.id}`}
-              onClick={() => setSelectedPlace([Number(b.latitude), Number(b.longitude)])}
-              className="w-full p-3 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 flex items-center gap-3 text-left transition-all group cursor-pointer"
-            >
-              <img
-                src={b.cover_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&auto=format&fit=crop&q=80'}
-                alt={b.name}
-                className="w-12 h-12 rounded-xl object-cover shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-[10px] font-bold text-emerald-700 uppercase">
-                    {b.category?.name}
-                  </span>
-                  {b.distance && (
-                    <span className="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">
-                      {b.distance} km
+          {visibleBusinesses.map((b) => {
+            const rawCover = b.cover_image || b.logo;
+            const bizImg = getFullImageUrl(rawCover, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&auto=format&fit=crop&q=80');
+
+            return (
+              <button
+                key={`biz-${b.id}`}
+                onClick={() => setSelectedPlace([Number(b.latitude), Number(b.longitude)])}
+                className="w-full p-3 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 flex items-center gap-3 text-left transition-all group cursor-pointer"
+              >
+                <img
+                  src={bizImg}
+                  alt={b.name}
+                  className="w-12 h-12 rounded-xl object-cover shrink-0"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&auto=format&fit=crop&q=80';
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[10px] font-bold text-emerald-700 uppercase">
+                      {b.category?.name}
                     </span>
-                  )}
+                    {b.distance && (
+                      <span className="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">
+                        {b.distance} km
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-xs text-slate-900 truncate group-hover:text-emerald-700">
+                    {b.name}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 truncate">{b.address}</p>
                 </div>
-                <h4 className="font-bold text-xs text-slate-900 truncate group-hover:text-emerald-700">
-                  {b.name}
-                </h4>
-                <p className="text-[11px] text-slate-500 truncate">{b.address}</p>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
 
         {/* Leaflet Map Canvas */}
@@ -333,9 +352,13 @@ export default function MapExplorer() {
                   <Popup>
                     <div className="w-56 overflow-hidden rounded-xl">
                       <img
-                        src={dest.primary_image?.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80'}
+                        src={getFullImageUrl(dest.primary_image?.image || dest.images?.[0]?.image, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80')}
                         alt={dest.name}
                         className="w-full h-24 object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80';
+                        }}
                       />
                       <div className="p-3 space-y-1">
                         <div className="flex items-center justify-between">
@@ -381,9 +404,13 @@ export default function MapExplorer() {
                   <Popup>
                     <div className="w-56 overflow-hidden rounded-xl">
                       <img
-                        src={biz.cover_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&auto=format&fit=crop&q=80'}
+                        src={getFullImageUrl(biz.cover_image || biz.logo, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&auto=format&fit=crop&q=80')}
                         alt={biz.name}
                         className="w-full h-24 object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&auto=format&fit=crop&q=80';
+                        }}
                       />
                       <div className="p-3 space-y-1">
                         <div className="flex items-center justify-between">

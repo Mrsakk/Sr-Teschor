@@ -111,14 +111,30 @@ class SearchController extends Controller
         $destinations = Destination::where('status', 'published')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
-            ->with(['category', 'primaryImage'])
+            ->with([
+                'category:id,name,slug,icon',
+                'primaryImage:id,destination_id,image',
+                'images:id,destination_id,image',
+            ])
+            ->select([
+                'id', 'category_id', 'name', 'khmer_name', 'slug',
+                'address', 'latitude', 'longitude', 'entrance_fee',
+                'rating', 'review_count', 'is_featured', 'is_hidden_gem'
+            ])
             ->get();
 
         $businesses = Business::where('status', 'active')
             ->where('verification_status', 'approved')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
-            ->with(['category'])
+            ->with([
+                'category:id,name,slug,icon',
+            ])
+            ->select([
+                'id', 'category_id', 'name', 'khmer_name', 'slug',
+                'address', 'latitude', 'longitude', 'cover_image', 'logo',
+                'rating', 'review_count', 'price_range', 'is_featured'
+            ])
             ->get();
 
         return response()->json([
