@@ -1,10 +1,13 @@
 <?php
 
-// Forward Vercel Serverless requests to normal public/index.php
-// Set up writable storage directories in /tmp for Vercel serverless environment
-$tmpStorage = '/tmp/storage';
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
-if (!file_exists($tmpStorage . '/framework/views')) {
+define('LARAVEL_START', microtime(true));
+
+// Setup writable /tmp storage for serverless
+$tmpStorage = '/tmp/storage';
+if (!is_dir($tmpStorage . '/framework/views')) {
     @mkdir($tmpStorage . '/framework/views', 0777, true);
     @mkdir($tmpStorage . '/framework/cache/data', 0777, true);
     @mkdir($tmpStorage . '/framework/sessions', 0777, true);
@@ -12,4 +15,19 @@ if (!file_exists($tmpStorage . '/framework/views')) {
     @mkdir($tmpStorage . '/app/public', 0777, true);
 }
 
-require __DIR__ . '/../public/index.php';
+// Autoload
+require __DIR__ . '/../vendor/autoload.php';
+
+// Bootstrap Laravel
+/** @var Application $app */
+$app = require_once __DIR__ . '/../bootstrap/app.php';
+
+$app->useStoragePath($tmpStorage);
+
+$kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+$response = $kernel->handle(
+    $request = Request::capture()
+);
+
+$response->send();
+$kernel->terminate($request, $response);
