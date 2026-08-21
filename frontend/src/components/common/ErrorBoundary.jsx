@@ -15,9 +15,11 @@ export default class ErrorBoundary extends React.Component {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
   handleReload = () => {
-    localStorage.clear();
-    sessionStorage.clear();
     window.location.reload();
   };
 
@@ -29,15 +31,17 @@ export default class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 text-white text-center">
-          <div className="max-w-md w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6">
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+          <div className="max-w-md w-full bg-slate-900/95 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6">
+            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto shadow-inner">
               <AlertTriangle className="w-8 h-8" />
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-xl font-black text-white font-heading">Something went wrong</h2>
+              <h2 className="text-xl font-black text-white font-heading">
+                មានអ្វីមួយខុសប្រក្រតី (Interface Notice)
+              </h2>
               <p className="text-xs text-slate-400 leading-relaxed">
-                An unexpected interface error occurred. You can reset local session or return to home.
+                ប្រព័ន្ធបានជួបប្រទះភាពមិនស៊ីគ្នា DOM ជាមួយ Browser Translation។ សូមចុចប៊ូតុងខាងក្រោមដើម្បីដំណើរការឡើងវិញ។
               </p>
               {this.state.error?.message && (
                 <div className="p-3 bg-rose-950/40 border border-rose-800/40 rounded-xl text-[11px] text-rose-300 text-left overflow-auto max-h-24 font-mono">
@@ -46,20 +50,20 @@ export default class ErrorBoundary extends React.Component {
               )}
             </div>
 
-            <div className="flex items-center justify-center gap-3 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <button
-                onClick={this.handleReload}
+                onClick={this.handleRetry}
                 className="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-600/25 flex items-center gap-2 transition-all cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
-                <span>Reset & Reload</span>
+                <span>ព្យាយាមម្តងទៀត (Try Again)</span>
               </button>
               <button
                 onClick={this.handleGoHome}
                 className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Home className="w-4 h-4" />
-                <span>Go Home</span>
+                <span>ទំព័រដើម (Home)</span>
               </button>
             </div>
           </div>

@@ -12,6 +12,93 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Google Translate & Browser Extension DOM Reconciliation Shield -->
+    <script>
+      (function() {
+        if (typeof window === 'undefined' || typeof Node === 'undefined' || !Node.prototype) return;
+        
+        // 1. Patch Node.prototype.insertBefore
+        var origInsertBefore = Node.prototype.insertBefore;
+        Node.prototype.insertBefore = function(newNode, referenceNode) {
+          if (referenceNode && referenceNode.parentNode !== this) {
+            if (referenceNode.parentNode && typeof referenceNode.parentNode.insertBefore === 'function') {
+              try {
+                return referenceNode.parentNode.insertBefore(newNode, referenceNode);
+              } catch (e) {}
+            }
+            try {
+              return this.appendChild(newNode);
+            } catch (e) {
+              return newNode;
+            }
+          }
+          try {
+            return origInsertBefore.apply(this, arguments);
+          } catch (e) {
+            try {
+              return this.appendChild(newNode);
+            } catch (err) {
+              return newNode;
+            }
+          }
+        };
+
+        // 2. Patch Node.prototype.removeChild
+        var origRemoveChild = Node.prototype.removeChild;
+        Node.prototype.removeChild = function(child) {
+          if (!child) return child;
+          if (child.parentNode !== this) {
+            if (child.parentNode && typeof child.parentNode.removeChild === 'function') {
+              try {
+                return child.parentNode.removeChild(child);
+              } catch (e) {
+                return child;
+              }
+            }
+            return child;
+          }
+          try {
+            return origRemoveChild.apply(this, arguments);
+          } catch (e) {
+            if (child.parentNode && typeof child.parentNode.removeChild === 'function') {
+              try {
+                return child.parentNode.removeChild(child);
+              } catch (err) {
+                return child;
+              }
+            }
+            return child;
+          }
+        };
+
+        // 3. Patch Node.prototype.replaceChild
+        var origReplaceChild = Node.prototype.replaceChild;
+        if (origReplaceChild) {
+          Node.prototype.replaceChild = function(newChild, oldChild) {
+            if (!oldChild) {
+              try { return this.appendChild(newChild); } catch (e) { return newChild; }
+            }
+            if (oldChild.parentNode !== this) {
+              if (oldChild.parentNode && typeof oldChild.parentNode.replaceChild === 'function') {
+                try {
+                  return oldChild.parentNode.replaceChild(newChild, oldChild);
+                } catch (e) {}
+              }
+              try { return this.appendChild(newChild); } catch (e) { return newChild; }
+            }
+            try {
+              return origReplaceChild.apply(this, arguments);
+            } catch (e) {
+              try {
+                return this.appendChild(newChild);
+              } catch (err) {
+                return newChild;
+              }
+            }
+          };
+        }
+      })();
+    </script>
     <style>
       /* Hide default Google Translate element entirely */
       #google_translate_element { display: none !important; }
