@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, Mail, Phone, MapPin, Heart, Sparkles, ExternalLink } from 'lucide-react';
 import { systemApi } from '../../api/endpoints';
+import { getFullImageUrl } from '../../utils/imageUrl';
 
 export default function Footer() {
   const [settings, setSettings] = useState({});
+  const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
     systemApi.getSettings().then((res) => {
@@ -42,9 +44,14 @@ export default function Footer() {
           {/* Col 1: Brand & Tagline */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              {settings.site_logo ? (
+              {settings.site_logo && !logoError ? (
                 <div className="relative h-9 flex items-center justify-center shrink-0">
-                  <img src={settings.site_logo} alt="Logo" className="h-full w-auto object-contain" />
+                  <img 
+                    src={getFullImageUrl(settings.site_logo)} 
+                    alt="Logo" 
+                    className="h-full w-auto object-contain" 
+                    onError={() => setLogoError(true)}
+                  />
                 </div>
               ) : (
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center text-white font-black text-xl shadow-md overflow-hidden shrink-0">

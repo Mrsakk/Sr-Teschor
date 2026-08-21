@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { systemApi } from '../../api/endpoints';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import {
   LayoutDashboard,
   Users,
@@ -30,6 +31,7 @@ import {
 
 export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) {
   const [settings, setSettings] = useState({});
+  const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
     systemApi.getSettings().then((res) => {
@@ -113,8 +115,13 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
             className="flex items-center gap-3 overflow-hidden text-left"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-600/30 shrink-0 overflow-hidden">
-              {settings.site_logo ? (
-                <img src={settings.site_logo} alt="Logo" className="w-full h-full object-cover" />
+              {settings.site_logo && !logoError ? (
+                <img 
+                  src={getFullImageUrl(settings.site_logo)} 
+                  alt="Logo" 
+                  className="w-full h-full object-contain p-1" 
+                  onError={() => setLogoError(true)}
+                />
               ) : (
                 <Compass className="w-6 h-6 animate-spin-slow" />
               )}
