@@ -10,18 +10,18 @@
       
     },
     {
-      "src": "backend/api/index.php",
+      "src": "backend/index.php",
       "use": "vercel-php@0.7.3"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/api/index.php"
+      "dest": "/backend/index.php"
     },
     {
       "src": "/storage/(.*)",
-      "dest": "/backend/api/index.php"
+      "dest": "/backend/index.php"
     },
     {
       "src": "/assets/(.*)",

@@ -5,7 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
-return Application::configure(basePath: dirname(__DIR__))
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
@@ -20,3 +20,17 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
     })->create();
+
+if (getenv('VERCEL') || isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL'])) {
+    $tmp = '/tmp/storage';
+    if (!is_dir($tmp . '/framework/views')) {
+        @mkdir($tmp . '/framework/views', 0777, true);
+        @mkdir($tmp . '/framework/cache/data', 0777, true);
+        @mkdir($tmp . '/framework/sessions', 0777, true);
+        @mkdir($tmp . '/logs', 0777, true);
+        @mkdir($tmp . '/app/public', 0777, true);
+    }
+    $app->useStoragePath($tmp);
+}
+
+return $app;
