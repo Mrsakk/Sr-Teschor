@@ -26,7 +26,7 @@ export default function AdminAdvertisements() {
   const [formData, setFormData] = useState({
     business_id: '',
     title: '',
-    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&auto=format&fit=crop&q=80',
+    image: '',
     link_url: '/businesses/heritage-suites-resort',
     placement: 'hero_banner',
     price: '35.00',

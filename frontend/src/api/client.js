@@ -27,29 +27,8 @@ const axiosInstance = axios.create({
 });
 
 const api = setupCache(axiosInstance, {
-  ttl: 1000 * 60 * 2, // Cache public GET requests for 2 minutes
-  interpretHeader: false,
-  cachePredicate: {
-    statusCheck: (status) => status >= 200 && status < 300,
-    responseMatch: (res) => {
-      const url = res.config?.url || '';
-      // NEVER cache admin, dashboard, user private, or transaction endpoints
-      if (
-        url.includes('/admin') ||
-        url.includes('/user') ||
-        url.includes('/my-') ||
-        url.includes('/bookings') ||
-        url.includes('/notifications') ||
-        url.includes('/favorites') ||
-        url.includes('/business') ||
-        url.includes('/auth') ||
-        url.includes('/payments')
-      ) {
-        return false;
-      }
-      return true;
-    },
-  },
+  ttl: 1000 * 60 * 3, // Cache GET requests for 3 minutes
+  interpretHeader: false, // Ensure our TTL is respected regardless of default backend cache-control
 });
 
 // Attach bearer token if present
@@ -58,36 +37,12 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
-  // Automatically bypass cache for any admin or authenticated mutation requests
-  const url = config.url || '';
-  if (
-    url.includes('/admin') ||
-    url.includes('/user') ||
-    url.includes('/my-') ||
-    url.includes('/bookings') ||
-    url.includes('/business')
-  ) {
-    config.cache = false;
-  }
-
   return config;
 });
 
-// Response interceptor for cache invalidation & session expiry
+// Response interceptor for session expiry
 api.interceptors.response.use(
-  (response) => {
-    // When any mutation (POST, PUT, DELETE, PATCH) happens, purge cache storage
-    const method = response.config?.method?.toLowerCase();
-    if (['post', 'put', 'delete', 'patch'].includes(method)) {
-      if (api.storage && typeof api.storage.clear === 'function') {
-        try {
-          api.storage.clear();
-        } catch (e) {}
-      }
-    }
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
       // If unauthorized and has token, clear token

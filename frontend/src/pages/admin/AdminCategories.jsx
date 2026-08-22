@@ -60,7 +60,7 @@ export default function AdminCategories() {
     setFormData({
       name: '',
       description: '',
-      image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&auto=format&fit=crop&q=80',
+      image: '',
       icon: 'Sparkles',
       type: 'all',
       display_order: (categories.length + 1),

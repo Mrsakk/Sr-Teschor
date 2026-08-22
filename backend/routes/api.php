@@ -30,7 +30,19 @@ Route::post('/payments/khqr/generate', [PaymentController::class, 'generateKhqr'
 Route::get('/invoices/{reference}', [PaymentController::class, 'getInvoice']);
 
 Route::get('/storage/{path}', function ($path) {
+    // 1. Serve from database (persistent on serverless environments)
+    if ($stored = \App\Models\StoredFile::where('path', $path)->first()) {
+        return response(base64_decode($stored->data))
+            ->header('Content-Type', $stored->mime)
+            ->header('Cache-Control', 'public, max-age=31536000, immutable')
+            ->header('Access-Control-Allow-Origin', '*');
+    }
+
+    // 2. Fall back to local public/storage disk
     $filePath = public_path('storage/' . $path);
+    if (!file_exists($filePath)) {
+        $filePath = storage_path('app/public/' . $path);
+    }
     if (file_exists($filePath) && !is_dir($filePath)) {
         $mime = mime_content_type($filePath) ?: 'image/jpeg';
         return response()->file($filePath, [

@@ -349,24 +349,15 @@ class AdvertisementController extends Controller
     }
 
     /**
-     * Process base64 data URLs or standard image URLs and store in public storage.
+     * Process base64 data URLs or standard image URLs and store in the database
+     * (persistent on serverless environments).
      */
     private function processImageValue($imageInput)
     {
         if (is_string($imageInput) && preg_match('/^data:image\/(\w+);base64,/', $imageInput, $type)) {
-            $imageBytes = substr($imageInput, strpos($imageInput, ',') + 1);
-            $ext = strtolower($type[1]);
-
-            if (!in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
-                $ext = 'jpg';
-            }
-            $decoded = base64_decode($imageBytes);
-
-            if ($decoded !== false) {
-                $fileName = 'ad_' . Str::random(16) . '.' . $ext;
-                $path = 'uploads/advertisements/' . $fileName;
-                Storage::disk('public')->put($path, $decoded);
-                return url('storage/' . $path);
+            $url = \App\Support\DbStorage::putDataUrl($imageInput, 'uploads/advertisements', 'ad');
+            if ($url) {
+                return $url;
             }
         }
 

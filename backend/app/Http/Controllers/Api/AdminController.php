@@ -717,19 +717,10 @@ class AdminController extends Controller
     private function processImageValue($imageInput)
     {
         if (is_string($imageInput) && preg_match('/^data:image\/(\w+);base64,/', $imageInput, $type)) {
-            $imageBytes = substr($imageInput, strpos($imageInput, ',') + 1);
-            $ext = strtolower($type[1]);
-
-            if (!in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
-                $ext = 'jpg';
-            }
-            $decoded = base64_decode($imageBytes);
-
-            if ($decoded !== false) {
-                $fileName = 'dest_' . Str::random(16) . '.' . $ext;
-                $path = 'uploads/destinations/' . $fileName;
-                Storage::disk('public')->put($path, $decoded);
-                return url('storage/' . $path);
+            // Store in the database so uploads persist on serverless environments
+            $url = \App\Support\DbStorage::putDataUrl($imageInput, 'uploads/destinations', 'dest');
+            if ($url) {
+                return $url;
             }
         }
 

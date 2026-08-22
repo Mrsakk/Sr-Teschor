@@ -18,6 +18,7 @@ import {
   Ticket
 } from 'lucide-react';
 import { aiApi } from '../../api/endpoints';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import { Link } from 'react-router-dom';
 
 export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner }) {
@@ -226,7 +227,10 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
                           className="flex items-center gap-2.5 p-2 bg-white rounded-xl border border-slate-200/80 hover:border-orange-400 shadow-xs hover:shadow-md transition-all group"
                         >
                           <img
-                            src={typeof dest.image === 'string' ? dest.image : (dest.image?.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500')}
+                            src={getFullImageUrl(
+                              typeof dest.image === 'string' ? dest.image : (dest.image?.image || ''),
+                              'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500'
+                            )}
                             alt={dest.name}
                             className="w-11 h-11 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
                             onError={(e) => {

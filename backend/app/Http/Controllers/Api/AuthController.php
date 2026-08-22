@@ -264,16 +264,10 @@ class AuthController extends Controller
         ]);
 
         if (!empty($validated['avatar']) && preg_match('/^data:image\/(\w+);base64,/', $validated['avatar'], $type)) {
-            $imageBytes = substr($validated['avatar'], strpos($validated['avatar'], ',') + 1);
-            $ext = strtolower($type[1]);
-            if (!in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
-                $ext = 'jpg';
-            }
-            $decoded = base64_decode($imageBytes);
-            if ($decoded !== false) {
-                $fileName = 'avatar_' . $user->id . '_' . Str::random(8) . '.' . $ext;
-                Storage::disk('public')->put('uploads/avatars/' . $fileName, $decoded);
-                $validated['avatar'] = url('storage/uploads/avatars/' . $fileName);
+            // Store in the database so uploads persist on serverless environments
+            $url = \App\Support\DbStorage::putDataUrl($validated['avatar'], 'uploads/avatars', 'avatar_' . $user->id);
+            if ($url) {
+                $validated['avatar'] = $url;
             }
         }
 

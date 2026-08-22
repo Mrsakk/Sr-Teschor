@@ -16,7 +16,9 @@ export function getFullImageUrl(url, fallback = 'https://images.unsplash.com/pho
     .replace(/http:\/\/localhost:8000\/storage/g, liveStorage)
     .replace(/http:\/\/127\.0\.0\.1:8000\/storage/g, liveStorage)
     .replace(/http:\/\/localhost:8000/g, 'https://sr-teschor-api.vercel.app')
-    .replace(/https:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage);
+    .replace(/https:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage)
+    .replace(/http:\/\/sr-teschor-api\.vercel\.app\/api\/storage/g, liveStorage)
+    .replace(/http:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage);
 
   if (resolved.startsWith('/api/storage/')) {
     resolved = `https://sr-teschor-api.vercel.app${resolved}`;

@@ -166,8 +166,6 @@ class DestinationController extends Controller
             ]);
         }
 
-        Cache::flush();
-
         return response()->json($destination->load('images'), 201);
     }
 
@@ -218,8 +216,6 @@ class DestinationController extends Controller
             }
         }
 
-        Cache::flush();
-
         return response()->json($destination->load('images'));
     }
 
@@ -229,8 +225,6 @@ class DestinationController extends Controller
 
         $destination = Destination::findOrFail($id);
         $destination->delete();
-
-        Cache::flush();
 
         return response()->json(['message' => 'Destination deleted successfully']);
     }

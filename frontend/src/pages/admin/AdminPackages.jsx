@@ -112,7 +112,7 @@ export default function AdminPackages() {
       rating: '4.9',
       reviews_count: '15',
       is_active: true,
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
+      image: '',
       includes: [
         'Hotel Pickup & Drop-off in private Air-Con Tuk Tuk',
         'Official Licensed Temple Tour Guide',
@@ -120,8 +120,8 @@ export default function AdminPackages() {
         'Authentic Khmer Set Lunch'
       ],
     });
-    setImagePreview('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80');
-    setImageUploadType('preset');
+    setImagePreview('');
+    setImageUploadType('upload');
     setIsModalOpen(true);
   };
 

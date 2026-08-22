@@ -13,6 +13,15 @@ Route::get('/', function () {
 
 // Serve uploaded storage assets on serverless environment with automatic caching & fallback
 Route::get('/storage/{path}', function ($path) {
+    // 1. Serve from database (persistent on serverless environments)
+    if ($stored = \App\Models\StoredFile::where('path', $path)->first()) {
+        return response(base64_decode($stored->data))
+            ->header('Content-Type', $stored->mime)
+            ->header('Cache-Control', 'public, max-age=31536000, immutable')
+            ->header('Access-Control-Allow-Origin', '*');
+    }
+
+    // 2. Fall back to local disk
     $filePath = public_path('storage/' . $path);
     if (!file_exists($filePath)) {
         $filePath = storage_path('app/public/' . $path);
