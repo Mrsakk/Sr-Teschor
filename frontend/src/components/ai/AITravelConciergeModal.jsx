@@ -5,21 +5,11 @@ import {
   Send, 
   Bot, 
   User, 
-  MapPin, 
-  Star, 
   Calendar, 
   Compass, 
-  Languages, 
-  ExternalLink,
-  ChevronRight,
-  RefreshCw,
-  HelpCircle,
-  Clock,
-  Ticket
+  RefreshCw
 } from 'lucide-react';
 import { aiApi } from '../../api/endpoints';
-import { getFullImageUrl } from '../../utils/imageUrl';
-import { Link } from 'react-router-dom';
 
 export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner }) {
   const [messages, setMessages] = useState([
@@ -210,52 +200,6 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
                 >
                   {msg.text}
                 </div>
-
-                {/* Destination Recommendation Mini Cards */}
-                {msg.destinations && msg.destinations.length > 0 && (
-                  <div className="space-y-1.5 pt-1">
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-orange-500" />
-                      <span>ទីតាំងណែនាំ (Recommended Destinations)</span>
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {msg.destinations.map((dest) => (
-                        <Link
-                          key={dest.id}
-                          to={dest.link}
-                          onClick={onClose}
-                          className="flex items-center gap-2.5 p-2 bg-white rounded-xl border border-slate-200/80 hover:border-orange-400 shadow-xs hover:shadow-md transition-all group"
-                        >
-                          <img
-                            src={getFullImageUrl(
-                              typeof dest.image === 'string' ? dest.image : (dest.image?.image || ''),
-                              'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500'
-                            )}
-                            alt={dest.name}
-                            className="w-11 h-11 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500';
-                            }}
-                          />
-                          <div className="min-w-0 flex-1">
-                            <h5 className="font-bold text-xs text-slate-900 truncate group-hover:text-orange-600">
-                              {dest.name}
-                            </h5>
-                            <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                              <span className="text-orange-600 font-semibold">{dest.category}</span>
-                              <span>•</span>
-                              <span className="flex items-center gap-0.5 text-amber-500 font-bold">
-                                <Star className="w-2.5 h-2.5 fill-amber-400" /> {dest.rating}
-                              </span>
-                            </div>
-                          </div>
-                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all" />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Suggestion Chips */}
                 {msg.suggestions && msg.suggestions.length > 0 && (
