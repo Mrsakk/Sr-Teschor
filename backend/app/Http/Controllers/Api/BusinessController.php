@@ -7,6 +7,7 @@ use App\Models\Business;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -14,104 +15,118 @@ class BusinessController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Business::query()
-            ->where('status', 'active')
-            ->where('verification_status', 'approved')
-            ->with(['category', 'promotions' => function ($q) {
-                $q->where('status', 'active');
-            }]);
+        $cacheKey = 'businesses_list_' . md5(json_encode($request->all()));
 
-        // Search
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('khmer_name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('address', 'like', "%{$search}%");
-            });
-        }
+        $businesses = Cache::remember($cacheKey, 120, function () use ($request) {
+            $query = Business::query()
+                ->where('status', 'active')
+                ->where('verification_status', 'approved')
+                ->with(['category', 'promotions' => function ($q) {
+                    $q->where('status', 'active');
+                }]);
 
-        // Category Filter
-        if ($request->filled('category')) {
-            $catSlug = $request->input('category');
-            $query->whereHas('category', function ($q) use ($catSlug) {
-                $q->where('slug', $catSlug);
-            });
-        }
+            // Search
+            if ($request->filled('search')) {
+                $search = $request->input('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('khmer_name', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%")
+                      ->orWhere('address', 'like', "%{$search}%");
+                });
+            }
 
-        // Price Range ($ to $$$$)
-        if ($request->filled('price_range')) {
-            $query->where('price_range', $request->input('price_range'));
-        }
+            // Category Filter
+            if ($request->filled('category')) {
+                $catSlug = $request->input('category');
+                $query->whereHas('category', function ($q) use ($catSlug) {
+                    $q->where('slug', $catSlug);
+                });
+            }
 
-        // Rating Filter
-        if ($request->filled('min_rating')) {
-            $query->where('rating', '>=', (float) $request->input('min_rating'));
-        }
+            // Price Range ($ to $$$$)
+            if ($request->filled('price_range')) {
+                $query->where('price_range', $request->input('price_range'));
+            }
 
-        // Featured Filter
-        if ($request->boolean('featured')) {
-            $query->where('is_featured', true);
-        }
+            // Rating Filter
+            if ($request->filled('min_rating')) {
+                $query->where('rating', '>=', (float) $request->input('min_rating'));
+            }
 
-        // Sorting (boost premium / featured listings)
-        $sortBy = $request->input('sort', 'featured');
-        switch ($sortBy) {
-            case 'rating':
-                $query->orderBy('rating', 'desc');
-                break;
-            case 'reviews':
-                $query->orderBy('review_count', 'desc');
-                break;
-            case 'newest':
-                $query->latest();
-                break;
-            case 'featured':
-            default:
-                $query->orderByRaw("CASE subscription_plan WHEN 'premium' THEN 1 WHEN 'pro' THEN 2 ELSE 3 END ASC")
-                      ->orderBy('is_featured', 'desc')
-                      ->orderBy('rating', 'desc');
-                break;
-        }
+            // Featured Filter
+            if ($request->boolean('featured')) {
+                $query->where('is_featured', true);
+            }
 
-        $perPage = $request->input('per_page', 12);
-        $businesses = $query->paginate($perPage);
+            // Sorting (boost premium / featured listings)
+            $sortBy = $request->input('sort', 'featured');
+            switch ($sortBy) {
+                case 'rating':
+                    $query->orderBy('rating', 'desc');
+                    break;
+                case 'reviews':
+                    $query->orderBy('review_count', 'desc');
+                    break;
+                case 'newest':
+                    $query->latest();
+                    break;
+                case 'featured':
+                default:
+                    $query->orderByRaw("CASE subscription_plan WHEN 'premium' THEN 1 WHEN 'pro' THEN 2 ELSE 3 END ASC")
+                          ->orderBy('is_featured', 'desc')
+                          ->orderBy('rating', 'desc');
+                    break;
+            }
+
+            $perPage = (int) $request->input('per_page', 12);
+            return $query->paginate($perPage);
+        });
 
         return response()->json($businesses);
     }
 
     public function show($slug)
     {
-        $business = Business::where('slug', $slug)
-            ->with([
-                'category',
-                'services' => function ($q) {
-                    $q->where('status', 'active');
-                },
-                'promotions' => function ($q) {
-                    $q->where('status', 'active');
-                },
-                'reviews' => function ($q) {
-                    $q->where('status', 'approved')->with('user')->latest();
-                },
-            ])
-            ->firstOrFail();
+        $cacheKey = 'business_detail_' . $slug;
 
-        $business->increment('views_count');
+        $data = Cache::remember($cacheKey, 180, function () use ($slug) {
+            $business = Business::where('slug', $slug)
+                ->with([
+                    'category',
+                    'services' => function ($q) {
+                        $q->where('status', 'active');
+                    },
+                    'promotions' => function ($q) {
+                        $q->where('status', 'active');
+                    },
+                    'reviews' => function ($q) {
+                        $q->where('status', 'approved')->with('user')->latest();
+                    },
+                ])
+                ->firstOrFail();
 
-        // Similar businesses in category
-        $similar = Business::where('category_id', $business->category_id)
-            ->where('id', '!=', $business->id)
-            ->where('status', 'active')
-            ->where('verification_status', 'approved')
-            ->with('category')
-            ->take(4)
-            ->get();
+            // Similar businesses in category
+            $similar = Business::where('category_id', $business->category_id)
+                ->where('id', '!=', $business->id)
+                ->where('status', 'active')
+                ->where('verification_status', 'approved')
+                ->with('category')
+                ->take(4)
+                ->get();
+
+            return [
+                'business' => $business,
+                'similar' => $similar,
+            ];
+        });
+
+        // Background views increment without slowing down response
+        Business::where('slug', $slug)->increment('views_count');
 
         return response()->json([
-            'business' => $business,
-            'similar' => $similar,
+            'business' => $data['business'],
+            'similar' => $data['similar'],
         ]);
     }
 

@@ -112,16 +112,16 @@ export default function BusinessDetail() {
   };
 
   return (
-    <div className="pt-16 sm:pt-24 pb-20 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+    <div className="pt-16 sm:pt-24 pb-28 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
       
       {/* ── 1. TOP BREADCRUMB & ACTION BAR ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+      <div className="flex items-center justify-between gap-2 pt-1">
         <Link
           to="/businesses"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 transition-colors"
+          className="h-9 sm:h-10 px-3 sm:px-4 rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-slate-50 flex items-center gap-1.5 transition-all shadow-2xs shrink-0 whitespace-nowrap"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>បញ្ជីអាជីវកម្ម (Businesses)</span>
+          <ArrowLeft className="w-4 h-4 shrink-0" />
+          <span className="whitespace-nowrap">ត្រឡប់ក្រោយ</span>
         </Link>
 
         {/* Action Buttons */}
@@ -129,11 +129,11 @@ export default function BusinessDetail() {
           {/* QR Code */}
           <button
             onClick={() => setQrModalOpen(true)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all shadow-xs cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition-all shadow-2xs shrink-0 cursor-pointer"
             title="Scan QR Code"
+            aria-label="QR Code"
           >
-            <QrCode className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="hidden sm:inline">QR Code</span>
+            <QrCode className="w-4 h-4 text-emerald-600 shrink-0" />
           </button>
 
           {/* Share Button */}
@@ -145,29 +145,29 @@ export default function BusinessDetail() {
                 setTimeout(() => setCopiedLink(false), 2500);
               }
             }}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all shadow-xs cursor-pointer"
+            className="h-9 sm:h-10 px-3 sm:px-4 rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer whitespace-nowrap"
           >
-            <Share2 className="w-3.5 h-3.5 text-slate-500" />
-            <span>{copiedLink ? 'បានចម្លង!' : 'Share'}</span>
+            <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
+            <span className="whitespace-nowrap">{copiedLink ? 'បានចម្លង!' : 'ចែករំលែក'}</span>
           </button>
 
           {/* Save Favorite Button */}
           <button
             onClick={() => toggleFavorite('business', business.id)}
-            className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs cursor-pointer ${
+            className={`h-9 sm:h-10 px-3.5 sm:px-4 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer whitespace-nowrap ${
               favorited
                 ? 'bg-rose-500 text-white shadow-rose-500/30'
                 : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
             }`}
           >
-            <Heart className={`w-3.5 h-3.5 ${favorited ? 'fill-current' : ''}`} />
-            <span>{favorited ? 'បានរក្សាទុក' : 'រក្សាទុក'}</span>
+            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${favorited ? 'fill-current' : ''}`} />
+            <span className="whitespace-nowrap">{favorited ? 'បានរក្សាទុក' : 'រក្សាទុក'}</span>
           </button>
         </div>
       </div>
 
       {/* ── 2. HERO HEADER BANNER ── */}
-      <div className="relative rounded-3xl overflow-hidden min-h-[340px] sm:min-h-[420px] bg-slate-950 shadow-xl flex flex-col justify-end p-5 sm:p-8 md:p-10 border border-slate-800">
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden min-h-[300px] sm:min-h-[420px] bg-slate-950 shadow-xl flex flex-col justify-end p-4 sm:p-8 md:p-10 border border-slate-800">
         
         {/* Cover Background Image */}
         <img
@@ -182,75 +182,75 @@ export default function BusinessDetail() {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-black/30" />
 
         {/* Content Container */}
-        <div className="relative z-10 space-y-4 max-w-3xl text-white">
+        <div className="relative z-10 space-y-3 sm:space-y-4 max-w-3xl text-white">
           
           {/* Category & Status Badges */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {business.category && (
-              <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30">
+              <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 sm:py-1 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30">
                 {business.category.name}
               </span>
             )}
             {business.verification_status === 'approved' && (
-              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white shadow-sm">
-                <CheckCircle2 className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white shadow-xs">
+                <CheckCircle2 className="w-3 h-3 shrink-0" />
                 <span>Verified Business</span>
               </span>
             )}
             {business.subscription_plan === 'premium' && (
-              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-900 shadow-sm">
-                <Award className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-900 shadow-xs">
+                <Award className="w-3 h-3 shrink-0" />
                 <span>Gold Partner</span>
               </span>
             )}
           </div>
 
           {/* Main Title & Khmer Subtitle */}
-          <div className="space-y-1">
+          <div className="space-y-0.5 sm:space-y-1">
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black font-heading text-white leading-tight drop-shadow-md">
               {business.name}
             </h1>
             {business.khmer_name && (
-              <p className="text-sm sm:text-lg font-khmer text-amber-300 drop-shadow-sm font-medium">
+              <p className="text-xs sm:text-lg font-khmer text-amber-300 drop-shadow-xs font-medium">
                 {business.khmer_name}
               </p>
             )}
           </div>
 
           {/* Location & Rating Meta Row */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-slate-200">
-            <div className="flex items-center gap-1 text-amber-400 font-bold bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-xl">
-              <Star className="w-4 h-4 fill-amber-400" />
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] sm:text-xs text-slate-200">
+            <div className="flex items-center gap-1 text-amber-400 font-bold bg-black/40 backdrop-blur-sm px-2.5 py-0.5 sm:py-1 rounded-xl">
+              <Star className="w-3.5 h-3.5 fill-amber-400 shrink-0" />
               <span>{Number(business.rating || 5).toFixed(1)}</span>
-              <span className="text-slate-300 font-normal">({business.review_count || 0} reviews)</span>
+              <span className="text-slate-300 font-normal">({business.review_count || 0})</span>
             </div>
 
-            <span className="text-white font-bold bg-white/15 px-2 py-0.5 rounded-lg text-xs">
+            <span className="text-white font-bold bg-white/15 px-2 py-0.5 rounded-lg text-[10px] sm:text-xs">
               {business.price_range || '$$ (Moderate)'}
             </span>
 
             <div className="flex items-center gap-1 text-slate-300">
               <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span className="truncate max-w-[280px] sm:max-w-md">{business.address}</span>
+              <span className="truncate max-w-[200px] sm:max-w-md">{business.address}</span>
             </div>
           </div>
 
           {/* CTA Action Button */}
-          <div className="pt-2 flex flex-wrap items-center gap-3">
+          <div className="pt-1 sm:pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
             <button
               onClick={() => handleOpenBooking()}
-              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm shadow-xl shadow-orange-500/30 flex items-center gap-2 transition-transform hover:scale-105 cursor-pointer"
+              className="w-full sm:w-auto px-5 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2 transition-transform hover:scale-102 cursor-pointer"
             >
-              <Calendar className="w-4 h-4" />
-              <span>កក់ទុក ឬសាកសួរ (Book / Inquire Now)</span>
+              <Calendar className="w-4 h-4 shrink-0" />
+              <span>កក់ទុក ឬសាកសួរ (Book / Inquire)</span>
             </button>
 
             {business.phone && (
               <a
                 href={`tel:${business.phone}`}
-                className="px-4 py-3.5 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs flex items-center gap-2 border border-white/20 transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/20 transition-colors"
               >
-                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>Call Directly</span>
               </a>
             )}
@@ -259,10 +259,10 @@ export default function BusinessDetail() {
       </div>
 
       {/* ── 3. MAIN CONTENT GRID (LEFT CONTENT + RIGHT STICKY SIDEBAR) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
         
         {/* Left Column: Promotions, About, Gallery, Services, Reviews */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-5 sm:space-y-8">
           
           {/* Active Promotions Voucher Alert */}
           {business.promotions && business.promotions.length > 0 && (
@@ -270,17 +270,17 @@ export default function BusinessDetail() {
               {business.promotions.map((p) => (
                 <div
                   key={p.id}
-                  className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-3xl p-5 sm:p-6 text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-orange-400/30 relative overflow-hidden"
+                  className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border border-orange-400/30 relative overflow-hidden"
                 >
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black shrink-0 border border-white/30">
-                      <Tag className="w-6 h-6 text-white" />
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black shrink-0 border border-white/30">
+                      <Tag className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider bg-white text-red-600 px-2.5 py-0.5 rounded-md shadow-xs inline-block">
+                    <div className="space-y-0.5 sm:space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider bg-white text-red-600 px-2 py-0.5 rounded-md shadow-2xs inline-block">
                         {p.discount}
                       </span>
-                      <h4 className="font-extrabold text-base text-white leading-tight font-heading">
+                      <h4 className="font-extrabold text-sm sm:text-base text-white leading-tight font-heading">
                         {p.title}
                       </h4>
                       <p className="text-xs text-orange-100 leading-relaxed max-w-md">
@@ -293,7 +293,7 @@ export default function BusinessDetail() {
                     <button
                       type="button"
                       onClick={() => handleCopyPromo(p.promo_code)}
-                      className="px-4 py-2 rounded-xl bg-black/30 hover:bg-black/40 border border-white/30 text-amber-200 font-mono font-bold text-xs flex items-center gap-2 self-start sm:self-center shrink-0 transition-all cursor-pointer"
+                      className="w-full sm:w-auto px-4 py-2 rounded-xl bg-black/30 hover:bg-black/40 border border-white/30 text-amber-200 font-mono font-bold text-xs flex items-center justify-center gap-2 shrink-0 transition-all cursor-pointer"
                       title="Click to copy promo code"
                     >
                       <Copy className="w-3.5 h-3.5" />
@@ -306,12 +306,12 @@ export default function BusinessDetail() {
           )}
 
           {/* About Section */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xs space-y-4">
-            <div className="border-b border-slate-100 pb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+            <div className="border-b border-slate-100 pb-2.5 sm:pb-3">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
                 ព័ត៌មានលម្អិត (Overview)
               </span>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading mt-0.5">
+              <h3 className="text-lg sm:text-2xl font-extrabold text-slate-900 font-heading mt-0.5">
                 About {business.name}
               </h3>
             </div>
@@ -323,27 +323,27 @@ export default function BusinessDetail() {
 
           {/* Photo Gallery Grid */}
           {allImages.length > 1 && (
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 sm:pb-3">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
                     រូបភាពទេសភាព (Gallery)
                   </span>
-                  <h3 className="text-xl font-extrabold text-slate-900 font-heading">
+                  <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">
                     Photo Gallery ({allImages.length})
                   </h3>
                 </div>
-                <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+                <span className="text-[11px] sm:text-xs text-slate-400 font-medium hidden sm:inline">
                   Click to view full screen
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 {allImages.map((img, index) => (
                   <button
                     key={index}
                     onClick={() => setLightboxImg(getFullImageUrl(img))}
-                    className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-slate-100 border border-slate-200 hover:shadow-lg transition-all cursor-pointer"
+                    className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden group bg-slate-100 border border-slate-200 hover:shadow-md transition-all cursor-pointer"
                   >
                     <img
                       src={getFullImageUrl(img)}
@@ -368,46 +368,46 @@ export default function BusinessDetail() {
 
           {/* Available Services / Menu Packages */}
           {business.services && business.services.length > 0 && (
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 sm:pb-3">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
                     សេវាកម្ម និងកញ្ចប់ (Services & Menu)
                   </span>
-                  <h3 className="text-xl font-extrabold text-slate-900 font-heading">
+                  <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">
                     Experiences & Services Offered
                   </h3>
                 </div>
-                <span className="text-xs text-slate-400 font-medium">Instant Booking</span>
+                <span className="text-[10px] sm:text-xs text-slate-400 font-medium">Instant Booking</span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5 sm:space-y-3">
                 {business.services.map((serv) => (
                   <div
                     key={serv.id}
-                    className="bg-slate-50 hover:bg-slate-100/80 rounded-2xl p-4 sm:p-5 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
+                    className="bg-slate-50 hover:bg-slate-100/80 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all"
                   >
                     <div className="space-y-1 min-w-0">
-                      <h4 className="font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                      <h4 className="font-bold text-xs sm:text-base text-slate-900 leading-snug">
                         {serv.name}
                       </h4>
                       <p className="text-xs text-slate-500 line-clamp-2">
                         {serv.description}
                       </p>
                       {serv.duration && (
-                        <span className="text-[11px] font-semibold text-slate-400 block pt-0.5">
+                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 block pt-0.5">
                           ⏱️ Duration: {serv.duration}
                         </span>
                       )}
                     </div>
 
                     <div className="flex items-center justify-between sm:flex-col sm:items-end w-full sm:w-auto gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200">
-                      <span className="font-extrabold text-base sm:text-lg text-emerald-700">
+                      <span className="font-extrabold text-sm sm:text-lg text-emerald-700">
                         ${Number(serv.price).toFixed(2)}
                       </span>
                       <Link
                         to={`/checkout/${serv.id}`}
-                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition-transform hover:scale-105 flex items-center gap-1"
+                        className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition-transform hover:scale-105 flex items-center gap-1"
                       >
                         <span>Book Now</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -420,13 +420,13 @@ export default function BusinessDetail() {
           )}
 
           {/* Customer Reviews Section */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b border-slate-100 pb-3 sm:pb-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
                   មតិយោបល់ភ្ញៀវទេសចរ (Reviews)
                 </span>
-                <h3 className="text-xl font-extrabold text-slate-900 font-heading">
+                <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">
                   Reviews & Customer Ratings ({business.reviews?.length || 0})
                 </h3>
                 <div className="mt-1">
@@ -436,24 +436,24 @@ export default function BusinessDetail() {
 
               <button
                 onClick={() => setReviewModalOpen(true)}
-                className="px-4 py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center gap-1.5 transition-colors self-start sm:self-center cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl sm:rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <MessageSquarePlus className="w-4 h-4 text-emerald-600" />
                 <span>Rate & Review (សរសេរការវាយតម្លៃ)</span>
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {(!business.reviews || business.reviews.length === 0) ? (
-                <div className="text-center py-8 text-slate-400 text-xs space-y-1">
-                  <Star className="w-6 h-6 text-slate-300 mx-auto" />
+                <div className="text-center py-6 sm:py-8 text-slate-400 text-xs space-y-1">
+                  <Star className="w-6 h-6 text-slate-300 mx-auto mb-1" />
                   <p>មិនទាន់មានការវាយតម្លៃនៅឡើយទេ។ សូមក្លាយជាអ្នកដំបូងដែលសរសេរ Review សម្រាប់ {business.name}!</p>
                 </div>
               ) : (
                 business.reviews.map((rev) => (
-                  <div key={rev.id} className="bg-slate-50 rounded-2xl p-4 sm:p-5 border border-slate-100 space-y-3">
+                  <div key={rev.id} className="bg-slate-50 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2.5">
                         <UserAvatar user={rev.user} size="sm" />
                         <div>
                           <p className="font-bold text-xs text-slate-900">{rev.user?.name || 'Traveler'}</p>
@@ -462,7 +462,7 @@ export default function BusinessDetail() {
                       </div>
                       <div className="flex items-center text-amber-400">
                         {Array.from({ length: rev.rating || 5 }).map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                          <Star key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
                         ))}
                       </div>
                     </div>
@@ -470,7 +470,7 @@ export default function BusinessDetail() {
 
                     {/* Business Owner Reply */}
                     {rev.reply && (
-                      <div className="bg-white rounded-xl p-3.5 border-l-4 border-emerald-600 text-xs space-y-1 shadow-xs">
+                      <div className="bg-white rounded-xl p-3 border-l-4 border-emerald-600 text-xs space-y-0.5 shadow-2xs">
                         <p className="font-bold text-slate-900 flex items-center gap-1.5">
                           <span>ឆ្លើយតបពី {business.name}</span>
                           <span className="text-[10px] text-slate-400 font-normal">
@@ -489,14 +489,14 @@ export default function BusinessDetail() {
         </div>
 
         {/* ── RIGHT COLUMN: CONTACT, OPENING HOURS & GPS MAP CARD ── */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-xl space-y-5 sticky top-24">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-7 border border-slate-100 shadow-xl space-y-4 sm:space-y-5 sticky top-24">
             
-            <div className="border-b border-slate-100 pb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+            <div className="border-b border-slate-100 pb-2.5 sm:pb-3">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
                 ទំនាក់ទំនង & ទីតាំង
               </span>
-              <h4 className="font-extrabold text-lg text-slate-900 font-heading mt-0.5">
+              <h4 className="font-extrabold text-base sm:text-lg text-slate-900 font-heading mt-0.5">
                 Contact & Location
               </h4>
             </div>

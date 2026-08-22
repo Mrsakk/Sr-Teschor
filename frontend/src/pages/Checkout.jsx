@@ -201,67 +201,67 @@ export default function Checkout() {
   }
 
   return (
-    <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 bg-slate-50/60 min-h-screen">
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
+    <div className="pt-20 sm:pt-28 pb-36 sm:pb-24 bg-slate-50/60 min-h-screen">
+      <div className="max-w-6xl mx-auto px-3.5 sm:px-6 lg:px-8">
         
         {/* Top Breadcrumb & Title */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Link
             to={isPackage ? "/packages" : (item?.business ? `/businesses/${item.business.slug}` : "/destinations")}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-orange-600 transition-colors mb-3"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-orange-600 transition-colors mb-2.5 sm:mb-3"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to {isPackage ? "Travel Packages" : (item?.business?.name || "Services")}</span>
+            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span>ត្រឡប់ក្រោយ ({isPackage ? "Travel Packages" : (item?.business?.name || "Services")})</span>
           </Link>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-orange-600">
+              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-orange-600">
                 Guaranteed Direct Reservation
               </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
-                Secure Booking Checkout
+              <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 font-heading">
+                ទូទាត់ប្រាក់ និងកក់សេវាកម្ម (Checkout)
               </h1>
             </div>
-            <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-bold shadow-xs">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Official SR Tes Chor Protected</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-[11px] sm:text-xs font-bold shadow-2xs self-start sm:self-auto">
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
+              <span>ធានាសុវត្ថិភាពផ្លូវការ (Official Protected)</span>
             </div>
           </div>
         </div>
 
         {errorMsg && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+          <div className="mb-5 sm:mb-6 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
             <span>{errorMsg}</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
           
           {/* LEFT COLUMN: Booking Form (7 Cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             
             {/* Step 1: Selected Experience Summary */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-              <div className="flex items-start gap-4">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+              <div className="flex items-start gap-3 sm:gap-4">
                 {item?.image && (
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-20 h-20 rounded-2xl object-cover shrink-0 shadow-xs"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl object-cover shrink-0 shadow-2xs"
                   />
                 )}
-                <div className="space-y-1">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-orange-100 text-orange-700 uppercase tracking-wide">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <span className="inline-block px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-orange-100 text-orange-700 uppercase tracking-wide">
                     {isPackage ? 'Curated Package' : (item?.type || 'Local Experience')}
                   </span>
-                  <h3 className="font-bold text-lg text-slate-900 leading-tight">
+                  <h3 className="font-bold text-base sm:text-lg text-slate-900 leading-snug line-clamp-2">
                     {item?.name}
                   </h3>
                   {item?.business && (
-                    <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
-                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{item.business.name}</span>
+                    <p className="text-xs text-slate-500 font-medium flex items-center gap-1 truncate">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="truncate">{item.business.name}</span>
                     </p>
                   )}
                 </div>
@@ -269,17 +269,17 @@ export default function Checkout() {
             </div>
 
             {/* Step 2: Schedule & Guests */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-              <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+              <h3 className="font-bold text-xs sm:text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-orange-500" />
-                <span>1. Schedule & Guests</span>
+                <span>១. កាលបរិច្ឆេទ និងចំនួនភ្ញៀវ (Schedule & Guests)</span>
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 {/* Date */}
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                    Booking Date
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                    កាលបរិច្ឆេទ (Date)
                   </label>
                   <input
                     type="date"
@@ -292,8 +292,8 @@ export default function Checkout() {
 
                 {/* Time */}
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                    Preferred Time
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                    ពេលវេលា (Time)
                   </label>
                   <select
                     value={bookingTime}
@@ -311,24 +311,24 @@ export default function Checkout() {
 
                 {/* Number of Guests */}
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                    Number of Guests
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                    ចំនួនភ្ញៀវ (Guests)
                   </label>
                   <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
                     <button
                       type="button"
                       onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                      className="px-3 py-2 text-slate-600 hover:bg-slate-200 font-bold transition-colors cursor-pointer"
+                      className="px-3.5 py-2.5 text-slate-600 hover:bg-slate-200 font-bold transition-colors cursor-pointer"
                     >
                       -
                     </button>
                     <span className="flex-1 text-center text-xs font-extrabold text-slate-800">
-                      {guests} {guests > 1 ? 'Guests' : 'Guest'}
+                      {guests} {guests > 1 ? 'នាក់' : 'នាក់'}
                     </span>
                     <button
                       type="button"
                       onClick={() => setGuests((g) => Math.min(20, g + 1))}
-                      className="px-3 py-2 text-slate-600 hover:bg-slate-200 font-bold transition-colors cursor-pointer"
+                      className="px-3.5 py-2.5 text-slate-600 hover:bg-slate-200 font-bold transition-colors cursor-pointer"
                     >
                       +
                     </button>
@@ -338,30 +338,30 @@ export default function Checkout() {
             </div>
 
             {/* Step 3: Contact & Pickup Details */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-              <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+              <h3 className="font-bold text-xs sm:text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Users className="w-4 h-4 text-orange-500" />
-                <span>2. Contact & Pickup Details</span>
+                <span>២. ព័ត៌មានទំនាក់ទំនង (Contact Details)</span>
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">
-                    Full Name *
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase mb-1">
+                    ឈ្មោះពេញ (Full Name) *
                   </label>
                   <input
                     type="text"
                     required
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
-                    placeholder="e.g. John Doe / Sok Dara"
+                    placeholder="e.g. Sok Dara / John Doe"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500 bg-slate-50/50"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">
-                    Phone / Telegram / WhatsApp *
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase mb-1">
+                    លេខទូរស័ព្ទ / Telegram / WhatsApp *
                   </label>
                   <input
                     type="tel"
@@ -374,22 +374,22 @@ export default function Checkout() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">
-                    Email Address (for E-Ticket) *
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase mb-1">
+                    អ៊ីមែលទទួលសំបុត្រ (Email for E-Ticket) *
                   </label>
                   <input
                     type="email"
                     required
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="john@example.com"
+                    placeholder="example@gmail.com"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500 bg-slate-50/50"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">
-                    Hotel Pickup Location (Optional)
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase mb-1">
+                    ទីតាំងទទួល (Hotel Pickup Location - Optional)
                   </label>
                   <div className="relative">
                     <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -397,21 +397,21 @@ export default function Checkout() {
                       type="text"
                       value={pickupLocation}
                       onChange={(e) => setPickupLocation(e.target.value)}
-                      placeholder="Hotel name & room number, or street address in Siem Reap"
+                      placeholder="ឈ្មោះសណ្ឋាគារ លេខបន្ទប់ ឬអាសយដ្ឋាននៅសៀមរាប"
                       className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-orange-500 bg-slate-50/50"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">
-                    Special Requests & Diet Preferences
+                  <label className="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase mb-1">
+                    សំណើពិសេស (Special Requests)
                   </label>
                   <textarea
                     rows={2}
                     value={specialRequests}
                     onChange={(e) => setSpecialRequests(e.target.value)}
-                    placeholder="Vegetarian meal, baby seat, guide speaks Khmer/English/Chinese, etc."
+                    placeholder="ម្ហូបបួស, កៅអីក្មេង, មគ្គុទ្ទេសក៍និយាយខ្មែរ/អង់គ្លេស..."
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:border-orange-500 bg-slate-50/50"
                   />
                 </div>
@@ -419,35 +419,35 @@ export default function Checkout() {
             </div>
 
             {/* Step 4: Payment Method Selection */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-              <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+              <h3 className="font-bold text-xs sm:text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-orange-500" />
-                <span>3. Select Payment Method</span>
+                <span>៣. ជ្រើសរើសវិធីសាស្ត្រទូទាត់ (Payment Method)</span>
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 
                 {/* KHQR (Recommended in Cambodia) */}
                 <div
                   onClick={() => setPaymentMethod('khqr')}
-                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'khqr'
-                      ? 'border-orange-500 bg-orange-50/40 shadow-sm ring-2 ring-orange-500/20'
+                      ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center font-extrabold text-xs shrink-0 shadow-xs">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-600 text-white flex items-center justify-center font-extrabold text-xs shrink-0 shadow-2xs">
                     KHQR
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <h4 className="font-bold text-xs text-slate-900">KHQR / Bakong</h4>
+                      <h4 className="font-bold text-xs text-slate-900">Bakong KHQR</h4>
                       <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-red-100 text-red-700">
-                        Popular
+                        ពេញនិយម
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      Scan with ABA, ACLEDA, Wing, or any Cambodian bank app.
+                    <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                      ស្កេនជាមួយ ABA, ACLEDA, Wing ឬគ្រប់ App ធនាគារក្នុងស្រុក។
                     </p>
                   </div>
                 </div>
@@ -455,19 +455,19 @@ export default function Checkout() {
                 {/* Credit / Debit Card */}
                 <div
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'card'
-                      ? 'border-orange-500 bg-orange-50/40 shadow-sm ring-2 ring-orange-500/20'
+                      ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
                     <CreditCard className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-xs text-slate-900">Visa / Mastercard / JCB</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      International cards processed securely with 3D Secure.
+                    <h4 className="font-bold text-xs text-slate-900">Visa / Mastercard</h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                      កាតអន្តរជាតិមានប្រព័ន្ធការពារសុវត្ថិភាព 3D Secure។
                     </p>
                   </div>
                 </div>
@@ -475,19 +475,19 @@ export default function Checkout() {
                 {/* Bakong Direct */}
                 <div
                   onClick={() => setPaymentMethod('bakong')}
-                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'bakong'
-                      ? 'border-orange-500 bg-orange-50/40 shadow-sm ring-2 ring-orange-500/20'
+                      ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                     <Wallet className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-xs text-slate-900">Bakong Wallet</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      Direct zero-fee debit from your official Bakong Account.
+                    <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                      កាត់ប្រាក់ដោយផ្ទាល់ មិនគិតថ្លៃសេវាបន្ថែម។
                     </p>
                   </div>
                 </div>
@@ -495,19 +495,19 @@ export default function Checkout() {
                 {/* Cash on Arrival */}
                 <div
                   onClick={() => setPaymentMethod('cash')}
-                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'cash'
-                      ? 'border-orange-500 bg-orange-50/40 shadow-sm ring-2 ring-orange-500/20'
+                      ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                     💵
                   </div>
                   <div>
-                    <h4 className="font-bold text-xs text-slate-900">Pay at Venue</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      Pay in Cash (USD/KHR) to your guide or hotel on arrival.
+                    <h4 className="font-bold text-xs text-slate-900">ទូទាត់ផ្ទាល់ពេលទៅដល់</h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                      ទូទាត់ប្រាក់សុទ្ធ (USD/KHR) ជូនមគ្គុទ្ទេសក៍ ឬសណ្ឋាគារ។
                     </p>
                   </div>
                 </div>
@@ -516,18 +516,18 @@ export default function Checkout() {
 
               {/* KHQR Live Mockup Preview */}
               {paymentMethod === 'khqr' && quote && (
-                <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-red-950 via-slate-900 to-slate-950 text-white flex flex-col sm:flex-row items-center gap-4">
+                <div className="mt-3 sm:mt-4 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-950 via-slate-900 to-slate-950 text-white flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
                   <div className="p-2 bg-white rounded-xl shrink-0 shadow-lg text-slate-900 flex flex-col items-center">
-                    <QrCode className="w-24 h-24 text-slate-900" />
+                    <QrCode className="w-20 h-20 sm:w-24 sm:h-24 text-slate-900" />
                     <span className="text-[9px] font-extrabold text-red-600 mt-1">KHQR PAY</span>
                   </div>
                   <div className="space-y-1 text-center sm:text-left">
                     <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-red-600 text-white">
                       Instant Confirmation
                     </span>
-                    <h5 className="font-bold text-sm text-white">Scan & Pay with Bakong / Banking App</h5>
-                    <p className="text-[11px] text-slate-300">
-                      Amount: <strong className="text-amber-300">${quote.total_amount.toFixed(2)} USD</strong> (៛{quote.total_amount_khr.toLocaleString()} KHR)
+                    <h5 className="font-bold text-xs sm:text-sm text-white">ស្កេនទូទាត់ជាមួយ Bakong ឬ App ធនាគារ</h5>
+                    <p className="text-xs text-slate-300">
+                      ចំនួនទឹកប្រាក់៖ <strong className="text-amber-300">${quote.total_amount.toFixed(2)} USD</strong> (៛{quote.total_amount_khr.toLocaleString()} KHR)
                     </p>
                     <p className="text-[10px] text-slate-400">
                       Merchant: SR Tes Chor Tourism Platform • Ref: TC-{new Date().getFullYear()}
@@ -540,35 +540,35 @@ export default function Checkout() {
           </div>
 
           {/* RIGHT COLUMN: Order Summary & Price Breakdown (5 Cols Sticky) */}
-          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28">
+          <div className="lg:col-span-5 space-y-4 sm:space-y-6 lg:sticky lg:top-28">
             
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-xl space-y-5">
-              <h3 className="font-bold text-base text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
-                <span>Order Summary</span>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-6 border border-slate-100 shadow-xl space-y-4 sm:space-y-5">
+              <h3 className="font-bold text-sm sm:text-base text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+                <span>សេចក្តីសង្ខេបនៃការកក់ (Summary)</span>
                 <span className="text-xs font-semibold text-slate-400">
-                  {guests} {guests > 1 ? 'tickets' : 'ticket'}
+                  {guests} {guests > 1 ? 'សំបុត្រ' : 'សំបុត្រ'}
                 </span>
               </h3>
 
               {/* Price Breakdown from Server */}
               {calculating ? (
-                <div className="py-8 text-center space-y-2">
+                <div className="py-6 sm:py-8 text-center space-y-2">
                   <RefreshCw className="w-5 h-5 text-orange-500 animate-spin mx-auto" />
-                  <p className="text-xs text-slate-400">Updating live price calculation...</p>
+                  <p className="text-xs text-slate-400">កំពុងគណនាតម្លៃ...</p>
                 </div>
               ) : quote ? (
-                <div className="space-y-3 text-xs">
+                <div className="space-y-2.5 sm:space-y-3 text-xs">
                   
                   <div className="flex items-center justify-between text-slate-600">
                     <span>
-                      ${quote.unit_price.toFixed(2)} × {quote.quantity} {quote.quantity > 1 ? 'Guests' : 'Guest'}
+                      ${quote.unit_price.toFixed(2)} × {quote.quantity} {quote.quantity > 1 ? 'នាក់' : 'នាក់'}
                     </span>
                     <span className="font-bold text-slate-800">${quote.subtotal.toFixed(2)}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-600">
                     <span className="flex items-center gap-1">
-                      <span>Platform Booking Fee</span>
+                      <span>សេវាប្រព័ន្ធ (Platform Fee)</span>
                       <Info className="w-3 h-3 text-slate-400" title="Includes 24/7 travel support and platform protection" />
                     </span>
                     <span className="font-bold text-slate-800">${quote.service_fee.toFixed(2)}</span>
@@ -578,7 +578,7 @@ export default function Checkout() {
                     <div className="flex items-center justify-between text-emerald-600 font-bold bg-emerald-50 p-2 rounded-xl">
                       <span className="flex items-center gap-1">
                         <Tag className="w-3.5 h-3.5" />
-                        <span>Promo Code ({quote.promo_code})</span>
+                        <span>កូដបញ្ចុះតម្លៃ ({quote.promo_code})</span>
                       </span>
                       <span>-${quote.discount_amount.toFixed(2)}</span>
                     </div>
@@ -586,16 +586,16 @@ export default function Checkout() {
 
                   <div className="pt-3 border-t border-slate-100 flex items-baseline justify-between">
                     <div>
-                      <span className="font-extrabold text-sm text-slate-900 block">Total Amount</span>
-                      <span className="text-[11px] text-slate-400">
-                        Exchange rate: 1 USD = ៛{quote.exchange_rate} KHR
+                      <span className="font-extrabold text-xs sm:text-sm text-slate-900 block">តម្លៃសរុប (Total)</span>
+                      <span className="text-[10px] sm:text-[11px] text-slate-400">
+                        អត្រាប្តូរប្រាក់៖ $1 = ៛{quote.exchange_rate} KHR
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-2xl font-extrabold text-orange-600 block">
+                      <span className="text-xl sm:text-2xl font-extrabold text-orange-600 block">
                         ${quote.total_amount.toFixed(2)}
                       </span>
-                      <span className="text-xs font-bold text-slate-500">
+                      <span className="text-[11px] sm:text-xs font-bold text-slate-500">
                         ៛{quote.total_amount_khr.toLocaleString()} KHR
                       </span>
                     </div>
@@ -609,15 +609,15 @@ export default function Checkout() {
                 {appliedPromo ? (
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-xs">
                     <div className="flex items-center gap-1.5 text-orange-800 font-bold">
-                      <Sparkles className="w-4 h-4 text-orange-600" />
-                      <span>Code "{appliedPromo}" Applied</span>
+                      <Sparkles className="w-4 h-4 text-orange-600 shrink-0" />
+                      <span>បានប្រើកូដ "{appliedPromo}"</span>
                     </div>
                     <button
                       type="button"
                       onClick={handleRemovePromo}
                       className="text-[11px] font-extrabold text-red-600 hover:underline cursor-pointer"
                     >
-                      Remove
+                      លុបចេញ
                     </button>
                   </div>
                 ) : (
@@ -628,28 +628,28 @@ export default function Checkout() {
                         type="text"
                         value={promoCodeInput}
                         onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
-                        placeholder="Try: SIEMREAP20 or TESCHOR5"
+                        placeholder="កូដបញ្ចុះតម្លៃ (Promo Code)"
                         className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-bold uppercase placeholder:normal-case placeholder-slate-400 focus:outline-none focus:border-orange-500"
                       />
                     </div>
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
+                      className="px-3.5 sm:px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer shrink-0"
                     >
-                      Apply
+                      ប្រើ
                     </button>
                   </form>
                 )}
               </div>
 
               {/* Security & Guarantees Badge */}
-              <div className="p-3.5 rounded-2xl bg-slate-50 text-[11px] text-slate-500 space-y-1.5 border border-slate-100">
+              <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 text-[10px] sm:text-[11px] text-slate-500 space-y-1 border border-slate-100">
                 <div className="flex items-center gap-1.5 font-bold text-slate-700">
-                  <Lock className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Bank-Grade 256-bit SSL Encrypted</span>
+                  <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>ប្រព័ន្ធសុវត្ថិភាព 256-bit SSL Encrypted</span>
                 </div>
                 <p className="leading-tight">
-                  Free cancellation up to 48 hours before start date. No hidden transaction fees.
+                  អាចលុបចោលឥតគិតថ្លៃរហូតដល់ ៤៨ ម៉ោងមុនកាលបរិច្ឆេទ។ គ្មានកម្រៃសេវាលាក់កំបាំង។
                 </p>
               </div>
 
@@ -658,16 +658,16 @@ export default function Checkout() {
                 type="button"
                 onClick={handleSubmitBooking}
                 disabled={processing || calculating || !quote}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {processing ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Processing Secure Payment...</span>
+                    <span>កំពុងដំណើរការទូទាត់ប្រាក់...</span>
                   </>
                 ) : (
                   <>
-                    <span>Confirm & Pay ${quote ? quote.total_amount.toFixed(2) : '...'}</span>
+                    <span>យល់ព្រម និងទូទាត់ប្រាក់ ${quote ? quote.total_amount.toFixed(2) : '...'}</span>
                     <ChevronRight className="w-4 h-4" />
                   </>
                 )}

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use App\Models\DestinationImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class DestinationController extends Controller
@@ -81,8 +82,12 @@ class DestinationController extends Controller
                 break;
         }
 
-        $perPage = $request->input('per_page', 18);
-        $destinations = $query->paginate($perPage);
+        $perPage = (int) $request->input('per_page', 18);
+        $cacheKey = 'destinations_list_' . md5(json_encode($request->all()));
+
+        $destinations = Cache::remember($cacheKey, 120, function () use ($query, $perPage) {
+            return $query->paginate($perPage);
+        });
 
         return response()->json($destinations);
     }
@@ -161,6 +166,8 @@ class DestinationController extends Controller
             ]);
         }
 
+        Cache::flush();
+
         return response()->json($destination->load('images'), 201);
     }
 
@@ -211,6 +218,8 @@ class DestinationController extends Controller
             }
         }
 
+        Cache::flush();
+
         return response()->json($destination->load('images'));
     }
 
@@ -220,6 +229,8 @@ class DestinationController extends Controller
 
         $destination = Destination::findOrFail($id);
         $destination->delete();
+
+        Cache::flush();
 
         return response()->json(['message' => 'Destination deleted successfully']);
     }

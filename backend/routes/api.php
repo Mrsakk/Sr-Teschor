@@ -31,6 +31,9 @@ Route::get('/invoices/{reference}', [PaymentController::class, 'getInvoice']);
 
 Route::get('/storage/{path}', function ($path) {
     $filePath = public_path('storage/' . $path);
+    if (!file_exists($filePath)) {
+        $filePath = storage_path('app/public/' . $path);
+    }
     if (file_exists($filePath) && !is_dir($filePath)) {
         $mime = mime_content_type($filePath) ?: 'image/jpeg';
         return response()->file($filePath, [

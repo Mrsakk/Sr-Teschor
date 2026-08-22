@@ -143,8 +143,10 @@ class TripPlanController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $item = TripItem::where('trip_plan_id', $trip->id)->where('id', $itemId)->firstOrFail();
-        $item->delete();
+        $item = TripItem::where('trip_plan_id', $trip->id)->where('id', $itemId)->first();
+        if ($item) {
+            $item->delete();
+        }
 
         return response()->json(['message' => 'Stop removed from itinerary']);
     }

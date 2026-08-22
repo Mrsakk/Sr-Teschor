@@ -126,73 +126,73 @@ export default function TouristToolsHub() {
   });
 
   return (
-    <section className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 text-white shadow-2xl relative overflow-hidden space-y-8">
+    <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-8 lg:p-10 text-white shadow-2xl relative overflow-hidden space-y-6 sm:space-y-8">
       {/* Background Decorative Glows */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-orange-500/10 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-sky-500/10 via-indigo-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-400 text-xs font-extrabold border border-orange-500/30 mb-2">
+      <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-5 sm:pb-6">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-400 text-xs font-extrabold border border-orange-500/30">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Siem Reap Tourist Travel Companion</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
+          <h2 className="text-xl sm:text-3xl font-extrabold text-white font-heading leading-tight">
             Essential Travel Tools & Daily Helper
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-400">
             Real-time sunrise countdown, fair tuk-tuk fares, KHQR payment guide, and temple etiquette.
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex flex-wrap items-center bg-slate-950 p-1.5 rounded-2xl border border-slate-800 self-start md:self-auto gap-1">
+        <div className="grid grid-cols-2 md:flex md:flex-row items-center bg-slate-950 p-1.5 rounded-2xl border border-slate-800 w-full md:w-auto gap-1.5 shrink-0">
           <button
             onClick={() => setActiveTab('sunrise')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'sunrise'
                 ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Sun className="w-3.5 h-3.5" />
+            <Sun className="w-3.5 h-3.5 shrink-0" />
             <span>Sunrise & Sunset</span>
           </button>
 
           <button
             onClick={() => setActiveTab('tuktuk')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'tuktuk'
                 ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Car className="w-3.5 h-3.5" />
+            <Car className="w-3.5 h-3.5 shrink-0" />
             <span>Tuk-Tuk Fares</span>
           </button>
 
           <button
             onClick={() => setActiveTab('currency')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'currency'
                 ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Coins className="w-3.5 h-3.5" />
+            <Coins className="w-3.5 h-3.5 shrink-0" />
             <span>Bakong & Currency</span>
           </button>
 
           <button
             onClick={() => setActiveTab('etiquette')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'etiquette'
                 ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
+            <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
             <span>Dress Code & Tips</span>
           </button>
         </div>
@@ -200,10 +200,10 @@ export default function TouristToolsHub() {
 
       {/* ── TAB 1: SUNRISE & SUNSET TRACKER ── */}
       {activeTab === 'sunrise' && (
-        <div key="tab-sunrise" className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch animate-in fade-in duration-300">
+        <div key="tab-sunrise" className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch animate-in fade-in duration-300">
           {/* Location Select Buttons */}
-          <div className="space-y-2.5">
-            <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+          <div className="space-y-2 sm:space-y-2.5">
+            <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
               Choose Iconic Viewpoint:
             </label>
             {Object.entries(spots).map(([key, spot]) => {
@@ -213,97 +213,105 @@ export default function TouristToolsHub() {
                 <button
                   key={key}
                   onClick={() => setSelectedSpot(key)}
-                  className={`w-full p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                  className={`w-full p-3 sm:p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                     isSelected
                       ? 'bg-gradient-to-r from-orange-600/20 to-amber-600/20 border-orange-500/60 shadow-lg text-white'
                       : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/60 hover:text-white'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                       spot.type === 'sunrise' ? 'bg-amber-500/20 text-amber-400' : 'bg-purple-500/20 text-purple-400'
                     }`}>
                       <Icon className="w-4 h-4" />
                     </div>
-                    <div>
-                      <h4 className="text-xs font-bold leading-tight">{spot.name}</h4>
-                      <span className="text-[10px] text-slate-400 capitalize">{spot.type} • {spot.time}</span>
+                    <div className="min-w-0 flex-1 pr-2">
+                      <h4 className="text-xs sm:text-sm font-bold leading-snug break-words">{spot.name}</h4>
+                      <span className="text-[10px] sm:text-xs text-slate-400 capitalize block mt-0.5">{spot.type} • {spot.time}</span>
                     </div>
                   </div>
-                  {isSelected && <CheckCircle2 className="w-4 h-4 text-orange-400" />}
+                  {isSelected && <CheckCircle2 className="w-4 h-4 text-orange-400 shrink-0" />}
                 </button>
               );
             })}
           </div>
 
           {/* Featured Spot Detail Card */}
-          <div className="lg:col-span-2 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 relative flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-4">
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-orange-400 block">
+          <div className="lg:col-span-2 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 lg:p-7 rounded-3xl border border-slate-800 relative flex flex-col justify-between space-y-4 sm:space-y-5">
+            <div className="space-y-3.5 sm:space-y-4">
+              {/* Card Header & Compact Time Badge */}
+              <div className="flex items-start justify-between gap-3 border-b border-slate-800/80 pb-3">
+                <div className="min-w-0 flex-1">
+                  <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-orange-400">
                     {spots[selectedSpot].type === 'sunrise' ? '☀️ Golden Dawn Forecast' : '🌅 Twilight Glow Forecast'}
                   </span>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white font-heading mt-0.5">
+                  <h3 className="text-base sm:text-xl font-extrabold text-white font-heading mt-0.5 leading-snug">
                     {spots[selectedSpot].name}
                   </h3>
                 </div>
 
-                <div className="text-right bg-slate-800/80 px-4 py-2 rounded-2xl border border-slate-700">
-                  <span className="text-[10px] text-slate-400 font-bold block">Exact Timing</span>
-                  <span className="text-2xl font-black text-amber-400">{spots[selectedSpot].time}</span>
+                <div className="text-right px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 shrink-0">
+                  <span className="text-[9px] uppercase tracking-wider text-amber-300 font-bold block">Exact Timing</span>
+                  <span className="text-base sm:text-lg font-black text-amber-400 leading-tight">{spots[selectedSpot].time}</span>
                 </div>
               </div>
 
-              {/* Recommendation Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-orange-400" />
-                    <span>Leave Hotel By</span>
+              {/* Recommendation Grid (Compact 3-in-1 on mobile) */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
+                  <span className="text-[10px] font-bold text-slate-400 flex items-center justify-center sm:justify-start gap-1">
+                    <Clock className="w-3 h-3 text-orange-400 shrink-0" />
+                    <span className="truncate">Leave Hotel</span>
                   </span>
-                  <span className="text-sm font-extrabold text-white mt-1 block">
+                  <span className="text-xs sm:text-sm font-extrabold text-white mt-1 block leading-tight">
                     {spots[selectedSpot].leaveHotelTime}
                   </span>
-                  <span className="text-[10px] text-slate-500">Allow time for entry gate</span>
+                  <span className="text-[9px] text-slate-500 hidden sm:block mt-0.5">Entry gate buffer</span>
                 </div>
 
-                <div className="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                    <Camera className="w-3 h-3 text-sky-400" />
-                    <span>Best Lighting Window</span>
+                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
+                  <span className="text-[10px] font-bold text-slate-400 flex items-center justify-center sm:justify-start gap-1">
+                    <Camera className="w-3 h-3 text-sky-400 shrink-0" />
+                    <span className="truncate">Best Light</span>
                   </span>
-                  <span className="text-sm font-extrabold text-sky-300 mt-1 block">
+                  <span className="text-xs sm:text-sm font-extrabold text-sky-300 mt-1 block leading-tight">
                     {spots[selectedSpot].bestLight}
                   </span>
-                  <span className="text-[10px] text-slate-500">Prime photography time</span>
+                  <span className="text-[9px] text-slate-500 hidden sm:block mt-0.5">Prime photography</span>
                 </div>
 
-                <div className="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                    <TrendingUp className="w-3 h-3 text-amber-400" />
-                    <span>Crowd Expectation</span>
+                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
+                  <span className="text-[10px] font-bold text-slate-400 flex items-center justify-center sm:justify-start gap-1">
+                    <TrendingUp className="w-3 h-3 text-amber-400 shrink-0" />
+                    <span className="truncate">Crowd</span>
                   </span>
-                  <span className="text-sm font-extrabold text-amber-300 mt-1 block">
+                  <span className="text-xs sm:text-sm font-extrabold text-amber-300 mt-1 block leading-tight truncate">
                     {spots[selectedSpot].crowdLevel}
                   </span>
-                  <span className="text-[10px] text-slate-500">Based on historical data</span>
+                  <span className="text-[9px] text-slate-500 hidden sm:block mt-0.5">Expected density</span>
                 </div>
               </div>
 
               {/* Insider Tip Alert */}
-              <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-2xl flex items-start gap-3">
+              <div className="bg-orange-500/10 border border-orange-500/20 p-3 sm:p-4 rounded-2xl flex items-start gap-2.5">
                 <Info className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-orange-200/90 leading-relaxed">
+                <p className="text-[11px] sm:text-xs text-orange-200/90 leading-relaxed">
                   <strong className="text-white">Local Guide Tip: </strong>
                   {spots[selectedSpot].tips}
                 </p>
               </div>
             </div>
 
-            <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-800/80 flex items-center justify-between">
-              <span>🎟️ Requires active Angkor Archaeological Park Pass</span>
-              <span className="text-amber-400 font-bold">Dress code strictly enforced</span>
+            {/* Bottom Rules & Dress Code */}
+            <div className="text-[10px] sm:text-[11px] text-slate-400 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row gap-1.5 sm:items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <span>🎟️</span>
+                <span>Requires active Angkor Archaeological Park Pass</span>
+              </span>
+              <span className="text-amber-400 font-semibold flex items-center gap-1.5">
+                <span>🛡️</span>
+                <span>Dress code strictly enforced</span>
+              </span>
             </div>
           </div>
         </div>

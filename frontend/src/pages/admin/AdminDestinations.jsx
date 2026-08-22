@@ -372,14 +372,24 @@ export default function AdminDestinations() {
     try {
       setActionLoading(true);
       if (editingDest) {
-        await adminApi.updateDestination(editingDest.id, formData);
+        const res = await adminApi.updateDestination(editingDest.id, formData);
         toast.success(`Destination '${formData.name}' updated.`);
+        // Optimistic update
+        if (res.data) {
+          setDestinations(prev => prev.map(d => d.id === editingDest.id ? { ...d, ...res.data } : d));
+        }
+        setIsFormOpen(false);
+        await fetchDestinations(pagination.current_page || 1);
       } else {
-        await adminApi.createDestination(formData);
+        const res = await adminApi.createDestination(formData);
         toast.success(`Destination '${formData.name}' published.`);
+        // Optimistic insert
+        if (res.data) {
+          setDestinations(prev => [res.data, ...prev]);
+        }
+        setIsFormOpen(false);
+        await fetchDestinations(1);
       }
-      setIsFormOpen(false);
-      fetchDestinations(pagination.current_page);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to save destination.');
     } finally {
@@ -389,14 +399,19 @@ export default function AdminDestinations() {
 
   const handleDeleteDestination = async () => {
     if (!destToDelete) return;
+    const targetId = destToDelete.id;
+    const targetName = destToDelete.name;
     try {
       setActionLoading(true);
-      await adminApi.deleteDestination(destToDelete.id);
-      toast.success(`Destination '${destToDelete.name}' deleted.`);
+      // Optimistic delete
+      setDestinations(prev => prev.filter(d => d.id !== targetId));
+      await adminApi.deleteDestination(targetId);
+      toast.success(`Destination '${targetName}' deleted.`);
       setDestToDelete(null);
-      fetchDestinations(pagination.current_page);
+      await fetchDestinations(pagination.current_page || 1);
     } catch (err) {
       toast.error('Failed to delete destination.');
+      await fetchDestinations(pagination.current_page || 1);
     } finally {
       setActionLoading(false);
     }

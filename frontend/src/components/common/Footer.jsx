@@ -14,35 +14,36 @@ export default function Footer() {
     }).catch(() => {});
   }, []);
   return (
-    <footer className="bg-slate-900 text-slate-300 pt-16 pb-24 lg:pb-12 border-t border-slate-800">
+    <footer className="bg-slate-900 text-slate-300 pt-12 sm:pt-16 pb-32 sm:pb-20 lg:pb-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Highlight Banner */}
-        <div className="bg-gradient-to-r from-orange-600 to-amber-600 rounded-3xl p-8 mb-16 text-white shadow-xl shadow-orange-950/20 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm">
-              Are you a business in Siem Reap?
+        <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-10 sm:mb-16 text-white shadow-xl shadow-orange-950/20 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-5 sm:gap-6">
+          <div className="space-y-2">
+            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm inline-block">
+              តើអ្នកជាម្ចាស់អាជីវកម្មនៅសៀមរាបមែនទេ?
             </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold mt-2 font-heading">
-              List Your Business on Tes Chor Today
+            <h3 className="text-xl sm:text-3xl font-extrabold font-heading leading-tight">
+              ចុះឈ្មោះអាជីវកម្មរបស់អ្នកនៅលើ Tes Chor ថ្ងៃនេះ
             </h3>
-            <p className="text-sm text-orange-100 mt-1 max-w-xl">
-              Connect directly with thousands of international and local travelers looking for authentic experiences, boutique hotels, and dining.
+            <p className="text-xs sm:text-sm text-orange-100 max-w-xl leading-relaxed">
+              ភ្ជាប់ទំនាក់ទំនងដោយផ្ទាល់ជាមួយភ្ញៀវទេសចរជាតិ និងអន្តរជាតិរាប់ពាន់នាក់ ដែលកំពុងស្វែងរកកន្លែងស្នាក់នៅ ម្ហូបអាហារ និងដំណើរកម្សាន្ត។
             </p>
           </div>
           <Link
             to="/pricing"
-            className="whitespace-nowrap px-6 py-3.5 bg-white text-orange-600 hover:bg-orange-50 font-bold rounded-2xl shadow-lg hover:scale-105 transition-all text-sm flex items-center gap-2"
+            className="w-full md:w-auto justify-center whitespace-nowrap px-6 py-3.5 bg-white text-orange-600 hover:bg-orange-50 font-extrabold rounded-xl sm:rounded-2xl shadow-lg hover:scale-102 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
           >
-            <Sparkles className="w-4 h-4" /> Partner With Us
+            <Sparkles className="w-4 h-4 shrink-0" />
+            <span>ចុះឈ្មោះចូលរួម (Partner With Us)</span>
           </Link>
         </div>
 
         {/* Footer Main Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-slate-800">
           
           {/* Col 1: Brand & Tagline */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="col-span-1 sm:col-span-2 space-y-3 sm:space-y-4">
             <div className="flex items-center gap-3">
               {settings.site_logo && !logoError ? (
                 <div className="relative h-9 flex items-center justify-center shrink-0">
@@ -64,25 +65,25 @@ export default function Footer() {
                 {settings.site_name || 'Tes Chor'}
               </span>
             </div>
-            <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
-              Siem Reap’s dedicated B2B2C tourism discovery & local business platform. Discover ancient temples, boutique retreats, Khmer flavors, and memorable journeys.
+            <p className="text-xs sm:text-sm text-slate-400 max-w-sm leading-relaxed">
+              វេទិកាស្វែងរកទេសចរណ៍ និងអាជីវកម្មក្នុងស្រុកនៅខេត្តសៀមរាប។ ស្វែងរកប្រាសាទបុរាណ កន្លែងស្នាក់នៅបែបធម្មជាតិ រសជាតិម្ហូបខ្មែរ និងបទពិសោធន៍ដ៏អស្ចារ្យ។
             </p>
             <p className="text-xs font-khmer text-orange-400 font-medium">
               “ស្វែងរកកន្លែងថ្មីៗ និងបទពិសោធន៍ល្អៗនៅសៀមរាប”
             </p>
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-3 pt-1">
               <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
-                <MapPin className="w-3.5 h-3.5 text-orange-400" /> Siem Reap, Cambodia
+                <MapPin className="w-3.5 h-3.5 text-orange-400 shrink-0" /> ខេត្តសៀមរាប, ប្រទេសកម្ពុជា
               </span>
             </div>
           </div>
 
           {/* Col 2: Discover Destinations */}
           <div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
-              Explore Destinations
+            <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-3 sm:mb-4">
+              រមណីយដ្ឋាន (Destinations)
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <Link to="/destinations/angkor-wat" className="hover:text-orange-400 transition-colors">Angkor Wat Sunrise</Link>
               </li>
@@ -106,10 +107,10 @@ export default function Footer() {
 
           {/* Col 3: Local Businesses */}
           <div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
-              Local Directory
+            <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-3 sm:mb-4">
+              អាជីវកម្ម (Local Places)
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <Link to="/businesses?category=hotels-resorts" className="hover:text-orange-400 transition-colors">Hotels & Resorts</Link>
               </li>
@@ -133,10 +134,10 @@ export default function Footer() {
 
           {/* Col 4: Platform & Legal */}
           <div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
-              Platform
+            <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-3 sm:mb-4">
+              សេវាកម្ម (Platform)
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <Link to="/my-trips" className="hover:text-orange-400 transition-colors">Trip Planner Tool</Link>
               </li>
@@ -150,8 +151,8 @@ export default function Footer() {
                 <Link to="/login" className="hover:text-orange-400 transition-colors">User Portal Login</Link>
               </li>
               <li>
-                <span className="text-slate-500 text-xs block pt-2">
-                  Built with Laravel Sanctum + React & Tailwind CSS
+                <span className="text-slate-500 text-[11px] block pt-2">
+                  Siem Reap Tourism Discovery Platform
                 </span>
               </li>
             </ul>
@@ -159,9 +160,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3 text-center sm:text-left">
           <p>© {new Date().getFullYear()} Tes Chor. All rights reserved. Crafted for Siem Reap Tourism.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6 text-[11px] sm:text-xs">
             <span>Discover More. Travel Better.</span>
             <span className="text-slate-700">•</span>
             <span>B2B2C Tourism Platform</span>

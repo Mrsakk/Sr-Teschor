@@ -14,6 +14,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { packageApi } from '../api/endpoints';
+import { getFullImageUrl } from '../utils/imageUrl';
 
 export default function TravelPackages() {
   const [packages, setPackages] = useState([]);
@@ -70,8 +71,12 @@ export default function TravelPackages() {
                   {/* Image & Price Overlay */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
                     <img
-                      src={pkg.image}
+                      src={getFullImageUrl(pkg.image)}
                       alt={pkg.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80';
+                      }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

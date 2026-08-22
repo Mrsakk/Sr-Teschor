@@ -137,12 +137,12 @@ export default function DestinationDetail() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen pb-28 sm:pb-16">
 
       {/* ═══════════════════════════════════════
           HERO — Full-bleed cinematic image
       ═══════════════════════════════════════ */}
-      <div className="relative w-full h-[70vh] min-h-[480px] max-h-[700px] overflow-hidden">
+      <div className="relative w-full h-[62vh] sm:h-[70vh] min-h-[420px] sm:min-h-[480px] max-h-[700px] overflow-hidden">
         {/* Background image */}
         <img
           src={heroImage}
@@ -151,43 +151,50 @@ export default function DestinationDetail() {
         />
 
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/25" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
 
         {/* Top nav bar (back + actions) */}
-        <div className="absolute top-0 inset-x-0 pt-20 px-4 sm:px-8 flex items-center justify-between z-20">
+        <div className="absolute top-0 inset-x-0 pt-16 sm:pt-20 px-3 sm:px-8 flex items-center justify-between gap-2 z-20">
           <Link
             to="/destinations"
-            className="inline-flex items-center gap-2 text-white/90 hover:text-white text-xs font-bold bg-black/30 hover:bg-black/50 backdrop-blur-md px-4 py-2 rounded-full transition-all"
+            className="h-9 sm:h-10 px-3 sm:px-4 rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md text-white flex items-center gap-1.5 transition-all border border-white/15 shrink-0 shadow-sm"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Destinations
+            <ArrowLeft className="w-4 h-4 shrink-0" />
+            <span className="text-xs font-bold whitespace-nowrap">ត្រឡប់ក្រោយ</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* QR Code */}
             <button
               onClick={() => setQrModalOpen(true)}
-              className="p-2.5 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md text-white flex items-center justify-center transition-all border border-white/15 shrink-0 cursor-pointer shadow-sm"
               title="QR Code"
+              aria-label="QR Code"
             >
-              <QrCode className="w-4 h-4" />
+              <QrCode className="w-4 h-4 shrink-0" />
             </button>
+
+            {/* Share */}
             <button
               onClick={handleShare}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white text-xs font-bold transition-all"
+              className="h-9 sm:h-10 px-3 sm:px-4 rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 transition-all border border-white/15 shrink-0 cursor-pointer shadow-sm"
             >
-              <Share2 className="w-3.5 h-3.5" />
-              <span>{copiedLink ? 'Copied!' : 'Share'}</span>
+              <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+              <span className="whitespace-nowrap">{copiedLink ? 'បានចម្លង!' : 'ចែករំលែក'}</span>
             </button>
+
+            {/* Favorite / Save */}
             <button
               onClick={() => toggleFavorite('destination', destination.id)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold transition-all ${
+              className={`h-9 sm:h-10 px-3.5 sm:px-4 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all border shrink-0 cursor-pointer shadow-md ${
                 favorited
-                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/40'
-                  : 'bg-black/30 hover:bg-black/50 backdrop-blur-md text-white'
+                  ? 'bg-red-500 text-white shadow-red-500/40 border-transparent'
+                  : 'bg-black/45 hover:bg-black/65 backdrop-blur-md text-white border-white/15'
               }`}
             >
-              <Heart className={`w-3.5 h-3.5 ${favorited ? 'fill-current' : ''}`} />
-              <span>{favorited ? 'Saved' : 'Save'}</span>
+              <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${favorited ? 'fill-current' : ''}`} />
+              <span className="whitespace-nowrap">{favorited ? 'បានរក្សាទុក' : 'រក្សាទុក'}</span>
             </button>
           </div>
         </div>
@@ -197,62 +204,64 @@ export default function DestinationDetail() {
           <>
             <button
               onClick={handlePrevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white transition-all"
+              className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white transition-all cursor-pointer"
+              aria-label="Previous Image"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             <button
               onClick={handleNextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white transition-all"
+              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white transition-all cursor-pointer"
+              aria-label="Next Image"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </>
         )}
 
         {/* Hero Content — Bottom overlay */}
-        <div className="absolute bottom-0 inset-x-0 px-4 sm:px-10 lg:px-16 pb-8 z-10">
+        <div className="absolute bottom-0 inset-x-0 px-3.5 sm:px-10 lg:px-16 pb-5 sm:pb-8 z-10">
           {/* Badges */}
-          <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
             {destination.category && (
-              <span className="text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-orange-500 text-white shadow-lg shadow-orange-500/40">
+              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 sm:py-1 rounded-full bg-orange-500 text-white shadow-lg shadow-orange-500/40">
                 {destination.category.name}
               </span>
             )}
             {destination.is_hidden_gem && (
-              <span className="text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-purple-600 text-white">
+              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 sm:py-1 rounded-full bg-purple-600 text-white">
                 ✦ Hidden Gem
               </span>
             )}
             {destination.is_featured && (
-              <span className="text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-amber-400 text-slate-900">
+              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 sm:py-1 rounded-full bg-amber-400 text-slate-900">
                 ★ Must Visit
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight drop-shadow-lg">
+          <h1 className="text-2xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight drop-shadow-lg font-heading">
             {destination.name}
           </h1>
           {destination.khmer_name && (
-            <p className="text-lg text-white/70 font-khmer mt-1">{destination.khmer_name}</p>
+            <p className="text-sm sm:text-lg text-white/80 font-khmer mt-0.5 sm:mt-1">{destination.khmer_name}</p>
           )}
 
           {/* Meta row */}
-          <div className="flex flex-wrap items-center gap-4 mt-4 text-white/80 text-xs font-semibold">
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-orange-400" />
-              {destination.address || 'Siem Reap, Cambodia'}
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 mt-2.5 sm:mt-4 text-white/90 text-[11px] sm:text-xs font-semibold">
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+              <span className="truncate max-w-[180px] sm:max-w-none">{destination.address || 'Siem Reap, Cambodia'}</span>
             </span>
-            <span className="flex items-center gap-1.5">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+            <span className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 shrink-0" />
               {Number(destination.rating || 0).toFixed(1)} · {destination.review_count || 0} reviews
             </span>
             {allImages.length > 1 && (
-              <span className="flex items-center gap-1.5">
-                <Camera className="w-3.5 h-3.5" />
-                {activeImageIndex + 1} / {allImages.length} Photos
+              <span className="flex items-center gap-1">
+                <Camera className="w-3.5 h-3.5 shrink-0" />
+                {activeImageIndex + 1} / {allImages.length}
               </span>
             )}
           </div>
@@ -263,12 +272,12 @@ export default function DestinationDetail() {
           THUMBNAIL STRIP
       ═══════════════════════════════════════ */}
       {allImages.length > 1 && (
-        <div className="bg-slate-950 px-4 sm:px-10 lg:px-16 py-3 flex gap-2 overflow-x-auto no-scrollbar">
+        <div className="bg-slate-950 px-3 sm:px-10 lg:px-16 py-2.5 sm:py-3 flex gap-2 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {allImages.map((img, idx) => (
             <button
               key={idx}
               onClick={() => setActiveImageIndex(idx)}
-              className={`flex-shrink-0 w-20 h-14 rounded-xl overflow-hidden border-2 transition-all ${
+              className={`flex-shrink-0 w-16 h-11 sm:w-20 sm:h-14 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                 idx === activeImageIndex ? 'border-orange-500 scale-105' : 'border-white/10 opacity-60 hover:opacity-100'
               }`}
             >
@@ -281,46 +290,67 @@ export default function DestinationDetail() {
       {/* ═══════════════════════════════════════
           MAIN CONTENT
       ═══════════════════════════════════════ */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
 
           {/* ─── LEFT: Main Info ─── */}
-          <div className="lg:col-span-2 space-y-10">
+          <div className="lg:col-span-2 space-y-8 sm:space-y-10">
 
             {/* Quick Stats Bar */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                {
-                  icon: <Ticket className="w-5 h-5 text-orange-500" />,
-                  label: 'Admission',
-                  value: destination.entrance_fee > 0 ? `$${Number(destination.entrance_fee).toFixed(0)}` : 'Free Entry',
-                  note: destination.fee_notes || 'Per person',
-                  bg: 'bg-orange-50 border-orange-100',
-                },
-                {
-                  icon: <Clock className="w-5 h-5 text-blue-500" />,
-                  label: 'Opens',
-                  value: destination.opening_time ? `${destination.opening_time.slice(0,5)}` : '05:00',
-                  note: `Closes ${destination.closing_time ? destination.closing_time.slice(0,5) : '17:30'}`,
-                  bg: 'bg-blue-50 border-blue-100',
-                },
-                {
-                  icon: <Sun className="w-5 h-5 text-amber-500" />,
-                  label: 'Best Time',
-                  value: destination.best_time || 'Early Morning',
-                  note: 'Recommended',
-                  bg: 'bg-amber-50 border-amber-100',
-                },
-              ].map((stat, i) => (
-                <div key={i} className={`p-4 rounded-2xl border ${stat.bg} space-y-1.5`}>
-                  <div className="flex items-center gap-2">
-                    {stat.icon}
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{stat.label}</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {/* Card 1: Admission */}
+              <div className="col-span-1 p-4 rounded-2xl border bg-gradient-to-br from-orange-50/90 to-amber-50/40 border-orange-100 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-100/90 flex items-center justify-center flex-shrink-0 text-orange-600 shadow-inner">
+                    <Ticket className="w-4 h-4" />
                   </div>
-                  <p className="text-lg font-extrabold text-slate-900 leading-tight">{stat.value}</p>
-                  <p className="text-[11px] text-slate-400">{stat.note}</p>
+                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">Admission</span>
                 </div>
-              ))}
+                <div className="space-y-1">
+                  <p className="text-base sm:text-xl font-extrabold text-slate-900 leading-tight">
+                    {destination.entrance_fee > 0 ? `$${Number(destination.entrance_fee).toFixed(0)}` : 'Free Entry'}
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">
+                    {destination.fee_notes || 'Per person'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2: Opens */}
+              <div className="col-span-1 p-4 rounded-2xl border bg-gradient-to-br from-blue-50/90 to-indigo-50/40 border-blue-100 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-blue-100/90 flex items-center justify-center flex-shrink-0 text-blue-600 shadow-inner">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">Opens</span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-base sm:text-xl font-extrabold text-slate-900 leading-tight">
+                    {destination.opening_time ? `${destination.opening_time.slice(0,5)}` : '05:00'}
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">
+                    Closes {destination.closing_time ? destination.closing_time.slice(0,5) : '17:30'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 3: Best Time (Spans full 2 columns on mobile for readable text) */}
+              <div className="col-span-2 sm:col-span-1 p-4 rounded-2xl border bg-gradient-to-br from-amber-50/90 to-yellow-50/40 border-amber-100 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100/90 flex items-center justify-center flex-shrink-0 text-amber-600 shadow-inner">
+                    <Sun className="w-4 h-4" />
+                  </div>
+                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">Best Time</span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                    {destination.best_time || 'Early Morning'}
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-amber-700/80 font-medium leading-tight">
+                    Recommended
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Divider */}
@@ -361,49 +391,49 @@ export default function DestinationDetail() {
             )}
 
             {/* Reviews */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-1 h-6 rounded-full bg-amber-500" />
-                  <h2 className="text-xl font-extrabold text-slate-900">
-                    Reviews <span className="text-slate-400 font-normal text-base">({destination.reviews?.length || 0})</span>
+                  <div className="w-1 h-5 sm:h-6 rounded-full bg-amber-500" />
+                  <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">
+                    Reviews <span className="text-slate-400 font-normal text-sm sm:text-base">({destination.reviews?.length || 0})</span>
                   </h2>
                 </div>
                 <button
                   onClick={() => setReviewModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold shadow-lg shadow-orange-500/30 transition-all"
+                  className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold shadow-lg shadow-orange-500/30 transition-all shrink-0 cursor-pointer"
                 >
                   <MessageSquarePlus className="w-3.5 h-3.5" />
-                  Write a Review
+                  <span>Write a Review</span>
                 </button>
               </div>
 
               {/* Rating Summary */}
-              <div className="flex items-center gap-6 p-5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-100">
-                <div className="text-center">
-                  <div className="text-5xl font-black text-slate-900">{Number(destination.rating || 0).toFixed(1)}</div>
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-4 sm:p-5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-100">
+                <div className="text-center shrink-0">
+                  <div className="text-4xl sm:text-5xl font-black text-slate-900">{Number(destination.rating || 0).toFixed(1)}</div>
                   <div className="flex items-center justify-center gap-0.5 mt-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-4 h-4 ${i < Math.round(destination.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`}
+                        className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${i < Math.round(destination.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`}
                       />
                     ))}
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1">{destination.review_count || 0} reviews</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{destination.review_count || 0} reviews</p>
                 </div>
-                <div className="flex-1 space-y-1.5">
+                <div className="w-full flex-1 space-y-1 sm:space-y-1.5">
                   {[5, 4, 3, 2, 1].map((star) => {
                     const count = destination.reviews?.filter(r => r.rating === star).length || 0;
                     const pct = destination.reviews?.length ? Math.round((count / destination.reviews.length) * 100) : 0;
                     return (
                       <div key={star} className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-slate-500 w-4">{star}</span>
+                        <span className="text-[11px] font-bold text-slate-500 w-3.5">{star}</span>
                         <Star className="w-3 h-3 fill-amber-400 text-amber-400 flex-shrink-0" />
                         <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
                           <div className="h-full bg-amber-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
                         </div>
-                        <span className="text-[11px] text-slate-400 w-7 text-right">{pct}%</span>
+                        <span className="text-[10px] sm:text-[11px] text-slate-400 w-7 text-right">{pct}%</span>
                       </div>
                     );
                   })}
@@ -411,31 +441,31 @@ export default function DestinationDetail() {
               </div>
 
               {/* Reviews list */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {(!destination.reviews || destination.reviews.length === 0) ? (
-                  <div className="text-center py-12 bg-slate-50 rounded-2xl border border-slate-100">
-                    <Star className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-                    <p className="text-sm font-semibold text-slate-400">No reviews yet</p>
-                    <p className="text-xs text-slate-400 mt-1">Be the first to share your experience!</p>
+                  <div className="text-center py-8 sm:py-12 bg-slate-50 rounded-2xl border border-slate-100 p-4">
+                    <Star className="w-8 h-8 sm:w-10 sm:h-10 text-slate-200 mx-auto mb-2" />
+                    <p className="text-xs sm:text-sm font-semibold text-slate-400">No reviews yet</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Be the first to share your experience!</p>
                   </div>
                 ) : (
                   destination.reviews.map((rev) => (
-                    <div key={rev.id} className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm space-y-3 hover:shadow-md transition-shadow">
+                    <div key={rev.id} className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-2.5 hover:shadow-md transition-shadow">
                       <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <UserAvatar user={rev.user} size="lg" />
+                        <div className="flex items-center gap-2.5 sm:gap-3">
+                          <UserAvatar user={rev.user} size="md" />
                           <div>
-                            <p className="font-bold text-sm text-slate-900">{rev.user?.name || 'Traveler'}</p>
-                            <p className="text-[11px] text-slate-400">Visited recently</p>
+                            <p className="font-bold text-xs sm:text-sm text-slate-900">{rev.user?.name || 'Traveler'}</p>
+                            <p className="text-[10px] sm:text-[11px] text-slate-400">Visited recently</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-0.5">
                           {Array.from({ length: rev.rating }).map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                            <Star key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
                           ))}
                         </div>
                       </div>
-                      <p className="text-sm text-slate-600 leading-relaxed">{rev.comment}</p>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{rev.comment}</p>
                     </div>
                   ))
                 )}
@@ -444,19 +474,19 @@ export default function DestinationDetail() {
           </div>
 
           {/* ─── RIGHT: Sticky Action Card ─── */}
-          <div className="space-y-5">
-            <div className="sticky top-24 space-y-4">
+          <div className="space-y-4 sm:space-y-5">
+            <div className="sticky top-24 space-y-3.5 sm:space-y-4">
 
               {/* Primary CTA Card */}
-              <div className="bg-white rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200/80 overflow-hidden">
+              <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/80 overflow-hidden">
                 {/* Card header accent */}
                 <div className="h-1.5 bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500" />
                 
-                <div className="p-6 space-y-5">
+                <div className="p-4.5 sm:p-6 space-y-4 sm:space-y-5">
                   <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-widest text-orange-500">Plan Your Visit</p>
-                    <h3 className="text-xl font-extrabold text-slate-900 mt-1">{destination.name}</h3>
-                    <div className="flex items-center gap-1.5 mt-2">
+                    <p className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-orange-500">Plan Your Visit</p>
+                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5 font-heading">{destination.name}</h3>
+                    <div className="flex items-center gap-1.5 mt-1.5">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star key={i} className={`w-3.5 h-3.5 ${i < Math.round(destination.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
                       ))}
@@ -467,7 +497,7 @@ export default function DestinationDetail() {
                   {/* Add to Trip CTA */}
                   <button
                     onClick={handleQuickAddToTrip}
-                    className={`w-full py-4 px-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-xl ${
+                    className={`w-full py-3.5 sm:py-4 px-4 rounded-xl sm:rounded-2xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xl cursor-pointer ${
                       addedToTripSuccess
                         ? 'bg-emerald-500 text-white shadow-emerald-500/30'
                         : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5'
@@ -482,7 +512,7 @@ export default function DestinationDetail() {
                     href={`https://www.google.com/maps/search/?api=1&query=${destination.latitude || 13.4125},${destination.longitude || 103.8670}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-3.5 px-4 rounded-2xl border-2 border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                    className="w-full py-3 sm:py-3.5 px-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-all"
                   >
                     <Navigation className="w-4 h-4 text-orange-500" />
                     Get GPS Directions
@@ -492,21 +522,21 @@ export default function DestinationDetail() {
                   <div className="border-t border-slate-100" />
 
                   {/* Info list */}
-                  <div className="space-y-3 text-xs">
+                  <div className="space-y-2.5 sm:space-y-3 text-xs">
                     <div className="flex items-center justify-between text-slate-600">
-                      <span className="flex items-center gap-2 font-semibold"><Ticket className="w-4 h-4 text-slate-400" />Admission Fee</span>
+                      <span className="flex items-center gap-2 font-semibold"><Ticket className="w-4 h-4 text-slate-400 shrink-0" />Admission Fee</span>
                       <span className="font-extrabold text-slate-900">
                         {destination.entrance_fee > 0 ? `$${Number(destination.entrance_fee).toFixed(0)}` : 'Free'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-slate-600">
-                      <span className="flex items-center gap-2 font-semibold"><Clock className="w-4 h-4 text-slate-400" />Opening Hours</span>
+                      <span className="flex items-center gap-2 font-semibold"><Clock className="w-4 h-4 text-slate-400 shrink-0" />Opening Hours</span>
                       <span className="font-extrabold text-slate-900">
                         {destination.opening_time ? `${destination.opening_time.slice(0,5)} – ${(destination.closing_time || '17:30').slice(0,5)}` : '05:00 – 17:30'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-slate-600">
-                      <span className="flex items-center gap-2 font-semibold"><MapPin className="w-4 h-4 text-slate-400" />Location</span>
+                      <span className="flex items-center gap-2 font-semibold"><MapPin className="w-4 h-4 text-slate-400 shrink-0" />Location</span>
                       <span className="font-extrabold text-slate-900 text-right max-w-[130px] truncate">
                         {destination.address || 'Siem Reap'}
                       </span>
@@ -516,15 +546,15 @@ export default function DestinationDetail() {
               </div>
 
               {/* Recommended Guide Card */}
-              <div className="p-5 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-xl shadow-orange-500/30 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  <span className="text-[11px] font-extrabold uppercase tracking-widest opacity-80">Local Expert Guide</span>
+              <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-xl shadow-orange-500/30 space-y-2.5 sm:space-y-3">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest opacity-90">Local Expert Guide</span>
                 </div>
-                <p className="text-sm font-bold leading-snug">Book a licensed tuk-tuk & temple tour with expert local guides</p>
+                <p className="text-xs sm:text-sm font-bold leading-snug">Book a licensed tuk-tuk & temple tour with expert local guides</p>
                 <Link
                   to="/businesses/angkor-sunrise-safari"
-                  className="inline-flex items-center gap-1.5 text-xs font-extrabold bg-white text-orange-600 px-4 py-2 rounded-xl hover:bg-orange-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-extrabold bg-white text-orange-600 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl hover:bg-orange-50 transition-colors"
                 >
                   View Angkor Sunrise Safari →
                 </Link>
@@ -536,7 +566,7 @@ export default function DestinationDetail() {
               {/* QR Code quick action */}
               <button
                 onClick={() => setQrModalOpen(true)}
-                className="w-full p-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-orange-300 text-slate-500 hover:text-orange-500 text-xs font-bold flex items-center justify-center gap-2 transition-all hover:bg-orange-50"
+                className="w-full p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-dashed border-slate-200 hover:border-orange-300 text-slate-500 hover:text-orange-500 text-xs font-bold flex items-center justify-center gap-2 transition-all hover:bg-orange-50 cursor-pointer"
               >
                 <QrCode className="w-4 h-4" />
                 Generate Location QR Code
@@ -550,23 +580,23 @@ export default function DestinationDetail() {
           SIMILAR DESTINATIONS
       ═══════════════════════════════════════ */}
       {similar.length > 0 && (
-        <div className="bg-slate-50 border-t border-slate-100 py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <div className="flex items-center justify-between">
+        <div className="bg-slate-50 border-t border-slate-100 py-10 sm:py-16">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+            <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="text-[11px] font-extrabold uppercase tracking-widest text-orange-500 mb-1">Explore More</p>
-                <h2 className="text-2xl font-extrabold text-slate-900">
+                <p className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-orange-500 mb-0.5 sm:mb-1">Explore More</p>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading">
                   Similar Destinations in {destination.category?.name || 'Siem Reap'}
                 </h2>
               </div>
               <Link
                 to="/destinations"
-                className="text-xs font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1"
+                className="text-xs font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1 shrink-0"
               >
                 View All →
               </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {similar.map((dest) => (
                 <DestinationCard key={dest.id} destination={dest} />
               ))}

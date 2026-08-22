@@ -4,6 +4,7 @@ import AppRoutes from './routes/AppRoutes';
 import { useAuthStore } from './store/useAuthStore';
 import { useFavoriteStore } from './store/useFavoriteStore';
 import { systemApi } from './api/endpoints';
+import ScrollToTop from './components/common/ScrollToTop';
 
 export default function App() {
   const { fetchCurrentUser, isAuthenticated } = useAuthStore();
@@ -42,6 +43,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppRoutes />
     </BrowserRouter>
   );

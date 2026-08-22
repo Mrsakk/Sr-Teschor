@@ -23,6 +23,7 @@ use App\Models\Subscription;
 use App\Models\TravelPackage;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -716,20 +717,32 @@ class AdminController extends Controller
 
     private function processImageValue($imageInput)
     {
-        if (is_string($imageInput) && preg_match('/^data:image\/(\w+);base64,/', $imageInput, $type)) {
-            $imageBytes = substr($imageInput, strpos($imageInput, ',') + 1);
-            $ext = strtolower($type[1]);
+        if (!is_string($imageInput) || empty($imageInput)) {
+            return $imageInput;
+        }
 
-            if (!in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
+        if (str_starts_with($imageInput, 'data:image/')) {
+            $parts = explode(',', $imageInput, 2);
+            if (count($parts) === 2) {
+                $header = $parts[0];
+                $data = $parts[1];
+
                 $ext = 'jpg';
-            }
-            $decoded = base64_decode($imageBytes);
+                if (preg_match('/data:image\/([a-zA-Z0-9\+\-]+)/i', $header, $matches)) {
+                    $detected = strtolower($matches[1]);
+                    if ($detected === 'jpeg' || $detected === 'jpg') $ext = 'jpg';
+                    elseif ($detected === 'png') $ext = 'png';
+                    elseif ($detected === 'webp') $ext = 'webp';
+                    elseif ($detected === 'gif') $ext = 'gif';
+                }
 
-            if ($decoded !== false) {
-                $fileName = 'dest_' . Str::random(16) . '.' . $ext;
-                $path = 'uploads/destinations/' . $fileName;
-                Storage::disk('public')->put($path, $decoded);
-                return url('storage/' . $path);
+                $decoded = base64_decode($data);
+                if ($decoded !== false) {
+                    $fileName = 'asset_' . Str::random(20) . '.' . $ext;
+                    $path = 'uploads/assets/' . $fileName;
+                    Storage::disk('public')->put($path, $decoded);
+                    return url('storage/' . $path);
+                }
             }
         }
 
@@ -1131,6 +1144,8 @@ class AdminController extends Controller
 
         $package = TravelPackage::create($validated);
 
+        Cache::flush();
+
         AdminActivityLog::log('Created Travel Package', 'packages', $package->name);
 
         return response()->json([
@@ -1170,6 +1185,8 @@ class AdminController extends Controller
 
         $package->update($validated);
 
+        Cache::flush();
+
         AdminActivityLog::log('Updated Travel Package', 'packages', $package->name);
 
         return response()->json([
@@ -1186,6 +1203,8 @@ class AdminController extends Controller
         $name = $package->name;
         $package->delete();
 
+        Cache::flush();
+
         AdminActivityLog::log('Deleted Travel Package', 'packages', $name);
 
         return response()->json([
@@ -1200,6 +1219,8 @@ class AdminController extends Controller
         $package = TravelPackage::findOrFail($id);
         $package->is_active = !$package->is_active;
         $package->save();
+
+        Cache::flush();
 
         AdminActivityLog::log('Toggled Travel Package Status', 'packages', "{$package->name} (" . ($package->is_active ? 'Active' : 'Inactive') . ')');
 

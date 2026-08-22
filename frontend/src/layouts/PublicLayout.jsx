@@ -10,23 +10,31 @@ export default function PublicLayout() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800 antialiased selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800 antialiased selection:bg-orange-500 selection:text-white print:bg-white print:p-0">
       {/* Top Navigation */}
-      <Navbar onOpenSearch={() => setSearchOpen(true)} />
+      <div className="print:hidden">
+        <Navbar onOpenSearch={() => setSearchOpen(true)} />
+      </div>
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main className="flex-1 print:p-0">
         <Outlet context={{ onOpenSearch: () => setSearchOpen(true) }} />
       </main>
 
       {/* Global Footer */}
-      <Footer />
+      <div className="print:hidden">
+        <Footer />
+      </div>
 
       {/* Mobile Floating Bottom Bar */}
-      <BottomNav onOpenSearch={() => setSearchOpen(true)} />
+      <div className="print:hidden">
+        <BottomNav onOpenSearch={() => setSearchOpen(true)} />
+      </div>
 
       {/* 24/7 AI Travel Assistant Floating Concierge */}
-      <AITravelConciergeWidget />
+      <div className="print:hidden">
+        <AITravelConciergeWidget />
+      </div>
 
       {/* Global Cmd+K Search Modal */}
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />

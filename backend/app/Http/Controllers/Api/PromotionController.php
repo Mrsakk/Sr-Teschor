@@ -6,16 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\Business;
 use App\Models\Promotion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class PromotionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Promotion::where('status', 'active')
-            ->where('end_date', '>=', now()->toDateString())
-            ->with(['business.category']);
+        $page = $request->query('page', 1);
+        $cacheKey = 'public_promotions_page_' . $page;
 
-        $promotions = $query->latest()->paginate(12);
+        $promotions = Cache::remember($cacheKey, 180, function () {
+            return Promotion::where('status', 'active')
+                ->where('end_date', '>=', now()->toDateString())
+                ->with(['business.category'])
+                ->latest()
+                ->paginate(12);
+        });
 
         return response()->json($promotions);
     }

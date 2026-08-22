@@ -494,110 +494,112 @@ export default function BusinessDashboard() {
   const chartData = data?.monthly_trends || [];
 
   return (
-    <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+    <div className="pt-20 sm:pt-28 pb-36 sm:pb-24 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4 pb-4 sm:pb-6 border-b border-slate-200">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
-            <Building2 className="w-4 h-4" /> Merchant Control Panel
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+            <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> ផ្ទាំងគ្រប់គ្រងម្ចាស់អាជីវកម្ម (Merchant Panel)
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 font-heading mt-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading mt-0.5 sm:mt-1">
             Business Partner Dashboard
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage your hotel, dining & tour listings, confirm reservations, and analyze views
+          <p className="text-xs text-slate-500 mt-0.5 sm:mt-1">
+            គ្រប់គ្រងព័ត៌មានអាជីវកម្ម សេវាកម្ម ការកក់របស់ភ្ញៀវ និងការផ្សព្វផ្សាយពាណិជ្ជកម្ម
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <Link
             to="/pricing"
-            className="px-4 py-2.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 font-extrabold text-xs flex items-center gap-1.5 hover:bg-amber-100 transition-colors shadow-xs"
+            className="px-3.5 sm:px-4 py-2.5 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 font-extrabold text-xs flex items-center justify-center gap-1.5 hover:bg-amber-100 transition-colors shadow-2xs whitespace-nowrap"
           >
-            <Sparkles className="w-4 h-4 text-amber-600" /> Upgrade Plan
+            <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span>Upgrade Plan</span>
           </Link>
 
           <button
             onClick={() => setAddBusinessModal(true)}
-            className="px-5 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/25 flex items-center gap-2 transition-transform hover:scale-105"
+            className="px-4 sm:px-5 py-2.5 rounded-xl sm:rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/25 flex items-center justify-center gap-1.5 sm:gap-2 transition-transform hover:scale-102 cursor-pointer whitespace-nowrap"
           >
-            <Plus className="w-4 h-4" /> Add Business Place
+            <Plus className="w-4 h-4 shrink-0" />
+            <span>+ Add Business</span>
           </button>
         </div>
       </div>
 
       {/* KPI Stats Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
         
-        <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-1">
-          <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
-            <Eye className="w-4 h-4" />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
+            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 block pt-1">Total Views</span>
-          <p className="text-2xl font-extrabold text-slate-900">{summary.total_views || 0}</p>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 block pt-0.5">Total Views</span>
+          <p className="text-xl sm:text-2xl font-extrabold text-slate-900">{summary.total_views || 0}</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-1">
-          <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-            <Calendar className="w-4 h-4" />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 block pt-1">Booking Requests</span>
-          <p className="text-2xl font-extrabold text-slate-900">{summary.total_bookings || 0}</p>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 block pt-0.5">Bookings</span>
+          <p className="text-xl sm:text-2xl font-extrabold text-slate-900">{summary.total_bookings || 0}</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-1">
-          <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
-            <Clock className="w-4 h-4" />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 block pt-1">Pending Approval</span>
-          <p className="text-2xl font-extrabold text-amber-600">{summary.pending_bookings || 0}</p>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 block pt-0.5">Pending</span>
+          <p className="text-xl sm:text-2xl font-extrabold text-amber-600">{summary.pending_bookings || 0}</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-1">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
-            <DollarSign className="w-4 h-4" />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+            <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 block pt-1">Total Revenue</span>
-          <p className="text-2xl font-extrabold text-slate-900">${summary.total_revenue || 0}</p>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 block pt-0.5">Revenue</span>
+          <p className="text-xl sm:text-2xl font-extrabold text-slate-900">${summary.total_revenue || 0}</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-1">
-          <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
-            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+            <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 block pt-1">Avg Rating</span>
-          <p className="text-2xl font-extrabold text-slate-900">{summary.average_rating || 5.0}</p>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 block pt-0.5">Avg Rating</span>
+          <p className="text-xl sm:text-2xl font-extrabold text-slate-900">{summary.average_rating || 5.0}</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-1">
-          <div className="w-8 h-8 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
-            <Heart className="w-4 h-4 fill-red-500 text-red-500" />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+            <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-red-500 text-red-500" />
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 block pt-1">Bookmarks</span>
-          <p className="text-2xl font-extrabold text-slate-900">{summary.total_favorites || 0}</p>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 block pt-0.5">Saved</span>
+          <p className="text-xl sm:text-2xl font-extrabold text-slate-900">{summary.total_favorites || 0}</p>
         </div>
 
       </div>
 
       {/* Analytics Chart & Business Listings Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8">
         
         {/* Performance Chart */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 className="font-bold text-lg text-slate-900 font-heading">
-                Monthly Profile Traffic & Booking Inquiries
+              <h3 className="font-bold text-base sm:text-lg text-slate-900 font-heading">
+                Monthly Profile Traffic & Inquiries
               </h3>
               <p className="text-xs text-slate-400">Visitor interactions over the last 6 months</p>
             </div>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full self-start sm:self-center">
               +{summary.conversion_rate || 2.5}% Conversion
             </span>
           </div>
 
-          <div className="h-64 w-full pt-4">
+          <div className="h-56 sm:h-64 w-full pt-2 sm:pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
@@ -611,8 +613,8 @@ export default function BusinessDashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} />
+                <XAxis dataKey="month" stroke="#94a3b8" fontSize={10} />
+                <YAxis stroke="#94a3b8" fontSize={10} />
                 <Tooltip />
                 <Area type="monotone" dataKey="views" name="Profile Views" stroke="#f97316" strokeWidth={2.5} fillOpacity={1} fill="url(#colorViews)" />
                 <Area type="monotone" dataKey="bookings" name="Bookings" stroke="#059669" strokeWidth={2.5} fillOpacity={1} fill="url(#colorBookings)" />
@@ -622,28 +624,28 @@ export default function BusinessDashboard() {
         </div>
 
         {/* My Businesses Quick List */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-base text-slate-900">
+            <h3 className="font-bold text-base text-slate-900 font-heading">
               My Places ({businesses.length})
             </h3>
             <button
               onClick={() => setAddBusinessModal(true)}
-              className="text-xs font-bold text-emerald-700 hover:underline"
+              className="text-xs font-bold text-emerald-700 hover:underline cursor-pointer"
             >
               + Add New
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5 sm:space-y-3">
             {businesses.map((b) => (
               <div
                 key={b.id}
-                className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-2 hover:bg-slate-100/60 transition-colors"
+                className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 space-y-2 hover:bg-slate-100/60 transition-colors"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-1.5">
                   <span className="font-bold text-xs text-slate-900 truncate max-w-[170px]">{b.name}</span>
-                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full shrink-0 ${
                     b.verification_status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                   }`}>
                     {b.verification_status}
@@ -655,10 +657,10 @@ export default function BusinessDashboard() {
                     View Page →
                   </Link>
                 </div>
-                <div className="pt-2 border-t border-slate-200/50 flex flex-wrap gap-1.5">
+                <div className="pt-2 border-t border-slate-200/50 flex flex-wrap gap-1">
                   <button
                     onClick={() => { setSelectedBizForBoost(b); setKhqrBoostModal(true); }}
-                    className="flex-1 py-1.5 px-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white rounded-lg text-[10px] font-extrabold shadow-2xs flex items-center justify-center gap-1 cursor-pointer"
+                    className="flex-1 min-w-[70px] py-1.5 px-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white rounded-lg text-[10px] font-extrabold shadow-2xs flex items-center justify-center gap-1 cursor-pointer"
                     title="Boost to #1 Top Search"
                   >
                     <Zap className="w-3 h-3 fill-current" />
@@ -666,26 +668,26 @@ export default function BusinessDashboard() {
                   </button>
                   <button
                     onClick={() => { setSelectedBizForAction(b); setAddServiceModal(true); }}
-                    className="flex-1 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                    className="flex-1 min-w-[55px] py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
                   >
                     + Service
                   </button>
                   <button
                     onClick={() => { setSelectedBizForAction(b); setAddPromoModal(true); }}
-                    className="flex-1 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                    className="flex-1 min-w-[55px] py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
                   >
                     + Coupon
                   </button>
                   <button
                     onClick={() => handleEditBusiness(b)}
-                    className="flex-none px-2 py-1.5 bg-blue-50 border border-blue-200 rounded-lg text-[10px] font-bold text-blue-700 hover:bg-blue-100 cursor-pointer"
+                    className="px-2 py-1.5 bg-blue-50 border border-blue-200 rounded-lg text-[10px] font-bold text-blue-700 hover:bg-blue-100 cursor-pointer"
                     title="Edit Business"
                   >
                     <Edit3 className="w-3 h-3" />
                   </button>
                   <button
                     onClick={() => handleDeleteBusiness(b.id)}
-                    className="flex-none px-2 py-1.5 bg-red-50 border border-red-200 rounded-lg text-[10px] font-bold text-red-700 hover:bg-red-100 cursor-pointer"
+                    className="px-2 py-1.5 bg-red-50 border border-red-200 rounded-lg text-[10px] font-bold text-red-700 hover:bg-red-100 cursor-pointer"
                     title="Delete Business"
                   >
                     <Trash2 className="w-3 h-3" />
@@ -699,10 +701,10 @@ export default function BusinessDashboard() {
       </div>
 
       {/* Booking Requests Manager */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm space-y-6">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-xl text-slate-900 font-heading">
+            <h3 className="font-bold text-lg sm:text-xl text-slate-900 font-heading">
               Customer Booking Requests ({recentBookings.length})
             </h3>
             <p className="text-xs text-slate-400">Accept or reject pending customer reservations</p>
@@ -714,7 +716,7 @@ export default function BusinessDashboard() {
         ) : (
           <div className="divide-y divide-slate-100">
             {recentBookings.map((b) => (
-              <div key={b.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div key={b.id} className="py-3.5 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-xs font-bold text-slate-400">#{b.booking_reference}</span>
@@ -724,10 +726,10 @@ export default function BusinessDashboard() {
                       {b.status}
                     </span>
                   </div>
-                  <h4 className="font-bold text-sm text-slate-900">
+                  <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug">
                     {b.contact_name} — {b.guests} Guests ({b.service?.name || 'General Inquiry'})
                   </h4>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-[11px] sm:text-xs text-slate-500">
                     📅 {b.booking_date} at {b.booking_time || 'Flexible'} • 📞 {b.contact_phone} • ✉️ {b.contact_email}
                   </p>
                   {b.notes && (
@@ -735,23 +737,23 @@ export default function BusinessDashboard() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                   {b.total_amount > 0 && (
-                    <span className="font-extrabold text-base text-slate-900 mr-2">
+                    <span className="font-extrabold text-sm sm:text-base text-slate-900">
                       ${Number(b.total_amount).toFixed(2)}
                     </span>
                   )}
                   {b.status === 'pending' && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
                       <button
                         onClick={() => handleBookingStatus(b.id, 'confirmed')}
-                        className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs flex items-center gap-1"
+                        className="px-3 sm:px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs flex items-center gap-1 cursor-pointer"
                       >
                         <Check className="w-3.5 h-3.5" /> Accept
                       </button>
                       <button
                         onClick={() => handleBookingStatus(b.id, 'rejected')}
-                        className="px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 font-bold text-xs"
+                        className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 font-bold text-xs cursor-pointer"
                       >
                         <X className="w-3.5 h-3.5" /> Decline
                       </button>
@@ -765,21 +767,21 @@ export default function BusinessDashboard() {
       </div>
 
       {/* Self-Service Ads & Marketing Campaigns Section */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 border border-amber-500/30 text-white shadow-xl space-y-6 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-amber-500/30 text-white shadow-xl space-y-4 sm:space-y-6 relative overflow-hidden">
         {/* Background ambient glow */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-60 h-60 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3.5 sm:gap-4 pb-3.5 sm:pb-4 border-b border-slate-800">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-extrabold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/30 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider mb-1.5 sm:mb-2">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>Self-Service Ads Platform</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight font-heading">
+            <h3 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight font-heading">
               Manage Banner Ad Campaigns ({adsData.summary?.active_ads || 0} Active)
             </h3>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400 mt-0.5 sm:mt-1">
               Purchase promotional banners, pay instantly via Bakong KHQR, and enjoy automated campaign lifecycle management.
             </p>
           </div>
@@ -788,7 +790,7 @@ export default function BusinessDashboard() {
             <button
               onClick={fetchAds}
               disabled={loadingAds}
-              className="p-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+              className="p-2.5 rounded-xl sm:rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
               title="Refresh Ads Data"
             >
               <RefreshCw className={`w-4 h-4 ${loadingAds ? 'animate-spin' : ''}`} />
@@ -807,48 +809,48 @@ export default function BusinessDashboard() {
                 }
                 setAddAdModal(true);
               }}
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right text-slate-950 font-black text-xs shadow-lg shadow-orange-500/25 hover:scale-102 transition-all flex items-center gap-2 cursor-pointer"
+              className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right text-slate-950 font-black text-xs shadow-lg shadow-orange-500/25 hover:scale-102 transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
-              <Plus className="w-4 h-4" />
-              <span>+ Buy New Ad Campaign</span>
+              <Plus className="w-4 h-4 shrink-0" />
+              <span>ទិញយុទ្ធនាការផ្សព្វផ្សាយថ្មី (Buy Ad)</span>
             </button>
           </div>
         </div>
 
         {/* Ad Metrics Summary Grid */}
-        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
-            <span className="text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <Megaphone className="w-3.5 h-3.5 text-amber-400" /> Active Campaigns
+        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
+              <Megaphone className="w-3.5 h-3.5 text-amber-400 shrink-0" /> យុទ្ធនាការសកម្ម
             </span>
-            <p className="text-2xl font-black text-white mt-1">
-              {adsData.summary?.active_ads || 0} <span className="text-xs font-normal text-slate-400">/ {adsData.summary?.total_ads || 0} Total</span>
+            <p className="text-xl sm:text-2xl font-black text-white mt-1">
+              {adsData.summary?.active_ads || 0} <span className="text-xs font-normal text-slate-400">/ {adsData.summary?.total_ads || 0}</span>
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
-            <span className="text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5 text-sky-400" /> Ad Views (Impressions)
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
+              <Eye className="w-3.5 h-3.5 text-sky-400 shrink-0" /> ចំនួនមើល Ad
             </span>
-            <p className="text-2xl font-black text-sky-400 mt-1">
+            <p className="text-xl sm:text-2xl font-black text-sky-400 mt-1">
               {Number(adsData.summary?.total_impressions || 0).toLocaleString()}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
-            <span className="text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <MousePointer className="w-3.5 h-3.5 text-emerald-400" /> Ad Clicks
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
+              <MousePointer className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> ចុចលើ Ad
             </span>
-            <p className="text-2xl font-black text-emerald-400 mt-1">
+            <p className="text-xl sm:text-2xl font-black text-emerald-400 mt-1">
               {Number(adsData.summary?.total_clicks || 0).toLocaleString()}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
-            <span className="text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-amber-400" /> Click Rate (CTR)
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" /> អត្រាចុច (CTR)
             </span>
-            <p className="text-2xl font-black text-amber-400 mt-1">
+            <p className="text-xl sm:text-2xl font-black text-amber-400 mt-1">
               {adsData.summary?.avg_ctr || 0}%
             </p>
           </div>
@@ -862,9 +864,9 @@ export default function BusinessDashboard() {
                 <Megaphone className="w-6 h-6" />
               </div>
               <div className="space-y-1 max-w-md mx-auto">
-                <h4 className="text-sm font-bold text-white font-heading">No ad campaigns launched yet</h4>
+                <h4 className="text-sm font-bold text-white font-heading">មិនទាន់មានយុទ្ធនាការផ្សាយពាណិជ្ជកម្មនៅឡើយទេ</h4>
                 <p className="text-xs text-slate-400">
-                  Launch banner campaigns to reach thousands of travelers visiting Siem Reap every day.
+                  ចាប់ផ្តើមដាក់បដាផ្សព្វផ្សាយដើម្បីទាក់ទាញភ្ញៀវទេសចររាប់ពាន់នាក់នៅសៀមរាប។
                 </p>
               </div>
               <button
@@ -874,82 +876,93 @@ export default function BusinessDashboard() {
                   }
                   setAddAdModal(true);
                 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
               >
-                <Plus className="w-4 h-4" /> Start Your First Ad Campaign
+                <Plus className="w-4 h-4" /> ចាប់ផ្តើមយុទ្ធនាការដំបូងរបស់អ្នក
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
               {adsData.data.map((ad) => (
                 <div
                   key={ad.id}
-                  className={`p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between gap-3 ${
                     ad.status === 'active'
                       ? 'bg-slate-800/70 border-amber-500/30 hover:border-amber-400/60 shadow-md'
                       : 'bg-slate-900/50 border-slate-800 opacity-80'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/10 bg-slate-950">
-                        <img
-                          src={ad.image}
-                          alt={ad.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="space-y-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-amber-300">
-                            {ad.placement}
-                          </span>
-                          {ad.status === 'active' ? (
-                            ad.is_expiring_soon ? (
-                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse">
-                                ⚠️ Expiring Soon ({ad.days_remaining} days left)
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                                🟢 Active ({ad.days_remaining} days left)
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                              🛑 Expired
+                  <div className="flex items-start gap-3">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/10 bg-slate-950">
+                      <img
+                        src={ad.image}
+                        alt={ad.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-amber-300">
+                          {PLACEMENT_PRICING[ad.placement]?.name?.split(' ')[0] || ad.placement}
+                        </span>
+                        {ad.status === 'active' ? (
+                          ad.is_expiring_soon ? (
+                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse">
+                              ⚠️ នៅសល់ {ad.days_remaining} ថ្ងៃទៀត
                             </span>
-                          )}
-                        </div>
-                        <h4 className="text-xs font-bold text-white leading-snug line-clamp-1">
-                          {ad.title}
-                        </h4>
-                        <p className="text-[11px] text-slate-400 truncate">
-                          {ad.business?.name} • ${Number(ad.price).toFixed(2)}
-                        </p>
+                          ) : (
+                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                              🟢 សកម្ម (នៅសល់ {ad.days_remaining} ថ្ងៃ)
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                            🛑 ផុតកំណត់
+                          </span>
+                        )}
                       </div>
+                      <h4 className="text-xs font-bold text-white leading-snug line-clamp-1">
+                        {ad.title}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        {ad.business?.name} • ${Number(ad.price).toFixed(2)}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-700/60">
-                    <div className="flex items-center gap-3">
-                      <span>👁️ <strong>{ad.impressions}</strong> Views</span>
-                      <span>🖱️ <strong>{ad.clicks}</strong> Clicks</span>
-                      <span className="text-amber-400 font-bold">CTR: {ad.ctr}%</span>
+                  {/* 3-Column Metrics Bar */}
+                  <div className="grid grid-cols-3 gap-1 py-1.5 px-2 rounded-xl bg-slate-950/50 border border-slate-800 text-center">
+                    <div>
+                      <span className="text-[9px] text-slate-400 block font-semibold">👁️ មើល (Views)</span>
+                      <span className="font-extrabold text-xs text-white">
+                        {Number(ad.impressions || 0).toLocaleString()}
+                      </span>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedAdForRenew(ad);
-                          setRenewAdModal(true);
-                        }}
-                        className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                      >
-                        <RefreshCw className="w-3 h-3" />
-                        <span>Renew Ad</span>
-                      </button>
+                    <div className="border-x border-slate-800">
+                      <span className="text-[9px] text-slate-400 block font-semibold">🖱️ ចុច (Clicks)</span>
+                      <span className="font-extrabold text-xs text-emerald-400">
+                        {Number(ad.clicks || 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[9px] text-slate-400 block font-semibold">📈 អត្រា CTR</span>
+                      <span className="font-extrabold text-xs text-amber-400">
+                        {ad.ctr || 0}%
+                      </span>
                     </div>
                   </div>
+
+                  {/* Renewal Button */}
+                  <button
+                    onClick={() => {
+                      setSelectedAdForRenew(ad);
+                      setRenewAdModal(true);
+                    }}
+                    className="w-full py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/35 text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                  >
+                    <RefreshCw className="w-3 h-3 shrink-0" />
+                    <span>បន្តការផ្សាយពាណិជ្ជកម្ម (Renew Ad)</span>
+                  </button>
                 </div>
               ))}
             </div>

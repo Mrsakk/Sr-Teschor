@@ -125,21 +125,21 @@ export default function AITravelConciergeWidget() {
   return (
     <>
       {/* Floating Trigger Button */}
-      <div className="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-40">
+      <div className="fixed bottom-20 lg:bottom-6 right-3 sm:right-6 z-40">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group relative px-4 py-3.5 rounded-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white font-extrabold text-xs shadow-2xl shadow-orange-600/40 flex items-center gap-2.5 transition-all hover:scale-108 hover:shadow-orange-600/60 cursor-pointer border border-white/20"
+            className="group relative px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white font-extrabold text-[11px] sm:text-xs shadow-2xl shadow-orange-600/40 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer border border-white/30"
             aria-label="Open AI Tourist Concierge"
           >
             {/* Ping indicator */}
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+            <span className="absolute -top-1 -right-1 flex h-3 w-3 sm:h-3.5 sm:w-3.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-300"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-amber-300"></span>
             </span>
 
-            <Sparkles className="w-5 h-5 text-amber-200 group-hover:rotate-12 transition-transform" />
-            <span className="font-heading tracking-wide">Ask AI Guide 🤖</span>
+            <Sparkles className="w-4 h-4 text-amber-200 group-hover:rotate-12 transition-transform shrink-0" />
+            <span className="font-heading tracking-wide">សួរមគ្គទេសក៍ AI 🤖</span>
           </button>
         )}
       </div>

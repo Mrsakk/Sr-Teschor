@@ -162,16 +162,16 @@ export default function AdBanner({
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 shadow-xl hover:shadow-2xl hover:shadow-amber-500/15 hover:border-amber-400/70 transition-all duration-300 cursor-pointer p-4 sm:p-5 ${className}`}
+      className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-amber-500/30 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 shadow-xl hover:shadow-2xl hover:shadow-amber-500/15 hover:border-amber-400/70 transition-all duration-300 cursor-pointer p-3.5 sm:p-5 ${className}`}
     >
       {/* Decorative Ambient Background Glow */}
       <div className="absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-bl from-amber-500/15 via-orange-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-gradient-to-tr from-orange-600/10 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 sm:gap-6">
+      <div className="relative z-10 flex flex-col md:flex-row items-center gap-3.5 sm:gap-6">
 
         {/* 1. VISUAL IMAGE PREVIEW (Left Card) */}
-        <div className="relative w-full md:w-56 lg:w-64 h-40 sm:h-44 md:h-36 shrink-0 rounded-2xl overflow-hidden shadow-lg border border-white/10 group-hover:border-amber-400/40 transition-colors">
+        <div className="relative w-full md:w-56 lg:w-64 h-36 sm:h-44 md:h-36 shrink-0 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border border-white/10 group-hover:border-amber-400/40 transition-colors">
           <img
             src={currentAd.image}
             alt={currentAd.title}
@@ -180,16 +180,16 @@ export default function AdBanner({
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
 
           {/* Floating Tag over Image */}
-          <div className="absolute top-2.5 left-2.5">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-md text-amber-300 border border-amber-500/30 text-[10px] font-extrabold tracking-wide uppercase shadow">
+          <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-md text-amber-300 border border-amber-500/30 text-[9px] sm:text-[10px] font-extrabold tracking-wide uppercase shadow">
               <Flame className="w-2.5 h-2.5 text-orange-400 fill-orange-400" />
               <span>Special Offer</span>
             </span>
           </div>
 
           {currentAd.business?.rating && (
-            <div className="absolute top-2.5 right-2.5">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-md text-white text-[11px] font-bold border border-white/10 shadow">
+            <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-bold border border-white/10 shadow">
                 <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                 <span>{currentAd.business.rating}</span>
               </span>
@@ -198,7 +198,7 @@ export default function AdBanner({
 
           {/* Partner name on mobile/image overlay */}
           {currentAd.business?.name && (
-            <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center gap-1 text-[11px] font-bold text-white drop-shadow truncate">
+            <div className="absolute bottom-2 left-2 right-2 sm:bottom-2.5 sm:left-2.5 sm:right-2.5 flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-white drop-shadow truncate">
               <MapPin className="w-3 h-3 text-amber-400 shrink-0" />
               <span className="truncate">{currentAd.business.address || 'Siem Reap'}</span>
             </div>
@@ -206,26 +206,26 @@ export default function AdBanner({
         </div>
 
         {/* 2. MAIN CONTENT (Center) */}
-        <div className="flex-1 space-y-2 text-left w-full min-w-0">
+        <div className="flex-1 space-y-1.5 sm:space-y-2 text-left w-full min-w-0">
 
           {/* Badges Row */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-extrabold uppercase tracking-wider shadow-sm">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/40 text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider shadow-xs">
               <Sparkles className="w-3 h-3 text-amber-400" />
               <span>ដៃគូឧបត្ថម្ភ • SPONSORED</span>
             </span>
 
             {currentAd.business?.name && (
-              <span className="inline-flex items-center gap-1 text-xs text-slate-300 font-semibold bg-slate-800/80 px-2.5 py-0.5 rounded-full border border-slate-700/60">
-                <Building2 className="w-3.5 h-3.5 text-amber-400" />
-                <span className="truncate max-w-[200px]">{currentAd.business.name}</span>
-                <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
+              <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-slate-300 font-semibold bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700/60">
+                <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+                <span className="truncate max-w-[160px] sm:max-w-[200px]">{currentAd.business.name}</span>
+                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-400" />
               </span>
             )}
           </div>
 
           {/* Headline */}
-          <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-white tracking-tight leading-snug group-hover:text-amber-300 transition-colors font-heading">
+          <h3 className="text-sm sm:text-base md:text-xl font-extrabold text-white tracking-tight leading-snug group-hover:text-amber-300 transition-colors font-heading line-clamp-2">
             {currentAd.title}
           </h3>
 
@@ -235,9 +235,9 @@ export default function AdBanner({
           </p>
 
           {/* Feature Highlights / Tags */}
-          <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-slate-400 font-medium">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-0.5 sm:pt-1 text-[10px] sm:text-[11px] text-slate-400 font-medium">
             <span className="flex items-center gap-1 text-emerald-400">
-              <CheckCircle2 className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span>Verified Partner</span>
             </span>
             <span className="text-slate-600">•</span>
@@ -248,7 +248,7 @@ export default function AdBanner({
         </div>
 
         {/* 3. CALL TO ACTION & CAROUSEL (Right) */}
-        <div className="flex sm:flex-col md:flex-col items-center md:items-end justify-between sm:justify-center gap-3 shrink-0 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
+        <div className="flex sm:flex-col md:flex-col items-center md:items-end justify-between sm:justify-center gap-2.5 sm:gap-3 shrink-0 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
 
           {/* Carousel dots indicator if multiple ads */}
           {ads.length > 1 && (
@@ -274,10 +274,10 @@ export default function AdBanner({
           {/* Glowing CTA Button */}
           <button
             type="button"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-orange-500/25 group-hover:shadow-amber-500/40 group-hover:scale-102 transition-all duration-300 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-orange-500/25 group-hover:shadow-amber-500/40 group-hover:scale-102 transition-all duration-300 cursor-pointer"
           >
             <span className="font-khmer font-bold">ស្វែងរក ឬកក់ឥឡូវនេះ</span>
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
