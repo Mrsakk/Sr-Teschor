@@ -10,18 +10,27 @@ export function getFullImageUrl(url, fallback = 'https://images.unsplash.com/pho
   if (!trimmed) return fallback;
   if (trimmed.startsWith('data:image/') || trimmed.startsWith('blob:')) return trimmed;
 
-  const liveStorage = 'https://sr-teschor-api.vercel.app/api/storage';
+  // Detect dev vs production environment
+  const isDev = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const liveStorage = isDev
+    ? 'http://localhost:8000/storage'
+    : 'https://sr-teschor-api.vercel.app/api/storage';
+  const liveBase = isDev
+    ? 'http://localhost:8000'
+    : 'https://sr-teschor-api.vercel.app';
 
   let resolved = url
-    .replace(/http:\/\/localhost:8000\/storage/g, liveStorage)
-    .replace(/http:\/\/127\.0\.0\.1:8000\/storage/g, liveStorage)
-    .replace(/http:\/\/localhost:8000/g, 'https://sr-teschor-api.vercel.app')
-    .replace(/https:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage)
-    .replace(/http:\/\/sr-teschor-api\.vercel\.app\/api\/storage/g, liveStorage)
-    .replace(/http:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage);
+    // Normalise any existing absolute URLs to the correct base
+    .replace(/https?:\/\/sr-teschor-api\.vercel\.app\/api\/storage/g, liveStorage)
+    .replace(/https?:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage)
+    .replace(/https?:\/\/sr-teschor-api\.vercel\.app/g, liveBase)
+    .replace(/https?:\/\/localhost:8000\/storage/g, liveStorage)
+    .replace(/https?:\/\/127\.0\.0\.1:8000\/storage/g, liveStorage)
+    .replace(/https?:\/\/localhost:8000/g, liveBase)
+    .replace(/https?:\/\/127\.0\.0\.1:8000/g, liveBase);
 
   if (resolved.startsWith('/api/storage/')) {
-    resolved = `https://sr-teschor-api.vercel.app${resolved}`;
+    resolved = `${liveBase}${resolved}`;
   } else if (resolved.startsWith('/storage/')) {
     resolved = `${liveStorage}${resolved.replace('/storage', '')}`;
   } else if (resolved.startsWith('uploads/') || resolved.startsWith('businesses/')) {

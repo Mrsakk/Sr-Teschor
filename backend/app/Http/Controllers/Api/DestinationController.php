@@ -86,7 +86,7 @@ class DestinationController extends Controller
         $cacheKey = 'destinations_list_' . md5(json_encode($request->all()));
 
         $destinations = Cache::remember($cacheKey, 120, function () use ($query, $perPage) {
-            return $query->paginate($perPage);
+            return $query->paginate($perPage)->toArray();
         });
 
         return response()->json($destinations);
@@ -94,31 +94,38 @@ class DestinationController extends Controller
 
     public function show($slug)
     {
-        $destination = Destination::where('slug', $slug)
-            ->with([
-                'category',
-                'images',
-                'reviews' => function ($q) {
-                    $q->where('status', 'approved')->with('user')->latest();
-                },
-            ])
-            ->firstOrFail();
+        $cacheKey = 'destination_detail_' . $slug;
 
-        // Increment view count
-        $destination->increment('views_count');
+        $data = Cache::remember($cacheKey, 120, function () use ($slug) {
+            $destination = Destination::where('slug', $slug)
+                ->with([
+                    'category',
+                    'images',
+                    'reviews' => function ($q) {
+                        $q->where('status', 'approved')->with('user')->latest();
+                    },
+                ])
+                ->firstOrFail();
 
-        // Nearby and similar destinations
-        $similarDestinations = Destination::where('category_id', $destination->category_id)
-            ->where('id', '!=', $destination->id)
-            ->where('status', 'published')
-            ->with(['images', 'category'])
-            ->take(4)
-            ->get();
+            $similarDestinations = Destination::where('category_id', $destination->category_id)
+                ->where('id', '!=', $destination->id)
+                ->where('status', 'published')
+                ->with(['images', 'category'])
+                ->take(4)
+                ->get();
 
-        return response()->json([
-            'destination' => $destination,
-            'similar' => $similarDestinations,
-        ]);
+            return [
+                'destination' => $destination,
+                'similar' => $similarDestinations,
+            ];
+        });
+
+        // Increment view count safely
+        try {
+            Destination::where('slug', $slug)->increment('views_count');
+        } catch (\Throwable $e) {}
+
+        return response()->json($data);
     }
 
     public function store(Request $request)

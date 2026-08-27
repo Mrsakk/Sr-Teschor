@@ -21,32 +21,27 @@ class AdvertisementController extends Controller
      */
     public function index(Request $request)
     {
-        // Run light auto-expiry sweep on fetch
-        $this->processExpiredAdsInternal();
-
         $today = now()->toDateString();
+        $cacheKey = 'active_ads_' . md5(json_encode($request->all())) . '_' . $today;
 
-        $query = Advertisement::with('business')
-            ->where('status', 'active')
-            ->where('start_date', '<=', $today)
-            ->where('end_date', '>=', $today);
+        $ads = \Illuminate\Support\Facades\Cache::remember($cacheKey, 60, function () use ($request, $today) {
+            $query = Advertisement::with('business')
+                ->where('status', 'active')
+                ->where('start_date', '<=', $today)
+                ->where('end_date', '>=', $today);
 
-        if ($request->filled('placement')) {
-            $placements = explode(',', $request->input('placement'));
-            $query->whereIn('placement', $placements);
-        }
+            if ($request->filled('placement')) {
+                $placements = explode(',', $request->input('placement'));
+                $query->whereIn('placement', $placements);
+            }
 
-        if ($request->filled('business_id')) {
-            $query->where('business_id', $request->input('business_id'));
-        }
+            if ($request->filled('business_id')) {
+                $query->where('business_id', $request->input('business_id'));
+            }
 
-        $limit = min((int)$request->input('limit', 10), 50);
-        $ads = $query->inRandomOrder()->take($limit)->get();
-
-        // Increment impressions for fetched active ads
-        if ($ads->isNotEmpty() && $request->boolean('track_impressions', true)) {
-            Advertisement::whereIn('id', $ads->pluck('id'))->increment('impressions');
-        }
+            $limit = min((int)$request->input('limit', 10), 50);
+            return $query->take($limit)->get();
+        });
 
         return response()->json([
             'status' => 'success',

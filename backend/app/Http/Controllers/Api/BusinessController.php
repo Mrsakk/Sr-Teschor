@@ -75,44 +75,56 @@ class BusinessController extends Controller
                 break;
         }
 
-        $perPage = $request->input('per_page', 12);
-        $businesses = $query->paginate($perPage);
+        $perPage = (int) $request->input('per_page', 12);
+        $cacheKey = 'businesses_list_' . md5(json_encode($request->all()));
+
+        $businesses = \Illuminate\Support\Facades\Cache::remember($cacheKey, 120, function () use ($query, $perPage) {
+            return $query->paginate($perPage);
+        });
 
         return response()->json($businesses);
     }
 
     public function show($slug)
     {
-        $business = Business::where('slug', $slug)
-            ->with([
-                'category',
-                'services' => function ($q) {
-                    $q->where('status', 'active');
-                },
-                'promotions' => function ($q) {
-                    $q->where('status', 'active');
-                },
-                'reviews' => function ($q) {
-                    $q->where('status', 'approved')->with('user')->latest();
-                },
-            ])
-            ->firstOrFail();
+        $cacheKey = 'business_detail_' . $slug;
 
-        $business->increment('views_count');
+        $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 120, function () use ($slug) {
+            $business = Business::where('slug', $slug)
+                ->with([
+                    'category',
+                    'services' => function ($q) {
+                        $q->where('status', 'active');
+                    },
+                    'promotions' => function ($q) {
+                        $q->where('status', 'active');
+                    },
+                    'reviews' => function ($q) {
+                        $q->where('status', 'approved')->with('user')->latest();
+                    },
+                ])
+                ->firstOrFail();
 
-        // Similar businesses in category
-        $similar = Business::where('category_id', $business->category_id)
-            ->where('id', '!=', $business->id)
-            ->where('status', 'active')
-            ->where('verification_status', 'approved')
-            ->with('category')
-            ->take(4)
-            ->get();
+            $similar = Business::where('category_id', $business->category_id)
+                ->where('id', '!=', $business->id)
+                ->where('status', 'active')
+                ->where('verification_status', 'approved')
+                ->with('category')
+                ->take(4)
+                ->get();
 
-        return response()->json([
-            'business' => $business,
-            'similar' => $similar,
-        ]);
+            return [
+                'business' => $business,
+                'similar' => $similar,
+            ];
+        });
+
+        // Increment views safely
+        try {
+            Business::where('slug', $slug)->increment('views_count');
+        } catch (\Throwable $e) {}
+
+        return response()->json($data);
     }
 
     public function store(Request $request)

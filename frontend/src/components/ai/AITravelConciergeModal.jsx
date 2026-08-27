@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Sparkles, 
   X, 
@@ -7,9 +8,12 @@ import {
   User, 
   Calendar, 
   Compass, 
-  RefreshCw
+  RefreshCw,
+  Star,
+  ExternalLink
 } from 'lucide-react';
 import { aiApi } from '../../api/endpoints';
+import { getFullImageUrl } from '../../utils/imageUrl';
 
 export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner }) {
   const [messages, setMessages] = useState([
@@ -214,6 +218,43 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
                         <Sparkles className="w-2.5 h-2.5 text-orange-500" />
                         <span>{sug}</span>
                       </button>
+                    ))}
+                  </div>
+                )}
+
+
+                {/* Business Cards */}
+                {msg.businesses && msg.businesses.length > 0 && (
+                  <div className="pt-1 space-y-1.5">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-orange-400" />
+                      អាជីវកម្មដែលជ្រើស (ណែនាំ)
+                    </p>
+                    {msg.businesses.map((biz, i) => (
+                      <Link
+                        key={i}
+                        to={biz.link || `/businesses/${biz.slug}`}
+                        onClick={onClose}
+                        className="flex items-center gap-2.5 bg-white hover:bg-orange-50 border border-slate-200 hover:border-orange-300 rounded-xl p-2 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100">
+                          <img
+                            src={getFullImageUrl(biz.image)}
+                            alt={biz.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&q=60'; }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-slate-900 truncate">{biz.name}</p>
+                          <p className="text-[10px] text-slate-500 truncate">{biz.category}</p>
+                        </div>
+                        <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+                          <span className="text-[10px] font-bold text-slate-700">{biz.rating}</span>
+                          <ExternalLink className="w-3 h-3 text-slate-300 ml-1 group-hover:text-orange-400 transition-colors" />
+                        </div>
+                      </Link>
                     ))}
                   </div>
                 )}
