@@ -126,7 +126,7 @@ export default function TouristToolsHub() {
   });
 
   return (
-    <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-8 lg:p-10 text-white shadow-2xl relative overflow-hidden space-y-6 sm:space-y-8">
+    <section className="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-8 lg:p-10 text-white shadow-md relative overflow-hidden space-y-6 sm:space-y-8">
       {/* Background Decorative Glows */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-orange-500/10 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-sky-500/10 via-indigo-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -147,12 +147,12 @@ export default function TouristToolsHub() {
         </div>
 
         {/* Tab Switcher */}
-        <div className="grid grid-cols-2 md:flex md:flex-row items-center bg-slate-950 p-1.5 rounded-2xl border border-slate-800 w-full md:w-auto gap-1.5 shrink-0">
+        <div className="grid grid-cols-2 md:flex md:flex-row items-center bg-slate-950 p-1.5 rounded-xl border border-slate-800 w-full md:w-auto gap-1.5 shrink-0">
           <button
             onClick={() => setActiveTab('sunrise')}
             className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'sunrise'
-                ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
+                ? 'bg-orange-600 text-white shadow-md shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -164,7 +164,7 @@ export default function TouristToolsHub() {
             onClick={() => setActiveTab('tuktuk')}
             className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'tuktuk'
-                ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
+                ? 'bg-orange-600 text-white shadow-md shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -176,7 +176,7 @@ export default function TouristToolsHub() {
             onClick={() => setActiveTab('currency')}
             className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'currency'
-                ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
+                ? 'bg-orange-600 text-white shadow-md shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -188,7 +188,7 @@ export default function TouristToolsHub() {
             onClick={() => setActiveTab('etiquette')}
             className={`w-full justify-center px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'etiquette'
-                ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
+                ? 'bg-orange-600 text-white shadow-md shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -213,7 +213,7 @@ export default function TouristToolsHub() {
                 <button
                   key={key}
                   onClick={() => setSelectedSpot(key)}
-                  className={`w-full p-3 sm:p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                  className={`w-full p-3 sm:p-3.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                     isSelected
                       ? 'bg-gradient-to-r from-orange-600/20 to-amber-600/20 border-orange-500/60 shadow-lg text-white'
                       : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/60 hover:text-white'
@@ -237,7 +237,7 @@ export default function TouristToolsHub() {
           </div>
 
           {/* Featured Spot Detail Card */}
-          <div className="lg:col-span-2 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 lg:p-7 rounded-3xl border border-slate-800 relative flex flex-col justify-between space-y-4 sm:space-y-5">
+          <div className="lg:col-span-2 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 lg:p-7 rounded-xl border border-slate-800 relative flex flex-col justify-between space-y-4 sm:space-y-5">
             <div className="space-y-3.5 sm:space-y-4">
               {/* Card Header & Compact Time Badge */}
               <div className="flex items-start justify-between gap-3 border-b border-slate-800/80 pb-3">
@@ -258,7 +258,7 @@ export default function TouristToolsHub() {
 
               {/* Recommendation Grid (Compact 3-in-1 on mobile) */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
+                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
                   <span className="text-[10px] font-bold text-slate-400 flex items-center justify-center sm:justify-start gap-1">
                     <Clock className="w-3 h-3 text-orange-400 shrink-0" />
                     <span className="truncate">Leave Hotel</span>
@@ -269,7 +269,7 @@ export default function TouristToolsHub() {
                   <span className="text-[9px] text-slate-500 hidden sm:block mt-0.5">Entry gate buffer</span>
                 </div>
 
-                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
+                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
                   <span className="text-[10px] font-bold text-slate-400 flex items-center justify-center sm:justify-start gap-1">
                     <Camera className="w-3 h-3 text-sky-400 shrink-0" />
                     <span className="truncate">Best Light</span>
@@ -280,7 +280,7 @@ export default function TouristToolsHub() {
                   <span className="text-[9px] text-slate-500 hidden sm:block mt-0.5">Prime photography</span>
                 </div>
 
-                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
+                <div className="bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-xl border border-slate-800/90 text-center sm:text-left flex flex-col justify-between">
                   <span className="text-[10px] font-bold text-slate-400 flex items-center justify-center sm:justify-start gap-1">
                     <TrendingUp className="w-3 h-3 text-amber-400 shrink-0" />
                     <span className="truncate">Crowd</span>
@@ -293,7 +293,7 @@ export default function TouristToolsHub() {
               </div>
 
               {/* Insider Tip Alert */}
-              <div className="bg-orange-500/10 border border-orange-500/20 p-3 sm:p-4 rounded-2xl flex items-start gap-2.5">
+              <div className="bg-orange-500/10 border border-orange-500/20 p-3 sm:p-4 rounded-xl flex items-start gap-2.5">
                 <Info className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
                 <p className="text-[11px] sm:text-xs text-orange-200/90 leading-relaxed">
                   <strong className="text-white">Local Guide Tip: </strong>
@@ -322,7 +322,7 @@ export default function TouristToolsHub() {
         <div key="tab-tuktuk" className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch animate-in fade-in duration-300">
           
           {/* Pick-up / Drop-off Selectors */}
-          <div className="space-y-4 bg-slate-950/60 p-5 rounded-3xl border border-slate-800">
+          <div className="space-y-4 bg-slate-950/60 p-5 rounded-xl border border-slate-800">
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5 text-orange-400" />
@@ -357,7 +357,7 @@ export default function TouristToolsHub() {
               </select>
             </div>
 
-            <div className="p-3 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-1.5 text-xs text-slate-400">
+            <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-1.5 text-xs text-slate-400">
               <div className="flex justify-between font-semibold">
                 <span>Estimated Distance:</span>
                 <span className="text-white font-bold">{currentFare.distance}</span>
@@ -377,20 +377,20 @@ export default function TouristToolsHub() {
           <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4 items-stretch">
             
             {/* Tuk-Tuk Card */}
-            <div className="bg-gradient-to-b from-orange-600/20 via-slate-900 to-slate-950 p-5 rounded-3xl border border-orange-500/40 flex flex-col justify-between space-y-4 relative shadow-lg">
+            <div className="bg-gradient-to-b from-orange-600/20 via-slate-900 to-slate-950 p-5 rounded-xl border border-orange-500/40 flex flex-col justify-between space-y-4 relative shadow-lg">
               <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full">
                 Most Popular
               </div>
 
               <div>
-                <div className="w-10 h-10 rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center mb-2">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center mb-2">
                   <span className="text-lg">🛺</span>
                 </div>
                 <h4 className="text-sm font-extrabold text-white">Classic Tuk-Tuk / Remorque</h4>
                 <p className="text-[11px] text-slate-400 mt-1">Open-air breezy ride, fits up to 4 passengers.</p>
               </div>
 
-              <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 text-center">
+              <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 text-center">
                 <span className="text-[10px] text-slate-400 font-bold block">Fair Estimate</span>
                 <span className="text-2xl font-black text-orange-400">${currentFare.tuktuk}</span>
                 <span className="text-[10px] text-slate-500 block">USD per trip</span>
@@ -398,16 +398,16 @@ export default function TouristToolsHub() {
             </div>
 
             {/* Private Car Card */}
-            <div className="bg-slate-950/80 p-5 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4">
+            <div className="bg-slate-950/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-4">
               <div>
-                <div className="w-10 h-10 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center mb-2">
+                <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center mb-2">
                   <Car className="w-5 h-5" />
                 </div>
                 <h4 className="text-sm font-extrabold text-white">Private Taxi / AC Car</h4>
                 <p className="text-[11px] text-slate-400 mt-1">Air-conditioned comfort, ideal for distant temples.</p>
               </div>
 
-              <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 text-center">
+              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 text-center">
                 <span className="text-[10px] text-slate-400 font-bold block">Fair Estimate</span>
                 <span className="text-2xl font-black text-sky-400">${currentFare.car}</span>
                 <span className="text-[10px] text-slate-500 block">USD per trip</span>
@@ -415,16 +415,16 @@ export default function TouristToolsHub() {
             </div>
 
             {/* Motorbike Card */}
-            <div className="bg-slate-950/80 p-5 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4">
+            <div className="bg-slate-950/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-4">
               <div>
-                <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2">
                   <span className="text-lg">🛵</span>
                 </div>
                 <h4 className="text-sm font-extrabold text-white">Moto Driver (Single)</h4>
                 <p className="text-[11px] text-slate-400 mt-1">Quick solo ride for short urban hops.</p>
               </div>
 
-              <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 text-center">
+              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 text-center">
                 <span className="text-[10px] text-slate-400 font-bold block">Fair Estimate</span>
                 <span className="text-2xl font-black text-emerald-400">${currentFare.moto}</span>
                 <span className="text-[10px] text-slate-500 block">USD per trip</span>
@@ -441,7 +441,7 @@ export default function TouristToolsHub() {
         <div key="tab-currency" className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center animate-in fade-in duration-300">
           
           {/* Currency Converter */}
-          <div className="bg-slate-950/60 p-6 rounded-3xl border border-slate-800 space-y-5">
+          <div className="bg-slate-950/60 p-6 rounded-xl border border-slate-800 space-y-5">
             <div>
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-orange-400 block">
                 Travel Currency Tool
@@ -484,7 +484,7 @@ export default function TouristToolsHub() {
               </div>
 
               {/* Conversion Result Banner */}
-              <div className="bg-gradient-to-r from-emerald-600/20 via-teal-600/10 to-transparent p-4 rounded-2xl border border-emerald-500/30 text-center">
+              <div className="bg-gradient-to-r from-emerald-600/20 via-teal-600/10 to-transparent p-4 rounded-xl border border-emerald-500/30 text-center">
                 <span className="text-[10px] text-emerald-300 uppercase font-extrabold tracking-wider block">
                   Converted Equivalent
                 </span >
@@ -499,9 +499,9 @@ export default function TouristToolsHub() {
           </div>
 
           {/* Bakong Tourists App Interactive Feature */}
-          <div className="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-950 p-6 sm:p-8 rounded-3xl border border-indigo-500/30 space-y-4">
+          <div className="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-950 p-6 sm:p-8 rounded-xl border border-indigo-500/30 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-500/40">
+              <div className="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-500/40">
                 <QrCode className="w-6 h-6" />
               </div>
               <div>
@@ -535,7 +535,7 @@ export default function TouristToolsHub() {
               <button
                 type="button"
                 onClick={() => setBakongModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-indigo-600/30 transition-transform hover:scale-102 cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-sm transition-transform hover:scale-102 cursor-pointer"
               >
                 <Smartphone className="w-3.5 h-3.5" />
                 <span>How to Setup Bakong Tourists</span>
@@ -561,8 +561,8 @@ export default function TouristToolsHub() {
       {activeTab === 'etiquette' && (
         <div key="tab-etiquette" className="grid grid-cols-1 md:grid-cols-3 gap-5 animate-in fade-in duration-300">
           
-          <div className="bg-slate-950/60 p-5 rounded-3xl border border-slate-800 space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+          <div className="bg-slate-950/60 p-5 rounded-xl border border-slate-800 space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <h4 className="text-sm font-extrabold text-white">Temple Dress Code</h4>
@@ -578,8 +578,8 @@ export default function TouristToolsHub() {
             </ul>
           </div>
 
-          <div className="bg-slate-950/60 p-5 rounded-3xl border border-slate-800 space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center">
+          <div className="bg-slate-950/60 p-5 rounded-xl border border-slate-800 space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center">
               <Sparkles className="w-5 h-5" />
             </div>
             <h4 className="text-sm font-extrabold text-white">Sacred Respect & Monks</h4>
@@ -595,8 +595,8 @@ export default function TouristToolsHub() {
             </ul>
           </div>
 
-          <div className="bg-slate-950/60 p-5 rounded-3xl border border-slate-800 space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
+          <div className="bg-slate-950/60 p-5 rounded-xl border border-slate-800 space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
               <Camera className="w-5 h-5" />
             </div>
             <h4 className="text-sm font-extrabold text-white">Monument Preservation</h4>
@@ -618,7 +618,7 @@ export default function TouristToolsHub() {
       {/* ── BAKONG TOURISTS STEP-BY-STEP MODAL ── */}
       {bakongModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-slate-900 border border-slate-700 max-w-lg w-full rounded-3xl p-6 sm:p-8 text-white shadow-2xl space-y-6 relative text-left">
+          <div className="bg-slate-900 border border-slate-700 max-w-lg w-full rounded-xl p-6 sm:p-8 text-white shadow-md space-y-6 relative text-left">
             
             <button
               onClick={() => setBakongModalOpen(false)}
@@ -628,7 +628,7 @@ export default function TouristToolsHub() {
             </button>
 
             <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center shrink-0">
                 <QrCode className="w-6 h-6" />
               </div>
               <div>
@@ -644,7 +644,7 @@ export default function TouristToolsHub() {
             <div className="space-y-4 text-xs">
               
               {/* Step 1 */}
-              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
+              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
                 <div className="w-6 h-6 rounded-full bg-indigo-600 text-white font-black flex items-center justify-center shrink-0 text-xs">
                   1
                 </div>
@@ -675,7 +675,7 @@ export default function TouristToolsHub() {
               </div>
 
               {/* Step 2 */}
-              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
+              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
                 <div className="w-6 h-6 rounded-full bg-indigo-600 text-white font-black flex items-center justify-center shrink-0 text-xs">
                   2
                 </div>
@@ -688,7 +688,7 @@ export default function TouristToolsHub() {
               </div>
 
               {/* Step 3 */}
-              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
+              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
                 <div className="w-6 h-6 rounded-full bg-indigo-600 text-white font-black flex items-center justify-center shrink-0 text-xs">
                   3
                 </div>
@@ -701,7 +701,7 @@ export default function TouristToolsHub() {
               </div>
 
               {/* Step 4 */}
-              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
+              <div className="flex items-start gap-3 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
                 <div className="w-6 h-6 rounded-full bg-indigo-600 text-white font-black flex items-center justify-center shrink-0 text-xs">
                   4
                 </div>
@@ -719,7 +719,7 @@ export default function TouristToolsHub() {
               <button
                 type="button"
                 onClick={() => setBakongModalOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-colors cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-sm transition-colors cursor-pointer"
               >
                 Got It, Thanks!
               </button>

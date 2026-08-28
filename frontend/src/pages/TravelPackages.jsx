@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Sparkles, 
   Clock, 
@@ -16,24 +17,14 @@ import {
 import { packageApi } from '../api/endpoints';
 
 export default function TravelPackages() {
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: packagesData, isLoading } = useQuery({
+    queryKey: ['packages'],
+    queryFn: () => packageApi.getAll().then(res => res.data),
+    staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+  });
 
-  useEffect(() => {
-    const fetchPackages = async () => {
-      setLoading(true);
-      try {
-        const res = await packageApi.getAll();
-        setPackages(res.data || []);
-      } catch (err) {
-        console.error('Failed to load packages', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPackages();
-  }, []);
+  const packages = Array.isArray(packagesData) ? packagesData : (packagesData?.data || []);
+  const loading = isLoading && !packagesData;
 
   return (
     <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 bg-slate-50/60 min-h-screen">
@@ -64,7 +55,7 @@ export default function TravelPackages() {
             {packages.map((pkg) => (
               <div
                 key={pkg.id}
-                className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
+                className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   {/* Image & Price Overlay */}
@@ -134,7 +125,7 @@ export default function TravelPackages() {
                 <div className="p-6 pt-0">
                   <Link
                     to={`/checkout/${pkg.id}?type=package`}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition-all hover:scale-102"
+                    className="w-full py-3.5 px-4 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs shadow-lg shadow-sm flex items-center justify-center gap-2 transition-all hover:scale-102"
                   >
                     <span>Book Package Now</span>
                     <ArrowRight className="w-4 h-4" />

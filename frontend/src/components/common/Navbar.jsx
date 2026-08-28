@@ -184,7 +184,7 @@ export default function Navbar({ onOpenSearch }) {
                   />
                 </div>
               ) : (
-                <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center shadow-md shadow-orange-400/30 group-hover:scale-105 transition-all duration-300 shrink-0 overflow-hidden">
+                <div className="relative w-9 h-9 rounded-xl bg-orange-600 flex items-center justify-center shadow-md shadow-sm group-hover:scale-105 transition-all duration-300 shrink-0 overflow-hidden">
                   <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
                     <path d="M12 2L9.5 6.5H14.5L12 2ZM7 8.5L4 13.5H20L17 8.5H7ZM2 15.5L3.5 22H20.5L22 15.5H2ZM10.5 17.5H13.5V21H10.5V17.5Z" />
                   </svg>
@@ -268,7 +268,7 @@ export default function Navbar({ onOpenSearch }) {
                 </button>
 
                 {langDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-36 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right py-1.5">
+                  <div className="absolute right-0 top-full mt-2 w-36 bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right py-1.5">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
@@ -349,7 +349,7 @@ export default function Navbar({ onOpenSearch }) {
 
                   {/* Notifications Dropdown */}
                   {notificationsOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+                    <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
                       {/* Header */}
                       <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
                         <div>
@@ -421,7 +421,7 @@ export default function Navbar({ onOpenSearch }) {
 
                   {/* User Dropdown */}
                   {userDropdownOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+                    <div className="absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
 
                       {/* User Identity */}
                       <div className="px-4 py-3 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-slate-100">
@@ -526,7 +526,7 @@ export default function Navbar({ onOpenSearch }) {
                   </Link>
                   <Link
                     to="/register"
-                    className="hidden sm:inline-flex text-xs font-extrabold px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-400/30 hover:from-orange-600 hover:to-amber-600 hover:shadow-orange-500/40 hover:scale-105 transition-all duration-200 whitespace-nowrap"
+                    className="hidden sm:inline-flex text-xs font-extrabold px-4 py-2.5 rounded-xl bg-orange-600 text-white shadow-md shadow-sm hover:bg-orange-700 hover:shadow-sm hover:scale-105 transition-all duration-200 whitespace-nowrap"
                   >
                     Sign Up Free
                   </Link>
@@ -549,7 +549,7 @@ export default function Navbar({ onOpenSearch }) {
 
         {/* ── MOBILE DRAWER ── */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white text-slate-900 border-t border-slate-100 shadow-2xl animate-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden bg-white text-slate-900 border-t border-slate-100 shadow-md animate-in slide-in-from-top-2 duration-200">
             {/* Search */}
             <div className="px-4 pt-4 pb-2">
               <button
@@ -612,7 +612,7 @@ export default function Navbar({ onOpenSearch }) {
                 <Link
                   to="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 text-center text-sm font-extrabold py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-400/20"
+                  className="flex-1 text-center text-sm font-extrabold py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-sm"
                 >
                   Sign Up Free
                 </Link>

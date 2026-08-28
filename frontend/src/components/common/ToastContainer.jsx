@@ -17,7 +17,7 @@ export default function ToastContainer() {
         return (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-xl border backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-3 ${
+            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-sm border backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-3 ${
               isSuccess
                 ? 'bg-emerald-950/90 text-emerald-100 border-emerald-500/30'
                 : isError

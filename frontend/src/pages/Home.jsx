@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Search, 
   MapPin, 
@@ -30,71 +31,50 @@ import TouristToolsHub from '../components/tourist/TouristToolsHub';
 import { getFullImageUrl } from '../utils/imageUrl';
 
 export default function Home({ onOpenSearch }) {
-  const [categories, setCategories] = useState([]);
-  const [popularDestinations, setPopularDestinations] = useState([]);
-  const [hiddenGems, setHiddenGems] = useState([]);
-  const [featuredBusinesses, setFeaturedBusinesses] = useState([]);
-  const [promotions, setPromotions] = useState([]);
-  const [settings, setSettings] = useState({});
-  const [loading, setLoading] = useState(true);
   const [aiPlannerOpen, setAiPlannerOpen] = useState(false);
-
-  // Search Bar Form state
   const [searchDestination, setSearchDestination] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [priceType, setPriceType] = useState('');
   const [minRating, setMinRating] = useState('');
-
   const navigate = useNavigate();
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [catsRes, destsRes, gemsRes, bizRes, promoRes, systemRes] = await Promise.allSettled([
-          categoryApi.getAll(),
-          destinationApi.getAll({ per_page: 4, sort: 'popular' }),
-          destinationApi.getAll({ hidden_gems: true, per_page: 4 }),
-          businessApi.getAll({ per_page: 4, featured: true }),
-          promotionApi.getAll(),
-          systemApi.getSettings(),
-        ]);
+  // ── All Home data with TanStack Query ──
+  const { data: categoriesRaw } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryApi.getAll().then(r => r.data),
+    staleTime: Infinity,
+  });
+  const { data: popularRaw, isLoading: loadingPopular } = useQuery({
+    queryKey: ['destinations', { per_page: 4, sort: 'popular' }],
+    queryFn: () => destinationApi.getAll({ per_page: 4, sort: 'popular' }).then(r => r.data),
+  });
+  const { data: gemsRaw } = useQuery({
+    queryKey: ['destinations', { hidden_gems: true, per_page: 4 }],
+    queryFn: () => destinationApi.getAll({ hidden_gems: true, per_page: 4 }).then(r => r.data),
+  });
+  const { data: bizRaw } = useQuery({
+    queryKey: ['businesses', { per_page: 4, featured: true }],
+    queryFn: () => businessApi.getAll({ per_page: 4, featured: true }).then(r => r.data),
+  });
+  const { data: promoRaw } = useQuery({
+    queryKey: ['promotions'],
+    queryFn: () => promotionApi.getAll().then(r => r.data),
+  });
+  const { data: systemRaw } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => systemApi.getSettings().then(r => r.data),
+    staleTime: Infinity,
+  });
 
-        if (!isMounted) return;
-
-        if (catsRes.status === 'fulfilled') {
-          const raw = catsRes.value?.data;
-          setCategories(Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []));
-        }
-        if (destsRes.status === 'fulfilled') {
-          const raw = destsRes.value?.data;
-          setPopularDestinations(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw) ? raw : []));
-        }
-        if (gemsRes.status === 'fulfilled') {
-          const raw = gemsRes.value?.data;
-          setHiddenGems(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw) ? raw : []));
-        }
-        if (bizRes.status === 'fulfilled') {
-          const raw = bizRes.value?.data;
-          setFeaturedBusinesses(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw) ? raw : []));
-        }
-        if (promoRes.status === 'fulfilled') {
-          const raw = promoRes.value?.data;
-          setPromotions(Array.isArray(raw?.data) ? raw.data : (Array.isArray(raw?.promotions) ? raw.promotions : (Array.isArray(raw) ? raw : [])));
-        }
-        if (systemRes.status === 'fulfilled') {
-          setSettings(systemRes.value?.data || {});
-        }
-      } catch (err) {
-        console.error('Home load error', err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-    fetchData();
-    return () => { isMounted = false; };
-  }, []);
+  // Normalize data safely
+  const categories = Array.isArray(categoriesRaw) ? categoriesRaw : (Array.isArray(categoriesRaw?.data) ? categoriesRaw.data : []);
+  const popularDestinations = Array.isArray(popularRaw?.data) ? popularRaw.data : (Array.isArray(popularRaw) ? popularRaw : []);
+  const hiddenGems = Array.isArray(gemsRaw?.data) ? gemsRaw.data : (Array.isArray(gemsRaw) ? gemsRaw : []);
+  const featuredBusinesses = Array.isArray(bizRaw?.data) ? bizRaw.data : (Array.isArray(bizRaw) ? bizRaw : []);
+  const promotions = Array.isArray(promoRaw?.data) ? promoRaw.data : (Array.isArray(promoRaw?.promotions) ? promoRaw.promotions : (Array.isArray(promoRaw) ? promoRaw : []));
+  const settings = systemRaw || {};
+  // Only true loading = first load with no cached data
+  const loading = loadingPopular && !popularRaw;
 
   const handleHeroSearch = (e) => {
     e.preventDefault();
@@ -113,36 +93,34 @@ export default function Home({ onOpenSearch }) {
       {/* 1. HERO SECTION */}
       <section className="relative min-h-[82vh] sm:min-h-[90vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
         
-        {/* Background Image with Dark & Golden Overlays */}
-        <div className="absolute inset-0 z-0 bg-slate-950">
+        {/* Glassmorphic Background overlay */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-slate-900/90">
           <img
             src={getFullImageUrl(settings.site_banner, "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&auto=format&fit=crop&q=85")}
             alt="Hero Background"
-            className="w-full h-full object-cover scale-105 animate-pulse duration-10000"
+            className="w-full h-full object-cover mix-blend-overlay opacity-80"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&auto=format&fit=crop&q=85";
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-black/40" />
-          <div className="absolute inset-0 bg-radial-at-c from-transparent via-transparent to-black/70" />
         </div>
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-5xl mx-auto text-center space-y-4 sm:space-y-6">
           
           {/* Welcome Tag */}
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 text-[11px] sm:text-sm font-bold shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-slate-100 text-[11px] sm:text-sm font-semibold mb-2">
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span>Discover Siem Reap, Cambodia</span>
             <span className="text-white/40">•</span>
-            <span className="text-white font-khmer">ស្វាគមន៍មកកាន់សៀមរាប</span>
+            <span className="font-khmer">ស្វាគមន៍មកកាន់សៀមរាប</span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold text-white tracking-tight font-heading leading-tight drop-shadow-md">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white tracking-tight font-heading leading-tight drop-shadow-lg">
             Discover Siem Reap <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-amber-200">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
               Your Way
             </span>
           </h1>
@@ -153,37 +131,39 @@ export default function Home({ onOpenSearch }) {
           </p>
 
           {/* Large Integrated Search Bar */}
-          <div className="max-w-4xl mx-auto pt-2 sm:pt-4">
+          <div className="max-w-4xl mx-auto pt-4 sm:pt-6">
             <form
               onSubmit={handleHeroSearch}
-              className="relative z-50 bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-2xl border border-white/40 text-left grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 items-center"
+              className="relative z-50 bg-white/10 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl border border-white/20 text-left grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center"
             >
               {/* Destination Search */}
-              <div className="lg:col-span-2 px-2.5 sm:px-3 py-1 border-b sm:border-b-0 sm:border-r border-slate-200">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="lg:col-span-2 px-2.5 sm:px-3 py-1 border-b sm:border-b-0 sm:border-r border-white/10">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-white/70">
                   Where to explore?
                 </label>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <Search className="w-4 h-4 text-orange-500 shrink-0" />
+                  <Search className="w-4 h-4 text-emerald-400 shrink-0" />
                   <input
                     type="text"
                     value={searchDestination}
                     onChange={(e) => setSearchDestination(e.target.value)}
                     placeholder="Angkor Wat, Haven, Cafés..."
-                    className="w-full text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none"
+                    className="w-full text-xs sm:text-sm font-semibold text-white placeholder-white/50 bg-transparent focus:outline-none"
                   />
                 </div>
               </div>
 
               {/* Category Dropdown */}
-              <div className="px-2.5 sm:px-3 py-1 border-b sm:border-b-0 sm:border-r border-slate-200">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="px-2.5 sm:px-3 py-1 border-b sm:border-b-0 sm:border-r border-white/10">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-white/70">
                   Category
                 </label>
                 <CustomSelect
                   value={selectedCategory}
                   onChange={setSelectedCategory}
                   placeholder="All Categories"
+                  triggerClassName="text-white bg-transparent"
+                  iconClassName="text-white/60"
                   options={categories.map((cat) => ({
                     value: cat.slug,
                     label: cat.name
@@ -192,49 +172,52 @@ export default function Home({ onOpenSearch }) {
               </div>
 
               {/* Price / Entry fee Filter */}
-              <div className="px-2.5 sm:px-3 py-1 border-b sm:border-b-0 sm:border-r border-slate-200">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="px-2.5 sm:px-3 py-1 border-b sm:border-b-0 lg:border-r border-white/10">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-white/70">
                   Admission
                 </label>
                 <CustomSelect
                   value={priceType}
                   onChange={setPriceType}
                   placeholder="Any Price"
+                  triggerClassName="text-white bg-transparent"
+                  iconClassName="text-white/60"
                   options={[
                     { value: 'free', label: 'Free Entry' },
-                    { value: 'paid', label: 'Ticketed' }
+                    { value: '$', label: 'Budget ($)' },
+                    { value: '$$', label: 'Moderate ($$)' },
+                    { value: '$$$', label: 'Premium ($$$)' },
                   ]}
                 />
               </div>
 
-              {/* Submit CTA Button */}
-              <div className="lg:col-span-1 pt-1 sm:pt-0">
-                <button
-                  type="submit"
-                  className="w-full py-3 sm:py-3.5 px-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition-all hover:scale-102 cursor-pointer"
-                >
-                  <span>Explore Now</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="lg:col-span-1 h-full w-full bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white rounded-xl flex items-center justify-center gap-2 font-bold text-xs sm:text-sm transition-all duration-300 py-3 sm:py-0 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] border border-white/20"
+              >
+                <span>Explore Now</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </form>
+          </div>
 
-            {/* Quick Filter Tags */}
-            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mt-3 sm:mt-4 text-[11px] sm:text-xs text-white/90">
-              <span className="text-white/60 text-[10px] sm:text-[11px] font-medium">Trending:</span>
-              <Link to="/destinations/angkor-wat" className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-colors">
-                Angkor Wat Sunrise
-              </Link>
-              <Link to="/destinations/ta-prohm" className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-colors">
-                Ta Prohm
-              </Link>
-              <Link to="/businesses?category=restaurants-dining" className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-colors">
-                Fish Amok Dining
-              </Link>
-              <Link to="/map" className="px-2.5 py-1 rounded-full bg-orange-500/80 hover:bg-orange-500 text-white font-bold backdrop-blur-md transition-colors flex items-center gap-1">
-                <MapPin className="w-3 h-3" /> Live Map
-              </Link>
-            </div>
+          {/* Quick Links / Trending */}
+          <div className="flex flex-wrap justify-center items-center gap-2 pt-4 sm:pt-6">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/60 mr-2">Trending:</span>
+            <Link to="/destinations?search=Angkor Wat Sunrise" className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] sm:text-xs font-semibold text-slate-100 transition-colors backdrop-blur-sm">
+              Angkor Wat Sunrise
+            </Link>
+            <Link to="/destinations?search=Ta Prohm" className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] sm:text-xs font-semibold text-slate-100 transition-colors backdrop-blur-sm">
+              Ta Prohm
+            </Link>
+            <Link to="/businesses?search=Amok" className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] sm:text-xs font-semibold text-slate-100 transition-colors backdrop-blur-sm">
+              Fish Amok Dining
+            </Link>
+            <Link to="/map" className="px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white border border-white/20 text-[10px] sm:text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5">
+              <MapPin className="w-3 h-3" />
+              Live Map
+            </Link>
           </div>
         </div>
       </section>
@@ -249,7 +232,7 @@ export default function Home({ onOpenSearch }) {
         <AdBanner placement="hero_banner" className="my-1 sm:my-2" />
 
         {/* AI Trip Planner Callout Banner */}
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white p-4.5 sm:p-7 lg:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 border border-orange-400/40">
+        <div className="relative rounded-xl sm:rounded-xl overflow-hidden bg-orange-600 text-white p-4.5 sm:p-7 lg:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 border border-orange-400/40">
           <div className="space-y-1.5 sm:space-y-2 text-center md:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-amber-100 text-[11px] sm:text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5" />
@@ -266,7 +249,7 @@ export default function Home({ onOpenSearch }) {
           <button
             type="button"
             onClick={() => setAiPlannerOpen(true)}
-            className="w-full md:w-auto justify-center px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl bg-white hover:bg-orange-50 text-orange-700 font-extrabold text-xs sm:text-sm shadow-2xl flex items-center gap-2.5 transition-all hover:scale-105 shrink-0 cursor-pointer"
+            className="w-full md:w-auto justify-center px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl sm:rounded-xl bg-white hover:bg-orange-50 text-orange-700 font-extrabold text-xs sm:text-sm shadow-md flex items-center gap-2.5 transition-all hover:scale-105 shrink-0 cursor-pointer"
           >
             <span className="text-base sm:text-lg">🤖</span>
             <span>Plan Trip with AI</span>
@@ -308,7 +291,7 @@ export default function Home({ onOpenSearch }) {
             <Link
               key={category.id}
               to={`/destinations?category=${category.slug}`}
-              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[4/3] bg-slate-900 shadow-xs hover:shadow-xl transition-all duration-300 card-hover-effect"
+              className="group relative rounded-xl sm:rounded-xl overflow-hidden aspect-[4/3] bg-slate-900 shadow-xs hover:shadow-sm transition-all duration-300 card-hover-effect"
             >
               <img
                 src={getFullImageUrl(category.image, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80')}
@@ -369,7 +352,7 @@ export default function Home({ onOpenSearch }) {
       {/* 5. CURRENT PROMOTIONS & SPECIAL OFFERS BANNER */}
       {promotions.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-slate-900 via-orange-950 to-slate-900 rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 lg:p-10 text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-gradient-to-br from-slate-900 via-orange-950 to-slate-900 rounded-xl sm:rounded-xl p-4.5 sm:p-8 lg:p-10 text-white shadow-md relative overflow-hidden">
             <div className="relative z-10">
               <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 mb-1.5 sm:mb-2">
                 <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Limited-Time Deals
@@ -385,7 +368,7 @@ export default function Home({ onOpenSearch }) {
                 {promotions.map((promo) => (
                   <div
                     key={promo.id}
-                    className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/15 flex flex-col justify-between hover:bg-white/15 transition-all"
+                    className="bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-5 border border-white/15 flex flex-col justify-between hover:bg-white/15 transition-all"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
@@ -466,7 +449,7 @@ export default function Home({ onOpenSearch }) {
 
       {/* 7. HIDDEN GEMS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-purple-950/20 border border-purple-200/50 rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 lg:p-10">
+        <div className="bg-purple-950/20 border border-purple-200/50 rounded-xl sm:rounded-xl p-4.5 sm:p-8 lg:p-10">
           <div className="flex items-end justify-between gap-3 mb-4 sm:mb-8">
             <div>
               <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-purple-700 mb-0.5 sm:mb-1">
@@ -500,7 +483,7 @@ export default function Home({ onOpenSearch }) {
 
       {/* 8. INTERACTIVE MAP TEASER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 text-white p-5 sm:p-10 lg:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+        <div className="relative rounded-xl sm:rounded-xl overflow-hidden bg-slate-900 text-white p-5 sm:p-10 lg:p-12 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
           <div className="space-y-3 sm:space-y-4 max-w-xl text-center md:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-[11px] sm:text-xs font-bold border border-orange-500/30">
               <MapPin className="w-3.5 h-3.5" /> Interactive Spatial Discovery
@@ -514,14 +497,14 @@ export default function Home({ onOpenSearch }) {
             <div className="pt-1 sm:pt-2">
               <Link
                 to="/map"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-orange-500/25 transition-all hover:scale-105"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl sm:rounded-xl bg-orange-600 hover:from-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-sm transition-all hover:scale-105"
               >
                 <Compass className="w-4 h-4" /> Open Interactive Map
               </Link>
             </div>
           </div>
 
-          <div className="w-full md:w-80 aspect-[16/10] sm:aspect-square rounded-2xl overflow-hidden border border-white/20 shadow-2xl relative shrink-0">
+          <div className="w-full md:w-80 aspect-[16/10] sm:aspect-square rounded-xl overflow-hidden border border-white/20 shadow-md relative shrink-0">
             <img
               src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80"
               alt="Map Preview"
@@ -552,8 +535,8 @@ export default function Home({ onOpenSearch }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-sm text-center space-y-2.5 sm:space-y-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto shadow-sm">
+          <div className="bg-white rounded-xl sm:rounded-xl p-5 sm:p-8 border border-slate-100 shadow-sm text-center space-y-2.5 sm:space-y-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto shadow-sm">
               <Compass className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
             <h3 className="font-bold text-base sm:text-lg text-slate-900">Curated Local Insights</h3>
@@ -562,8 +545,8 @@ export default function Home({ onOpenSearch }) {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-sm text-center space-y-2.5 sm:space-y-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+          <div className="bg-white rounded-xl sm:rounded-xl p-5 sm:p-8 border border-slate-100 shadow-sm text-center space-y-2.5 sm:space-y-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
               <Shield className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
             <h3 className="font-bold text-base sm:text-lg text-slate-900">Verified Local Partners</h3>
@@ -572,8 +555,8 @@ export default function Home({ onOpenSearch }) {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-sm text-center space-y-2.5 sm:space-y-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto shadow-sm">
+          <div className="bg-white rounded-xl sm:rounded-xl p-5 sm:p-8 border border-slate-100 shadow-sm text-center space-y-2.5 sm:space-y-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto shadow-sm">
               <Calendar className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
             <h3 className="font-bold text-base sm:text-lg text-slate-900">Smart Trip Planner</h3>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
@@ -100,7 +101,7 @@ export default function AdminMedia() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Media & Asset Library</h2>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Media & Asset Library</h2>
           <p className="text-xs text-slate-400">
             Organize and manage image assets used across tourist destinations, promotions, and partner profiles.
           </p>
@@ -108,7 +109,7 @@ export default function AdminMedia() {
 
         <button
           onClick={() => setIsUploadOpen(true)}
-          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition-all"
+          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm shadow-emerald-600/20 flex items-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Add Media Asset</span>
@@ -116,7 +117,7 @@ export default function AdminMedia() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg flex items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 overflow-x-auto">
           {[
             { label: 'All Media', value: '' },
@@ -131,7 +132,7 @@ export default function AdminMedia() {
               className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
                 categoryFilter === tab.value
                   ? 'bg-emerald-600 text-white font-semibold shadow-md'
-                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                  : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
               }`}
             >
               {tab.label}
@@ -144,19 +145,19 @@ export default function AdminMedia() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {isLoading ? (
           [...Array(12)].map((_, i) => (
-            <div key={i} className="h-40 bg-slate-900 rounded-2xl animate-pulse" />
+            <div key={i} className="h-40 bg-white rounded-xl animate-pulse" />
           ))
         ) : mediaItems.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-slate-500">
+          <div className="col-span-full text-center py-12 text-slate-400">
             No media assets found in this folder.
           </div>
         ) : (
           mediaItems.map((item) => (
             <div
               key={item.id}
-              className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg group relative flex flex-col justify-between"
+              className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm group relative flex flex-col justify-between"
             >
-              <div className="h-28 relative overflow-hidden bg-slate-950">
+              <div className="h-28 relative overflow-hidden bg-slate-50">
                 <img
                   src={getFullImageUrl(item.file_path, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400')}
                   alt={item.title}
@@ -166,17 +167,17 @@ export default function AdminMedia() {
                     e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400';
                   }}
                 />
-                <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <div className="absolute inset-0 bg-slate-50/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button
                     onClick={() => handleCopyUrl(item.file_path, item.id)}
-                    className="p-1.5 bg-slate-800/90 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                    className="p-1.5 bg-slate-100/90 text-white rounded-lg hover:bg-emerald-600 transition-colors"
                     title="Copy URL"
                   >
-                    {copiedId === item.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedId === item.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                   <button
                     onClick={() => setItemToDelete(item)}
-                    className="p-1.5 bg-slate-800/90 text-white rounded-lg hover:bg-rose-600 transition-colors"
+                    className="p-1.5 bg-slate-100/90 text-white rounded-lg hover:bg-rose-600 transition-colors"
                     title="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -185,10 +186,10 @@ export default function AdminMedia() {
               </div>
 
               <div className="p-2.5">
-                <p className="text-[11px] font-bold text-white truncate" title={item.title}>
+                <p className="text-[11px] font-bold text-slate-900 truncate" title={item.title}>
                   {item.title}
                 </p>
-                <span className="text-[9px] text-slate-500 uppercase font-semibold block mt-0.5">
+                <span className="text-[9px] text-slate-400 uppercase font-semibold block mt-0.5">
                   {item.category}
                 </span>
               </div>
@@ -199,48 +200,48 @@ export default function AdminMedia() {
 
       {/* Upload Asset Modal */}
       {isUploadOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50/80 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 shadow-md relative text-left">
             <button
               onClick={() => setIsUploadOpen(false)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-100"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-base font-bold text-white mb-4">Add Media Asset</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-4">Add Media Asset</h3>
 
             <form onSubmit={handleUpload} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Asset Title</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Asset Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Bayon Sunset View"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Image URL</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Image URL</label>
                 <input
                   type="url"
                   required
                   placeholder="https://images.unsplash.com/photo-..."
                   value={formData.file_path}
                   onChange={(e) => setFormData({ ...formData, file_path: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Folder Category</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Folder Category</label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 >
                   <option value="destinations">Destinations</option>
                   <option value="businesses">Businesses</option>
@@ -250,13 +251,13 @@ export default function AdminMedia() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Alt Text Description</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Alt Text Description</label>
                 <input
                   type="text"
                   placeholder="Descriptive caption for accessibility..."
                   value={formData.alt_text}
                   onChange={(e) => setFormData({ ...formData, alt_text: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 />
               </div>
 
@@ -264,7 +265,7 @@ export default function AdminMedia() {
                 <button
                   type="button"
                   onClick={() => setIsUploadOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 text-xs font-medium"
+                  className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-medium"
                 >
                   Cancel
                 </button>

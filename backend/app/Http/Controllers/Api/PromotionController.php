@@ -20,7 +20,8 @@ class PromotionController extends Controller
                 ->where('end_date', '>=', now()->toDateString())
                 ->with(['business.category'])
                 ->latest()
-                ->paginate(12);
+                ->paginate(12)
+                ->toArray();
         });
 
         return response()->json($promotions);

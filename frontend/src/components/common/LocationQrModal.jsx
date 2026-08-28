@@ -30,7 +30,7 @@ export default function LocationQrModal({ isOpen, onClose, placeName, url, khmer
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 p-6 space-y-6 text-center">
+      <div className="relative w-full max-w-sm bg-white rounded-xl shadow-md overflow-hidden border border-slate-100 p-6 space-y-6 text-center">
         
         {/* Close Button */}
         <button
@@ -43,7 +43,7 @@ export default function LocationQrModal({ isOpen, onClose, placeName, url, khmer
 
         {/* Header */}
         <div className="space-y-1">
-          <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto shadow-inner">
+          <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto shadow-inner">
             <QrCode className="w-6 h-6" />
           </div>
           <h3 className="font-extrabold text-base text-slate-900 pt-1">{placeName}</h3>
@@ -54,7 +54,7 @@ export default function LocationQrModal({ isOpen, onClose, placeName, url, khmer
         </div>
 
         {/* QR Image Container */}
-        <div className="relative inline-block p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-inner">
+        <div className="relative inline-block p-4 rounded-xl bg-slate-50 border border-slate-200/80 shadow-inner">
           <img
             src={qrImageUrl}
             alt="Place QR Code"
@@ -79,7 +79,7 @@ export default function LocationQrModal({ isOpen, onClose, placeName, url, khmer
           <button
             type="button"
             onClick={handleDownload}
-            className="py-2.5 px-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-orange-500/20 transition-all cursor-pointer"
+            className="py-2.5 px-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-sm transition-all cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Download QR</span>

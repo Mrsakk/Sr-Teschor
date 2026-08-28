@@ -187,7 +187,7 @@ export default function KhqrPaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-white rounded-xl shadow-md overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200">
         
         {/* Top Official Bakong Red Bar Header */}
         <div className="bg-gradient-to-r from-red-600 via-red-600 to-rose-700 p-5 text-white relative overflow-hidden">
@@ -230,7 +230,7 @@ export default function KhqrPaymentModal({
           ) : paymentSuccess ? (
             /* Success State */
             <div className="py-8 text-center space-y-4 animate-in zoom-in-95 duration-300">
-              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
+              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm shadow-sm">
                 <CheckCircle2 className="w-12 h-12" />
               </div>
               <div>
@@ -245,7 +245,7 @@ export default function KhqrPaymentModal({
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1">
                 <div className="flex justify-between text-slate-500">
                   <span>Amount Paid</span>
                   <span className="font-bold text-slate-900">${Number(amount).toFixed(2)} USD</span>
@@ -264,14 +264,14 @@ export default function KhqrPaymentModal({
             /* QR Code Display & Scan View */
             <>
               {errorMsg && (
-                <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
                   <span>{errorMsg}</span>
                 </div>
               )}
 
               {/* Amount Display */}
-              <div className="text-center bg-slate-50 rounded-2xl p-3 border border-slate-100">
+              <div className="text-center bg-slate-50 rounded-xl p-3 border border-slate-100">
                 <div className="text-xs text-slate-500 font-semibold mb-0.5">
                   {itemTitle || 'Total Payment Due'}
                 </div>
@@ -289,7 +289,7 @@ export default function KhqrPaymentModal({
               </div>
 
               {/* QR Code Container */}
-              <div className="relative mx-auto w-64 h-64 p-3 bg-white rounded-3xl border-2 border-red-500/30 shadow-xl shadow-red-500/10 flex flex-col items-center justify-center group">
+              <div className="relative mx-auto w-64 h-64 p-3 bg-white rounded-xl border-2 border-red-500/30 shadow-sm shadow-sm flex flex-col items-center justify-center group">
                 
                 {/* Decorative Red Corner Marks */}
                 <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-red-600 rounded-tl-lg" />
@@ -326,7 +326,7 @@ export default function KhqrPaymentModal({
               </div>
 
               {/* Supported Apps Pills */}
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">
                   Scan with any Bakong Supported App
                 </p>
@@ -347,7 +347,7 @@ export default function KhqrPaymentModal({
                 {khqrData?.deep_link && (
                   <a
                     href={khqrData.deep_link}
-                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-xs shadow-md shadow-red-600/20 flex items-center justify-center gap-2 transition-all"
+                    className="w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-sm flex items-center justify-center gap-2 transition-all"
                   >
                     <Smartphone className="w-4 h-4" />
                     <span>Open in Bakong App</span>
@@ -358,7 +358,7 @@ export default function KhqrPaymentModal({
                 <button
                   onClick={() => handleVerify(true)}
                   disabled={verifying}
-                  className="w-full py-2.5 px-4 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs shadow-sm flex items-center justify-center gap-2 transition-all"
+                  className="w-full py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs shadow-sm flex items-center justify-center gap-2 transition-all"
                 >
                   {verifying ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />

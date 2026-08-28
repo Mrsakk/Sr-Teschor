@@ -122,15 +122,15 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/75 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[92vh] my-auto notranslate" translate="no">
+      <div className="relative w-full max-w-2xl bg-white rounded-xl sm:rounded-xl shadow-md overflow-hidden border border-slate-100 flex flex-col max-h-[92vh] my-auto notranslate" translate="no">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-500 text-white p-4 sm:p-6 relative overflow-hidden shrink-0 shadow-md">
+        <div className="bg-orange-600 text-white p-4 sm:p-6 relative overflow-hidden shrink-0 shadow-md">
           <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
           
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5 sm:gap-3">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl sm:text-2xl shadow-inner border border-white/30 shrink-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl sm:text-2xl shadow-inner border border-white/30 shrink-0">
                 ✨
               </div>
               <div>
@@ -163,20 +163,20 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
             <div className="space-y-5 sm:space-y-6">
               
               {/* Language Selector */}
-              <div className="flex items-center justify-between bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+              <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
                 <span className="text-xs font-bold text-slate-700">🌐 ភាសាកាលវិភាគ:</span>
                 <div className="flex gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
                   <button
                     type="button"
                     onClick={() => setLang('km')}
-                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${lang === 'km' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${lang === 'km' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 hover:text-white'}`}
                   >
                     🇰🇭 ខ្មែរ
                   </button>
                   <button
                     type="button"
                     onClick={() => setLang('en')}
-                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${lang === 'en' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${lang === 'en' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 hover:text-white'}`}
                   >
                     🇬🇧 English
                   </button>
@@ -194,9 +194,9 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
                       key={d}
                       type="button"
                       onClick={() => setDuration(d)}
-                      className={`py-2.5 sm:py-3 rounded-xl sm:rounded-2xl border text-center font-black text-xs transition-all cursor-pointer ${
+                      className={`py-2.5 sm:py-3 rounded-xl sm:rounded-xl border text-center font-black text-xs transition-all cursor-pointer ${
                         duration === d
-                          ? 'border-orange-500 bg-orange-500 text-white shadow-md shadow-orange-500/20 scale-[1.02]'
+                          ? 'border-orange-500 bg-orange-500 text-white shadow-md shadow-sm scale-[1.02]'
                           : 'border-slate-200 bg-white hover:border-orange-300 text-slate-700 shadow-2xs'
                       }`}
                     >
@@ -225,7 +225,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
                       key={item.id}
                       type="button"
                       onClick={() => setStyle(item.id)}
-                      className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 ${
+                      className={`p-2.5 sm:p-3 rounded-xl sm:rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 ${
                         style === item.id
                           ? 'border-orange-500 bg-orange-50/80 text-orange-950 ring-2 ring-orange-400/40 shadow-xs'
                           : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700 shadow-2xs'
@@ -260,9 +260,9 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
                       key={b.id}
                       type="button"
                       onClick={() => setBudget(b.id)}
-                      className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-center transition-all cursor-pointer ${
+                      className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-xl border text-center transition-all cursor-pointer ${
                         budget === b.id
-                          ? 'border-orange-500 bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                          ? 'border-orange-500 bg-orange-500 text-white shadow-md shadow-sm'
                           : 'border-slate-200 bg-white hover:border-orange-300 text-slate-700 shadow-2xs'
                       }`}
                     >
@@ -278,7 +278,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={handleGenerate}
-                className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
+                className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-xl bg-orange-600 hover:from-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
               >
                 <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-200 animate-spin" />
                 <span>បង្កើតកាលវិភាគឆ្លាតវៃជាមួយ AI</span>
@@ -289,7 +289,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
           {/* STEP 2: GENERATING ANIMATION */}
           {step === 'generating' && (
             <div className="py-14 sm:py-16 text-center space-y-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-orange-500 to-amber-400 text-white flex items-center justify-center mx-auto shadow-xl shadow-orange-500/30 animate-bounce">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-xl bg-gradient-to-tr from-orange-500 to-amber-400 text-white flex items-center justify-center mx-auto shadow-sm shadow-sm animate-bounce">
                 <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
               </div>
               <div className="space-y-1">
@@ -308,7 +308,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
             <div className="space-y-4 sm:space-y-5">
               
               {/* Plan Summary Card */}
-              <div className="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+              <div className="bg-white p-4 sm:p-5 rounded-xl sm:rounded-xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 font-extrabold text-[10px] uppercase">
@@ -323,7 +323,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
                   </h3>
                 </div>
 
-                <div className="text-left sm:text-right bg-orange-50/80 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-orange-200/80 w-full sm:w-auto">
+                <div className="text-left sm:text-right bg-orange-50/80 p-2.5 sm:p-3 rounded-xl sm:rounded-xl border border-orange-200/80 w-full sm:w-auto">
                   <p className="text-[10px] font-bold text-slate-500 uppercase">Estimated Total</p>
                   <p className="text-base sm:text-lg font-black text-orange-600">
                     ${generatedPlan.estimated_total_usd} <span className="text-xs font-normal text-slate-500">USD</span>
@@ -351,7 +351,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
 
               {/* Day Timeline Activities */}
               {generatedPlan.days.filter((d) => d.day === activeDayTab).map((d) => (
-                <div key={d.day} className="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xs space-y-3 sm:space-y-4">
+                <div key={d.day} className="bg-white p-4 sm:p-5 rounded-xl sm:rounded-xl border border-slate-200 shadow-2xs space-y-3 sm:space-y-4">
                   <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-orange-500 shrink-0" />
                     <span>{d.title}</span>
@@ -383,7 +383,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={() => setStep('input')}
-                  className="px-4 py-3 rounded-xl sm:rounded-2xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
+                  className="px-4 py-3 rounded-xl sm:rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
                 >
                   <RotateCcw className="w-4 h-4 text-slate-500 shrink-0" />
                   <span>បង្កើតសារជាថ្មី (Re-generate)</span>
@@ -393,7 +393,7 @@ export default function AITripPlannerModal({ isOpen, onClose }) {
                   type="button"
                   onClick={handleSaveTrip}
                   disabled={saving}
-                  className="flex-1 py-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white font-extrabold text-xs shadow-md shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
+                  className="flex-1 py-3 rounded-xl sm:rounded-xl bg-orange-600 hover:from-orange-600 text-white font-extrabold text-xs shadow-md shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
                 >
                   {saving ? (
                     <>

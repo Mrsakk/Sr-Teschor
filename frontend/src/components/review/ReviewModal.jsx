@@ -47,7 +47,7 @@ export default function ReviewModal({ type, target, isOpen, onClose, onSuccess }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-md border border-slate-100 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="bg-slate-900 text-white p-6 relative">
@@ -121,7 +121,7 @@ export default function ReviewModal({ type, target, isOpen, onClose, onSuccess }
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="What made this place special? Any tips on best time, photography angles, or favorite dishes?"
-              className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
             />
           </div>
 
@@ -129,7 +129,7 @@ export default function ReviewModal({ type, target, isOpen, onClose, onSuccess }
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm shadow-lg shadow-orange-500/25 transition-all disabled:opacity-50"
+            className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-sm shadow-lg shadow-sm transition-all disabled:opacity-50"
           >
             {loading ? 'Submitting Review...' : 'Publish Review'}
           </button>

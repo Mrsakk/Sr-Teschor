@@ -110,12 +110,12 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-2xl h-[90vh] max-h-[720px] shadow-2xl border border-slate-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl w-full max-w-2xl h-[90vh] max-h-[720px] shadow-md border border-slate-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* Header Bar */}
-        <div className="p-4 sm:p-5 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white flex items-center justify-between shadow-md relative z-10">
+        <div className="p-4 sm:p-5 bg-orange-600 text-white flex items-center justify-between shadow-md relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
               <Sparkles className="w-5 h-5 text-yellow-200 animate-pulse" />
             </div>
             <div>
@@ -174,7 +174,7 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
               onClose();
               if (onOpenPlanner) onOpenPlanner();
             }}
-            className="px-3 py-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white rounded-xl font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer text-[11px]"
+            className="px-3 py-1 bg-orange-600 hover:from-orange-600 text-white rounded-xl font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer text-[11px]"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>AI Itinerary Planner</span>
@@ -189,16 +189,16 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
               className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs mt-1">
+                <div className="w-8 h-8 rounded-xl bg-orange-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs mt-1">
                   <Bot className="w-4 h-4" />
                 </div>
               )}
 
               <div className={`max-w-[85%] sm:max-w-[78%] space-y-3`}>
                 <div
-                  className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
+                  className={`p-4 rounded-xl text-xs sm:text-sm leading-relaxed ${
                     msg.sender === 'user'
-                      ? 'bg-orange-500 text-white font-medium rounded-tr-xs shadow-md shadow-orange-500/15'
+                      ? 'bg-orange-500 text-white font-medium rounded-tr-xs shadow-md shadow-sm'
                       : 'bg-white text-slate-800 border border-slate-200/80 shadow-xs rounded-tl-xs whitespace-pre-line'
                   }`}
                 >
@@ -271,10 +271,10 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
           {/* Typing Indicator */}
           {isLoading && (
             <div className="flex gap-3 items-center">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-orange-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="px-4 py-3 bg-white rounded-2xl rounded-tl-xs border border-slate-200 shadow-xs flex items-center gap-2 text-xs text-slate-500">
+              <div className="px-4 py-3 bg-white rounded-xl rounded-tl-xs border border-slate-200 shadow-xs flex items-center gap-2 text-xs text-slate-500">
                 <RefreshCw className="w-3.5 h-3.5 text-orange-500 animate-spin" />
                 <span>SR TesChor AI កំពុងគិត និងស្វែងរកព័ត៌មាន...</span>
               </div>
@@ -297,12 +297,12 @@ export default function AITravelConciergeModal({ isOpen, onClose, onOpenPlanner 
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder={lang === 'km' ? "សួរពីតម្លៃសំបុត្រ ទីតាំងដើរលេង ម្ហូបអាហារ..." : "Ask about tickets, sunrise, food, transport..."}
-              className="flex-1 px-4 py-3 bg-slate-100 focus:bg-white rounded-2xl border border-transparent focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-xs sm:text-sm text-slate-800 outline-none transition-all placeholder:text-slate-400"
+              className="flex-1 px-4 py-3 bg-slate-100 focus:bg-white rounded-xl border border-transparent focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-xs sm:text-sm text-slate-800 outline-none transition-all placeholder:text-slate-400"
             />
             <button
               type="submit"
               disabled={!inputMessage.trim() || isLoading}
-              className="px-4 sm:px-5 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-orange-500/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer flex-shrink-0"
+              className="px-4 sm:px-5 py-3 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer flex-shrink-0"
             >
               <Send className="w-4 h-4" />
               <span className="hidden sm:inline">Send</span>

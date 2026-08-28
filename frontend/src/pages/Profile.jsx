@@ -97,7 +97,7 @@ export default function Profile() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
         
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
+        <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
           <h3 className="font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2 font-heading">
             <User className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
             <span>ព័ត៌មានផ្ទាល់ខ្លួន (Personal Info)</span>
@@ -152,7 +152,7 @@ export default function Profile() {
             <div className="space-y-2.5 sm:space-y-3 pt-1">
               <label className="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase">រូបតំណាង (Profile Photo)</label>
               
-              <div className="flex items-center gap-3 sm:gap-4 bg-slate-50 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-slate-200">
+              <div className="flex items-center gap-3 sm:gap-4 bg-slate-50 p-3 sm:p-3.5 rounded-xl sm:rounded-xl border border-slate-200">
                 <UserAvatar user={{ ...user, avatar, name }} size="lg" />
                 <div className="space-y-1 flex-1 min-w-0">
                   <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-orange-400 text-slate-700 text-xs font-bold rounded-xl cursor-pointer shadow-2xs transition-colors">
@@ -202,7 +202,7 @@ export default function Profile() {
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="w-full py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
+                className="w-full py-3 sm:py-3.5 rounded-xl sm:rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
               >
                 {savingProfile ? 'កំពុងរក្សាទុក...' : 'រក្សាទុកព័ត៌មាន (Save Changes)'}
               </button>
@@ -211,7 +211,7 @@ export default function Profile() {
         </div>
 
         {/* Password Security Card */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
+        <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
           <h3 className="font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2 font-heading">
             <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
             <span>ប្តូរពាក្យសម្ងាត់ (Change Password)</span>
@@ -272,7 +272,7 @@ export default function Profile() {
               <button
                 type="submit"
                 disabled={savingPassword}
-                className="w-full py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
+                className="w-full py-3 sm:py-3.5 rounded-xl sm:rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
               >
                 {savingPassword ? 'កំពុងផ្លាស់ប្តូរ...' : 'ប្តូរពាក្យសម្ងាត់ (Update Password)'}
               </button>

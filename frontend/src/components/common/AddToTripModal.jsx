@@ -102,12 +102,12 @@ export default function AddToTripModal({ isOpen, onClose, destination, business 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden p-6 space-y-6">
+      <div className="bg-white w-full max-w-lg rounded-xl shadow-md border border-slate-100 overflow-hidden p-6 space-y-6">
         
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
@@ -124,7 +124,7 @@ export default function AddToTripModal({ isOpen, onClose, destination, business 
         </div>
 
         {/* Selected Item Preview */}
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
           <img
             src={targetImage}
             alt={targetTitle}
@@ -207,7 +207,7 @@ export default function AddToTripModal({ isOpen, onClose, destination, business 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-orange-500/20"
+              className="w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-sm"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Create & Continue
             </button>
@@ -289,7 +289,7 @@ export default function AddToTripModal({ isOpen, onClose, destination, business 
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-orange-500/20 disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-sm disabled:opacity-50"
               >
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} Save to Trip
               </button>

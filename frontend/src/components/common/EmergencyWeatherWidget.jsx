@@ -17,7 +17,7 @@ export default function EmergencyWeatherWidget() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-slate-900/5 border border-orange-200/70 rounded-3xl p-3.5 sm:p-5 shadow-xs">
+    <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-slate-900/5 border border-orange-200/70 rounded-xl p-3.5 sm:p-5 shadow-xs">
       
       {/* Top Row: Weather & Sunrise Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -26,7 +26,7 @@ export default function EmergencyWeatherWidget() {
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           {/* Weather Info */}
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-sm shrink-0">
               <Sun className="w-5 h-5 sm:w-6 sm:h-6 animate-spin duration-10000" />
             </div>
             <div>
@@ -42,7 +42,7 @@ export default function EmergencyWeatherWidget() {
           </div>
 
           {/* Sunrise & Sunset Times */}
-          <div className="flex items-center gap-2 text-[11px] sm:text-xs bg-white/90 px-3 py-1.5 rounded-2xl border border-orange-100 shadow-2xs">
+          <div className="flex items-center gap-2 text-[11px] sm:text-xs bg-white/90 px-3 py-1.5 rounded-xl border border-orange-100 shadow-2xs">
             <div className="flex items-center gap-1 text-orange-700 font-bold">
               <Sun className="w-3.5 h-3.5 text-amber-500 shrink-0" />
               <span>ថ្ងៃរះ: 05:45 AM</span>
@@ -59,7 +59,7 @@ export default function EmergencyWeatherWidget() {
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer w-full sm:w-auto"
+          className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer w-full sm:w-auto"
         >
           <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
           <span>លេខសង្គ្រោះបន្ទាន់ (Emergency)</span>
@@ -75,7 +75,7 @@ export default function EmergencyWeatherWidget() {
           {/* Tourist Police */}
           <a
             href="tel:+85563963440"
-            className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-200/80 hover:border-orange-300 transition-all group"
+            className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200/80 hover:border-orange-300 transition-all group"
           >
             <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
               <ShieldAlert className="w-4 h-4" />
@@ -91,7 +91,7 @@ export default function EmergencyWeatherWidget() {
           {/* Hospital */}
           <a
             href="tel:+85563963409"
-            className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-200/80 hover:border-orange-300 transition-all group"
+            className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200/80 hover:border-orange-300 transition-all group"
           >
             <div className="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
               <HeartHandshake className="w-4 h-4" />
@@ -107,7 +107,7 @@ export default function EmergencyWeatherWidget() {
           {/* Emergency Ambulance */}
           <a
             href="tel:119"
-            className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-200/80 hover:border-orange-300 transition-all group"
+            className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200/80 hover:border-orange-300 transition-all group"
           >
             <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
               <PhoneCall className="w-4 h-4" />

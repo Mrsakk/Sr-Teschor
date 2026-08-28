@@ -38,7 +38,7 @@ export default function BusinessCard({ business, onRequireAuth, onQuickBook }) {
   const coverImg = getFullImageUrl(rawCover, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80');
 
   return (
-    <div className="group bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-100 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col h-full card-hover-effect">
+    <div className="group bg-white rounded-xl sm:rounded-xl overflow-hidden border border-slate-100 shadow-xs hover:shadow-sm transition-all duration-300 flex flex-col h-full card-hover-effect">
       
       {/* Cover Image & Badges */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">

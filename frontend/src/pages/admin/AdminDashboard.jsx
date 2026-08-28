@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/endpoints';
+import { useQuery } from '@tanstack/react-query';
 import StatCard from '../../components/admin/StatCard';
 import {
   Users,
@@ -38,37 +39,28 @@ import {
 } from 'recharts';
 
 export default function AdminDashboard() {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // ── Instant from cache on revisit (stale 2min) ──
+  const { data, isLoading: isLoading } = useQuery({
+    queryKey: ['admin', 'dashboard'],
+    queryFn: () => adminApi.getDashboard().then(r => r.data),
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getDashboard();
-      setData(res.data);
-    } catch (err) {
-      console.error('Failed to load dashboard data:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const fetchDashboardData = () => {}; // kept for any manual refresh buttons
 
   if (isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-8 bg-slate-900 rounded-xl w-64" />
+        <div className="h-8 bg-white rounded-xl w-64" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-32 bg-slate-900 rounded-2xl" />
+            <div key={i} className="h-32 bg-white rounded-xl" />
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="h-80 bg-slate-900 rounded-2xl" />
-          <div className="h-80 bg-slate-900 rounded-2xl" />
+          <div className="h-80 bg-white rounded-xl" />
+          <div className="h-80 bg-white rounded-xl" />
         </div>
       </div>
     );
@@ -84,8 +76,8 @@ export default function AdminDashboard() {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700 p-3.5 rounded-2xl shadow-2xl text-xs space-y-1.5 min-w-[170px]">
-          <p className="font-bold text-white mb-1.5 border-b border-slate-700/60 pb-1 flex items-center justify-between">
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200 p-3.5 rounded-xl shadow-md text-xs space-y-1.5 min-w-[170px]">
+          <p className="font-bold text-slate-900 mb-1.5 border-b border-slate-100 pb-1 flex items-center justify-between">
             <span>{label}</span>
             <span className="text-[10px] text-slate-400 font-normal">Analytics</span>
           </p>
@@ -106,7 +98,7 @@ export default function AdminDashboard() {
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
                   {entry.name}:
                 </span>
-                <span className="font-bold text-white">{formattedVal}</span>
+                <span className="font-bold text-slate-900">{formattedVal}</span>
               </div>
             );
           })}
@@ -119,15 +111,15 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Top Banner & Quick Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 border border-emerald-500/20 p-5 rounded-3xl shadow-xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-50 via-white to-white border border-emerald-200 p-5 rounded-xl shadow-sm">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-600 border border-emerald-500/30">
               Live Monitoring
             </span>
             <span className="text-xs text-slate-400">Siem Reap, Cambodia</span>
           </div>
-          <h2 className="text-xl font-bold text-white">Platform Health & Growth Overview</h2>
+          <h2 className="text-xl font-bold text-slate-900">Platform Health & Growth Overview</h2>
           <p className="text-xs text-slate-400 mt-0.5">
             Real-time analytics across tourist engagement, business verifications, and financial streams.
           </p>
@@ -136,14 +128,14 @@ export default function AdminDashboard() {
         <div className="flex items-center gap-2.5 shrink-0">
           <Link
             to="/admin/businesses/pending"
-            className="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-600 text-xs font-semibold flex items-center gap-1.5 transition-colors"
           >
             <AlertCircle className="w-4 h-4" />
             <span>Verify Businesses ({quickCounts.businesses || 0})</span>
           </Link>
           <Link
             to="/admin/destinations"
-            className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition-all"
+            className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm shadow-emerald-600/20 flex items-center gap-1.5 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Add Destination</span>
@@ -231,13 +223,13 @@ export default function AdminDashboard() {
       {/* Recharts Data Visualizations Grid (Row 1: Revenue Trends & User Growth) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue Breakdown Trend (AreaChart) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 lg:p-6 shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 lg:p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white">Revenue Inflow by Streams ($ USD)</h3>
+              <h3 className="text-sm font-bold text-slate-900">Revenue Inflow by Streams ($ USD)</h3>
               <p className="text-xs text-slate-400">Monthly subscription, ad, and commission breakdown</p>
             </div>
-            <Link to="/admin/revenue" className="text-xs text-emerald-400 hover:underline flex items-center gap-1">
+            <Link to="/admin/revenue" className="text-xs text-emerald-600 hover:underline flex items-center gap-1">
               Financials <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -269,13 +261,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* User Community Growth (LineChart) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 lg:p-6 shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 lg:p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white">Tourist & User Acquisition</h3>
+              <h3 className="text-sm font-bold text-slate-900">Tourist & User Acquisition</h3>
               <p className="text-xs text-slate-400">Total active registered users vs new signups</p>
             </div>
-            <Link to="/admin/users" className="text-xs text-emerald-400 hover:underline flex items-center gap-1">
+            <Link to="/admin/users" className="text-xs text-emerald-600 hover:underline flex items-center gap-1">
               All Users <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -299,13 +291,13 @@ export default function AdminDashboard() {
       {/* Row 2: Bookings Volume & Category Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Bookings Volume (BarChart) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 lg:p-6 shadow-xl lg:col-span-2">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 lg:p-6 shadow-sm lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white">Monthly Reservations & Completion</h3>
+              <h3 className="text-sm font-bold text-slate-900">Monthly Reservations & Completion</h3>
               <p className="text-xs text-slate-400">Completed tours vs cancelled/rejected reservations</p>
             </div>
-            <Link to="/admin/bookings" className="text-xs text-emerald-400 hover:underline flex items-center gap-1">
+            <Link to="/admin/bookings" className="text-xs text-emerald-600 hover:underline flex items-center gap-1">
               Bookings <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -326,10 +318,10 @@ export default function AdminDashboard() {
         </div>
 
         {/* Categories Distribution (PieChart) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 lg:p-6 shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 lg:p-6 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold text-white">Place Categories</h3>
-            <Link to="/admin/categories" className="text-xs text-emerald-400 hover:underline">
+            <h3 className="text-sm font-bold text-slate-900">Place Categories</h3>
+            <Link to="/admin/categories" className="text-xs text-emerald-600 hover:underline">
               Manage
             </Link>
           </div>
@@ -358,7 +350,7 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-2 gap-1.5 mt-2 text-[11px]">
             {(charts.categories_distribution || []).slice(0, 4).map((cat, idx) => (
-              <div key={idx} className="flex items-center gap-1.5 truncate text-slate-300">
+              <div key={idx} className="flex items-center gap-1.5 truncate text-slate-700">
                 <div
                   className="w-2.5 h-2.5 rounded-full shrink-0"
                   style={{ backgroundColor: PIE_COLORS[idx % PIE_COLORS.length] }}
@@ -373,13 +365,13 @@ export default function AdminDashboard() {
       {/* Row 3: Popular Destinations & Live Activity Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Popular Destinations Ranking (Horizontal Bars) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 lg:p-6 shadow-xl lg:col-span-2">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 lg:p-6 shadow-sm lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white">Most Visited Tourist Attractions</h3>
+              <h3 className="text-sm font-bold text-slate-900">Most Visited Tourist Attractions</h3>
               <p className="text-xs text-slate-400">Top ranked destinations by platform views & engagement</p>
             </div>
-            <Link to="/admin/destinations" className="text-xs text-emerald-400 hover:underline flex items-center gap-1">
+            <Link to="/admin/destinations" className="text-xs text-emerald-600 hover:underline flex items-center gap-1">
               Catalog <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -402,13 +394,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Live Activity Stream */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 lg:p-6 shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 lg:p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              <h3 className="text-sm font-bold text-white">Live Activity Stream</h3>
+              <h3 className="text-sm font-bold text-slate-900">Live Activity Stream</h3>
             </div>
-            <Link to="/admin/activity-logs" className="text-xs text-emerald-400 hover:underline">
+            <Link to="/admin/activity-logs" className="text-xs text-emerald-600 hover:underline">
               Audit Logs
             </Link>
           </div>
@@ -416,15 +408,15 @@ export default function AdminDashboard() {
           <div className="space-y-3.5">
             {recentActivities.map((act) => (
               <div key={act.id} className="flex items-start gap-3 text-xs">
-                <div className="p-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 shrink-0 mt-0.5">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="p-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 shrink-0 mt-0.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white truncate">{act.title}</p>
+                  <p className="font-semibold text-slate-900 truncate">{act.title}</p>
                   <p className="text-slate-400 text-[11px] leading-snug line-clamp-2 mt-0.5">
                     {act.description}
                   </p>
-                  <span className="text-[10px] text-slate-500 mt-1 block">{act.time}</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">{act.time}</span>
                 </div>
               </div>
             ))}

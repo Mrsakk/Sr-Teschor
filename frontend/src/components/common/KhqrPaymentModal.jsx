@@ -87,7 +87,7 @@ export default function KhqrPaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[95vh]">
+      <div className="relative w-full max-w-sm bg-white rounded-xl shadow-md overflow-hidden border border-slate-100 flex flex-col max-h-[95vh]">
         
         {/* KHQR Header Banner */}
         <div className="bg-[#E11D48] text-white p-4 relative text-center">
@@ -125,7 +125,7 @@ export default function KhqrPaymentModal({
           ) : (
             <>
               {/* Merchant Details */}
-              <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/70 text-left text-xs space-y-1">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70 text-left text-xs space-y-1">
                 <div className="flex justify-between items-center text-slate-500 text-[11px]">
                   <span>Merchant:</span>
                   <span className="font-bold text-slate-800">SR TECHOR HUB (SIEM REAP)</span>
@@ -151,7 +151,7 @@ export default function KhqrPaymentModal({
               </div>
 
               {/* KHQR Code Display Box */}
-              <div className="relative p-3 bg-slate-50 rounded-2xl border border-slate-200 inline-block shadow-inner">
+              <div className="relative p-3 bg-slate-50 rounded-xl border border-slate-200 inline-block shadow-inner">
                 <img
                   src={qrImage}
                   alt="KHQR Code"
@@ -174,7 +174,7 @@ export default function KhqrPaymentModal({
                 type="button"
                 onClick={handleSimulatePayment}
                 disabled={isProcessing}
-                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all hover:scale-102 cursor-pointer"
+                className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg shadow-sm flex items-center justify-center gap-2 transition-all hover:scale-102 cursor-pointer"
               >
                 {isProcessing ? (
                   <span>កំពុងផ្ទៀងផ្ទាត់ការទូទាត់...</span>

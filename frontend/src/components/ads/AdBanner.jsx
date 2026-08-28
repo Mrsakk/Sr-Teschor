@@ -83,7 +83,7 @@ export default function AdBanner({
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`group relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 p-4 shadow-xl hover:border-amber-400/60 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer ${className}`}
+        className={`group relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 p-4 shadow-sm hover:border-amber-400/60 hover:shadow-md hover:shadow-sm transition-all duration-300 cursor-pointer ${className}`}
       >
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold uppercase tracking-wider">
@@ -99,7 +99,7 @@ export default function AdBanner({
         </div>
 
         {currentAd.image && (
-          <div className="relative h-36 w-full rounded-2xl overflow-hidden mb-3.5 shadow-md">
+          <div className="relative h-36 w-full rounded-xl overflow-hidden mb-3.5 shadow-md">
             <img
               src={currentAd.image}
               alt={currentAd.title}
@@ -162,7 +162,7 @@ export default function AdBanner({
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-amber-500/30 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 shadow-xl hover:shadow-2xl hover:shadow-amber-500/15 hover:border-amber-400/70 transition-all duration-300 cursor-pointer p-3.5 sm:p-5 ${className}`}
+      className={`group relative overflow-hidden rounded-xl sm:rounded-xl border border-amber-500/30 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 shadow-sm hover:shadow-md hover:shadow-sm hover:border-amber-400/70 transition-all duration-300 cursor-pointer p-3.5 sm:p-5 ${className}`}
     >
       {/* Decorative Ambient Background Glow */}
       <div className="absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-bl from-amber-500/15 via-orange-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -171,7 +171,7 @@ export default function AdBanner({
       <div className="relative z-10 flex flex-col md:flex-row items-center gap-3.5 sm:gap-6">
 
         {/* 1. VISUAL IMAGE PREVIEW (Left Card) */}
-        <div className="relative w-full md:w-56 lg:w-64 h-36 sm:h-44 md:h-36 shrink-0 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border border-white/10 group-hover:border-amber-400/40 transition-colors">
+        <div className="relative w-full md:w-56 lg:w-64 h-36 sm:h-44 md:h-36 shrink-0 rounded-xl sm:rounded-xl overflow-hidden shadow-lg border border-white/10 group-hover:border-amber-400/40 transition-colors">
           <img
             src={currentAd.image}
             alt={currentAd.title}
@@ -274,7 +274,7 @@ export default function AdBanner({
           {/* Glowing CTA Button */}
           <button
             type="button"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-orange-500/25 group-hover:shadow-amber-500/40 group-hover:scale-102 transition-all duration-300 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-xl bg-amber-600 bg-[length:200%_auto] hover:bg-right text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-sm group-hover:shadow-sm group-hover:scale-102 transition-all duration-300 cursor-pointer"
           >
             <span className="font-khmer font-bold">ស្វែងរក ឬកក់ឥឡូវនេះ</span>
             <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />

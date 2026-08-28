@@ -129,7 +129,7 @@ export default function AITravelConciergeWidget() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group relative px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white font-extrabold text-[11px] sm:text-xs shadow-2xl shadow-orange-600/40 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer border border-white/30"
+            className="group relative px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-full bg-orange-600 text-white font-extrabold text-[11px] sm:text-xs shadow-md shadow-sm flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer border border-white/30"
             aria-label="Open AI Tourist Concierge"
           >
             {/* Ping indicator */}
@@ -146,12 +146,12 @@ export default function AITravelConciergeWidget() {
 
       {/* Interactive Chat Window Modal */}
       {isOpen && (
-        <div className="fixed bottom-20 lg:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[420px] max-h-[calc(100vh-140px)] sm:max-h-[620px] h-[540px] bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed bottom-20 lg:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[420px] max-h-[calc(100vh-140px)] sm:max-h-[620px] h-[540px] bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-xl shadow-md flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
           
           {/* Header */}
-          <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 p-4 text-white flex items-center justify-between shrink-0 shadow-md">
+          <div className="bg-orange-600 p-4 text-white flex items-center justify-between shrink-0 shadow-md">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+              <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
                 <Bot className="w-5 h-5" />
               </div>
               <div>
@@ -221,7 +221,7 @@ export default function AITravelConciergeWidget() {
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-[88%] p-3.5 rounded-2xl leading-relaxed whitespace-pre-line ${
+                  className={`max-w-[88%] p-3.5 rounded-xl leading-relaxed whitespace-pre-line ${
                     msg.sender === 'user'
                       ? 'bg-orange-600 text-white rounded-br-none shadow-md'
                       : 'bg-slate-800/95 text-slate-100 rounded-bl-none border border-slate-700/60 shadow'
@@ -284,7 +284,7 @@ export default function AITravelConciergeWidget() {
             ))}
 
             {isTyping && (
-              <div className="flex items-center gap-2 p-3 bg-slate-800/60 rounded-2xl rounded-bl-none text-slate-400 text-xs border border-slate-700/40 w-fit">
+              <div className="flex items-center gap-2 p-3 bg-slate-800/60 rounded-xl rounded-bl-none text-slate-400 text-xs border border-slate-700/40 w-fit">
                 <RefreshCw className="w-3.5 h-3.5 text-orange-400 animate-spin" />
                 <span>SR TesChor AI is thinking...</span>
               </div>

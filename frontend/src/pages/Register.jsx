@@ -40,11 +40,11 @@ export default function Register() {
 
   return (
     <div className="min-h-[90vh] flex items-center justify-center pt-24 pb-16 px-4">
-      <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-100 shadow-2xl w-full max-w-md space-y-6">
+      <div className="bg-white rounded-xl p-8 sm:p-10 border border-slate-100 shadow-md w-full max-w-md space-y-6">
         
         {/* Header */}
         <div className="text-center space-y-1">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center mx-auto shadow-md shadow-orange-500/20 font-black text-xl mb-3">
+          <div className="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-md shadow-sm font-black text-xl mb-3">
             <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
               <path d="M12 2L9 7H15L12 2ZM7 9L4 14H20L17 9H7ZM2 16L3.5 22H20.5L22 16H2ZM11 18H13V21H11V18Z" />
             </svg>
@@ -58,7 +58,7 @@ export default function Register() {
         </div>
 
         {/* Role Toggle Tabs */}
-        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
+        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-xl text-xs font-bold">
           <button
             type="button"
             onClick={() => setRole('customer')}
@@ -174,10 +174,10 @@ export default function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-3.5 rounded-2xl text-white font-extrabold text-sm shadow-md transition-all disabled:opacity-50 cursor-pointer ${
+            className={`w-full py-3.5 rounded-xl text-white font-extrabold text-sm shadow-md transition-all disabled:opacity-50 cursor-pointer ${
               role === 'business'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 shadow-emerald-700/25'
-                : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 shadow-orange-500/25'
+                ? 'bg-emerald-600 hover:from-emerald-700 shadow-sm'
+                : 'bg-orange-600 hover:from-orange-600 shadow-sm'
             }`}
           >
             {isLoading ? 'Creating Account...' : (role === 'business' ? 'Register Business Owner' : 'Create Traveler Account')}

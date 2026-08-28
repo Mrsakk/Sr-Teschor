@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Search, 
   Building2, 
@@ -8,7 +9,8 @@ import {
   X, 
   Tag, 
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  RefreshCw
 } from 'lucide-react';
 import { businessApi, categoryApi } from '../api/endpoints';
 import BusinessCard from '../components/business/BusinessCard';
@@ -16,10 +18,6 @@ import SkeletonCard from '../components/common/SkeletonCard';
 
 export default function Businesses() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [businesses, setBusinesses] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
-  const [loading, setLoading] = useState(true);
 
   // Filters from search params
   const search = searchParams.get('search') || '';
@@ -30,41 +28,30 @@ export default function Businesses() {
   const sort = searchParams.get('sort') || 'featured';
   const page = parseInt(searchParams.get('page') || '1', 10);
 
-  useEffect(() => {
-    categoryApi.getAll({ type: 'business' })
-      .then((res) => setCategories(Array.isArray(res.data) ? res.data : []))
-      .catch(() => {});
-  }, []);
+  const queryParams = { page, search, category, price_range: priceRange, min_rating: minRating, featured, sort, per_page: 9 };
 
-  useEffect(() => {
-    const fetchBusinesses = async () => {
-      setLoading(true);
-      try {
-        const params = {
-          page,
-          search,
-          category,
-          price_range: priceRange,
-          min_rating: minRating,
-          featured,
-          sort,
-          per_page: 9,
-        };
-        const res = await businessApi.getAll(params);
-        setBusinesses(res.data.data || []);
-        setPagination({
-          current_page: res.data.current_page,
-          last_page: res.data.last_page,
-          total: res.data.total,
-        });
-      } catch (err) {
-        console.error('Error fetching businesses', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBusinesses();
-  }, [searchParams]);
+  // ── Categories (cached forever) ──
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories', 'business'],
+    queryFn: () => categoryApi.getAll({ type: 'business' }).then(r => r.data),
+    staleTime: Infinity,
+  });
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
+
+  // ── Businesses (instant from cache on revisit) ──
+  const { data: bizData, isLoading, isFetching } = useQuery({
+    queryKey: ['businesses', queryParams],
+    queryFn: () => businessApi.getAll(queryParams).then(r => r.data),
+    placeholderData: (prev) => prev,
+  });
+
+  const businesses = bizData?.data || [];
+  const pagination = {
+    current_page: bizData?.current_page || 1,
+    last_page: bizData?.last_page || 1,
+    total: bizData?.total || 0,
+  };
+  const loading = isLoading && !bizData;
 
   const updateParam = (key, value) => {
     const newParams = new URLSearchParams(searchParams);
@@ -87,9 +74,9 @@ export default function Businesses() {
     <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 rounded-3xl p-6 sm:p-12 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-slate-900 rounded-xl p-6 sm:p-12 text-white shadow-sm relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
-          <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/30 text-emerald-300 border border-emerald-500/40">
+          <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-slate-100 border border-white/20">
             Local Businesses & Hospitality
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold mt-3 font-heading">
@@ -102,7 +89,7 @@ export default function Businesses() {
       </div>
 
       {/* Filter and Search Toolbar */}
-      <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-100 space-y-4">
+      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-slate-100 space-y-4">
         
         {/* Search and Sort Row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
@@ -113,7 +100,7 @@ export default function Businesses() {
               value={search}
               onChange={(e) => updateParam('search', e.target.value)}
               placeholder="Search hotel name, restaurant, tour guide..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:outline-none"
             />
             {search && (
               <button
@@ -125,7 +112,7 @@ export default function Businesses() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
             <ArrowUpDown className="w-3.5 h-3.5 text-emerald-600" />
             <span>Sort:</span>
             <select
@@ -147,7 +134,7 @@ export default function Businesses() {
             onClick={() => updateParam('category', '')}
             className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
               !category
-                ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/25'
+                ? 'bg-emerald-700 text-white shadow-md shadow-sm'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -159,7 +146,7 @@ export default function Businesses() {
               onClick={() => updateParam('category', cat.slug)}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 category === cat.slug
-                  ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/25'
+                  ? 'bg-emerald-700 text-white shadow-md shadow-sm'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -224,7 +211,7 @@ export default function Businesses() {
           ))}
         </div>
       ) : businesses.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 text-center border border-slate-100 max-w-lg mx-auto space-y-4">
+        <div className="bg-white rounded-xl p-12 text-center border border-slate-100 max-w-lg mx-auto space-y-4">
           <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
             <Building2 className="w-8 h-8" />
           </div>
@@ -256,9 +243,9 @@ export default function Businesses() {
               <button
                 key={pageNum}
                 onClick={() => updateParam('page', pageNum.toString())}
-                className={`w-10 h-10 rounded-2xl text-xs font-bold transition-all ${
+                className={`w-10 h-10 rounded-xl text-xs font-bold transition-all ${
                   page === pageNum
-                    ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/25 scale-105'
+                    ? 'bg-emerald-700 text-white shadow-md shadow-sm scale-105'
                     : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
                 }`}
               >

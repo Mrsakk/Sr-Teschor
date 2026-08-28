@@ -162,13 +162,13 @@ export default function Explore() {
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setMobileFilterOpen(true)}
-                className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200"
+                className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200"
               >
                 <SlidersHorizontal className="w-4 h-4 text-orange-500" />
                 Filters {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-orange-500" />}
               </button>
 
-              <div className="flex items-center p-1 bg-slate-100 rounded-2xl border border-slate-200">
+              <div className="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
@@ -201,7 +201,7 @@ export default function Explore() {
               placeholder="Search attractions, temples, boutique hotels, cafés, tour guides..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none transition-all shadow-inner"
+              className="w-full pl-12 pr-10 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none transition-all shadow-inner"
             />
             {searchQuery && (
               <button
@@ -246,7 +246,7 @@ export default function Explore() {
           
           {/* Desktop Left Sidebar Filters */}
           <aside className="hidden lg:block lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6 sticky top-24">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-6 sticky top-24">
               
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <span className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
@@ -355,7 +355,7 @@ export default function Explore() {
           <main className="lg:col-span-3 space-y-6">
             
             {/* Results bar & Sorting */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span className="text-xs font-bold text-slate-600">
                 Found <span className="text-slate-900 font-extrabold">{totalCount}</span> places in Siem Reap
               </span>
@@ -379,7 +379,7 @@ export default function Explore() {
 
             {/* View Mode: Map vs Grid */}
             {viewMode === 'map' ? (
-              <div className="h-[600px] rounded-3xl overflow-hidden border border-slate-200 shadow-lg relative z-0">
+              <div className="h-[600px] rounded-xl overflow-hidden border border-slate-200 shadow-lg relative z-0">
                 <MapContainer
                   center={[13.3633, 103.8564]}
                   zoom={12}
@@ -447,7 +447,7 @@ export default function Explore() {
                 ))}
               </div>
             ) : totalCount === 0 ? (
-              <div className="bg-white rounded-3xl p-12 border border-slate-200 shadow-sm text-center">
+              <div className="bg-white rounded-xl p-12 border border-slate-200 shadow-sm text-center">
                 <EmptyState
                   icon={Compass}
                   title="No places match your search"

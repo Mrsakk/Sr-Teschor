@@ -58,7 +58,7 @@ export default function Bookings() {
         </div>
         <h2 className="text-2xl font-bold text-slate-900">Manage Your Bookings</h2>
         <p className="text-xs text-slate-500">Sign in to view your tour reservations, hotel requests, and dinner tables.</p>
-        <Link to="/login" className="inline-block px-8 py-3 rounded-2xl bg-orange-500 text-white font-bold text-xs shadow-md">
+        <Link to="/login" className="inline-block px-8 py-3 rounded-xl bg-orange-500 text-white font-bold text-xs shadow-md">
           Sign In
         </Link>
       </div>
@@ -107,7 +107,7 @@ export default function Bookings() {
         </div>
 
         {/* Filter Pills (Scrollable on mobile) */}
-        <div className="flex items-center gap-1.5 bg-slate-100/90 p-1 rounded-2xl text-xs font-bold overflow-x-auto no-scrollbar w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 bg-slate-100/90 p-1 rounded-xl text-xs font-bold overflow-x-auto no-scrollbar w-full sm:w-auto">
           {filterTabs.map((tab) => (
             <button
               key={tab.id}
@@ -129,7 +129,7 @@ export default function Bookings() {
           <p className="text-xs font-bold text-slate-400">កំពុងផ្ទុកបញ្ជីការកក់របស់អ្នក...</p>
         </div>
       ) : bookings.length === 0 ? (
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center border border-slate-100 max-w-md mx-auto space-y-4 shadow-2xs">
+        <div className="bg-white rounded-xl sm:rounded-xl p-8 sm:p-12 text-center border border-slate-100 max-w-md mx-auto space-y-4 shadow-2xs">
           <Calendar className="w-12 h-12 text-slate-300 mx-auto" />
           <h3 className="text-base sm:text-lg font-bold text-slate-900">អ្នកមិនទាន់មានការកក់ណាមួយឡើយ</h3>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -137,7 +137,7 @@ export default function Bookings() {
           </p>
           <Link
             to="/businesses"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
           >
             <Building2 className="w-4 h-4 shrink-0" />
             <span>ស្វែងរកសេវាកម្មទេសចរណ៍</span>
@@ -148,7 +148,7 @@ export default function Bookings() {
           {bookings.map((booking) => (
             <div
               key={booking.id}
-              className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-2xs hover:shadow-xs transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6"
+              className="bg-white rounded-xl sm:rounded-xl p-4 sm:p-6 border border-slate-100 shadow-2xs hover:shadow-xs transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6"
             >
               <div className="space-y-2 w-full sm:w-auto min-w-0 flex-1">
                 <div className="flex flex-wrap items-center justify-between sm:justify-start gap-2">

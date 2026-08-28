@@ -51,7 +51,7 @@ export default function DigitalInvoiceModal({ isOpen, onClose, reference }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200 my-4 sm:my-8 max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-white rounded-xl sm:rounded-xl shadow-md overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200 my-4 sm:my-8 max-h-[92vh] flex flex-col">
         
         {/* Sticky Top Control Bar (Hidden when printing) */}
         <div className="print:hidden sticky top-0 z-30 bg-slate-900 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-white border-b border-slate-800 shrink-0">
@@ -100,7 +100,7 @@ export default function DigitalInvoiceModal({ isOpen, onClose, reference }) {
               <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-6 pb-5 sm:pb-6 border-b-2 border-slate-900">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center font-extrabold font-heading text-sm shadow-md shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-orange-600 text-white flex items-center justify-center font-extrabold font-heading text-sm shadow-md shrink-0">
                       SR
                     </div>
                     <div>
@@ -136,7 +136,7 @@ export default function DigitalInvoiceModal({ isOpen, onClose, reference }) {
               </div>
 
               {/* Bill To Customer Section */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-50 border border-slate-100">
                 <div>
                   <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block">
                     Billed To / ជូនចំពោះ
@@ -201,7 +201,7 @@ export default function DigitalInvoiceModal({ isOpen, onClose, reference }) {
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-6 pt-4 border-t border-slate-200">
                 
                 {/* QR Authenticity Seal */}
-                <div className="flex items-center gap-3 p-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200/80 w-full sm:w-auto">
+                <div className="flex items-center gap-3 p-3 rounded-xl sm:rounded-xl bg-slate-50 border border-slate-200/80 w-full sm:w-auto">
                   <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white p-1 rounded-xl shadow-2xs border border-slate-200 shrink-0">
                     <img
                       src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(invoice.qr_verification.verified_online_url || '')}`}

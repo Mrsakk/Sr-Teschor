@@ -96,25 +96,25 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
       {/* Mobile backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-50/80 backdrop-blur-sm lg:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col bg-slate-900 border-r border-slate-800 transition-all duration-300 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col bg-white border-r border-slate-200 transition-all duration-300 ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800 shrink-0">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200 shrink-0">
           <Link
             to="/admin/dashboard"
             className="flex items-center gap-3 overflow-hidden text-left"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-600/30 shrink-0 overflow-hidden">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-emerald-600 shrink-0 overflow-hidden bg-transparent">
               {settings.site_logo && !logoError ? (
                 <img 
                   src={getFullImageUrl(settings.site_logo)} 
@@ -130,10 +130,10 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
               <div className="leading-tight">
                 <span 
                   translate="no" 
-                  className="notranslate font-extrabold text-lg text-white tracking-tight flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis"
+                  className="notranslate font-extrabold text-lg text-slate-900 tracking-tight flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   {settings.site_name || 'Tes Chor'}
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono shrink-0">ADMIN</span>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-600 px-1.5 py-0.5 rounded font-mono shrink-0">ADMIN</span>
                 </span>
                 <p className="text-[11px] text-slate-400 font-medium">Siem Reap Platform</p>
               </div>
@@ -143,7 +143,7 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
           {/* Desktop collapse toggle */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -155,7 +155,7 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
           {navigationGroups.map((grp) => (
             <div key={grp.group}>
               {!isCollapsed && (
-                <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">
                   {grp.group}
                 </p>
               )}
@@ -170,8 +170,8 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group relative ${
                           isActive
-                            ? 'bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-600/20'
-                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+                            ? 'bg-emerald-600 text-white font-semibold shadow-sm shadow-emerald-600/20'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                         } ${isCollapsed ? 'justify-center' : ''}`
                       }
                       title={isCollapsed ? item.name : undefined}
@@ -183,7 +183,7 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
 
                       {/* Tooltip for collapsed mode */}
                       {isCollapsed && (
-                        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-slate-700">
+                        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-100 text-slate-900 text-xs font-semibold rounded-lg shadow-sm whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-slate-200">
                           {item.name}
                         </div>
                       )}
@@ -196,12 +196,12 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed, isMobileOpen
         </div>
 
         {/* View Public Platform Footer */}
-        <div className="p-3 border-t border-slate-800 shrink-0 bg-slate-900/50">
+        <div className="p-3 border-t border-slate-200 shrink-0 bg-white/50">
           <Link
             to="/"
             target="_blank"
             rel="noreferrer"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-emerald-400 hover:bg-slate-800 transition-colors border border-slate-800 hover:border-slate-700 ${
+            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-emerald-600 hover:bg-slate-100 transition-colors border border-slate-200 hover:border-slate-200 ${
               isCollapsed ? 'justify-center' : ''
             }`}
           >

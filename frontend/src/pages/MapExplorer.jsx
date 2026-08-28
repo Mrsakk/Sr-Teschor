@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { 
@@ -76,35 +77,26 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
 }
 
 export default function MapExplorer() {
-  const [destinations, setDestinations] = useState([]);
-  const [businesses, setBusinesses] = useState([]);
+  const { data: mapData, isLoading } = useQuery({
+    queryKey: ['mapLocations'],
+    queryFn: () => searchApi.getMapLocations().then(res => res.data),
+    staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+  });
+
+  const destinations = mapData?.destinations || [];
+  const businesses = mapData?.businesses || [];
+  const loading = isLoading && !mapData;
+
   const [filterType, setFilterType] = useState('all'); // 'all', 'destinations', 'businesses'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState(null);
   const [locating, setLocating] = useState(false);
   const [mobileView, setMobileView] = useState('map'); // 'map' | 'list'
 
   // Center coordinate: Siem Reap / Angkor region
   const siemReapCenter = [13.4125, 103.8670];
-
-  useEffect(() => {
-    const fetchLocations = async () => {
-      setLoading(true);
-      try {
-        const res = await searchApi.getMapLocations();
-        setDestinations(res.data.destinations || []);
-        setBusinesses(res.data.businesses || []);
-      } catch (err) {
-        console.error('Failed to load map locations', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLocations();
-  }, []);
 
   const handleLocateMe = () => {
     if (!navigator.geolocation) {
@@ -246,7 +238,7 @@ export default function MapExplorer() {
               disabled={locating}
               className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 text-[11px] sm:text-xs font-bold transition-all shrink-0 cursor-pointer ${
                 userLocation
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-1 ring-blue-400'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-sm ring-1 ring-blue-400'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
               }`}
             >
@@ -273,7 +265,7 @@ export default function MapExplorer() {
                 onClick={() => setFilterType('destinations')}
                 className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
                   filterType === 'destinations'
-                    ? 'bg-orange-500 text-white font-bold shadow-md shadow-orange-500/20'
+                    ? 'bg-orange-500 text-white font-bold shadow-md shadow-sm'
                     : 'bg-slate-800 text-orange-400 hover:bg-slate-700/80 border border-orange-500/30'
                 }`}
               >
@@ -285,7 +277,7 @@ export default function MapExplorer() {
                 onClick={() => setFilterType('businesses')}
                 className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
                   filterType === 'businesses'
-                    ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/20'
+                    ? 'bg-emerald-600 text-white font-bold shadow-md shadow-sm'
                     : 'bg-slate-800 text-emerald-400 hover:bg-slate-700/80 border border-emerald-500/30'
                 }`}
               >
@@ -359,9 +351,9 @@ export default function MapExplorer() {
                   <div
                     key={`${item.itemType}-${item.id}`}
                     onClick={() => handleSelectItem(item)}
-                    className={`w-full p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 text-left group ${
+                    className={`w-full p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-3 text-left group ${
                       isSelected
-                        ? 'bg-slate-800 border-orange-500 shadow-lg shadow-orange-500/10'
+                        ? 'bg-slate-800 border-orange-500 shadow-lg shadow-sm'
                         : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/70'
                     }`}
                   >
@@ -470,7 +462,7 @@ export default function MapExplorer() {
                   }}
                 >
                   <Popup>
-                    <div className="w-60 overflow-hidden rounded-2xl bg-white text-slate-900 shadow-xl">
+                    <div className="w-60 overflow-hidden rounded-xl bg-white text-slate-900 shadow-sm">
                       <div className="relative h-28 w-full bg-slate-100 overflow-hidden">
                         <img
                           src={getFullImageUrl(dest.primary_image?.image || dest.images?.[0]?.image, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80')}
@@ -508,7 +500,7 @@ export default function MapExplorer() {
                         </div>
                         <Link
                           to={`/destinations/${dest.slug}`}
-                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
                         >
                           <span>មើលព័ត៌មានលម្អិត</span>
                           <ChevronRight className="w-3.5 h-3.5" />
@@ -532,7 +524,7 @@ export default function MapExplorer() {
                   }}
                 >
                   <Popup>
-                    <div className="w-60 overflow-hidden rounded-2xl bg-white text-slate-900 shadow-xl">
+                    <div className="w-60 overflow-hidden rounded-xl bg-white text-slate-900 shadow-sm">
                       <div className="relative h-28 w-full bg-slate-100 overflow-hidden">
                         <img
                           src={getFullImageUrl(biz.cover_image || biz.logo, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&auto=format&fit=crop&q=80')}
@@ -570,7 +562,7 @@ export default function MapExplorer() {
                         </div>
                         <Link
                           to={`/businesses/${biz.slug}`}
-                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
                         >
                           <span>មើលព័ត៌មានអាជីវកម្ម</span>
                           <ChevronRight className="w-3.5 h-3.5" />
@@ -586,7 +578,7 @@ export default function MapExplorer() {
           {/* ── MOBILE FLOATING ACTIVE CARD DRAWER ── */}
           {activeItem && (
             <div className="md:hidden absolute bottom-4 inset-x-3 z-30 animate-in slide-in-from-bottom-6 duration-300">
-              <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-3 shadow-2xl flex items-center gap-3 relative">
+              <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-xl p-3 shadow-md flex items-center gap-3 relative">
                 <button
                   onClick={() => setActiveItem(null)}
                   className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center shadow-md text-xs"

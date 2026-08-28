@@ -55,7 +55,7 @@ export default function CustomerDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         {/* Welcome Header Banner */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 text-white p-8 sm:p-10 shadow-xl">
+        <div className="relative rounded-xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 text-white p-8 sm:p-10 shadow-sm">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 text-xs font-bold">
@@ -73,13 +73,13 @@ export default function CustomerDashboard() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 to="/my-trips"
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-extrabold shadow-lg shadow-orange-500/25 transition-all hover:scale-105"
+                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-extrabold shadow-lg shadow-sm transition-all hover:scale-105"
               >
                 <Plus className="w-4 h-4" /> Create New Trip
               </Link>
               <Link
                 to="/explore"
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 backdrop-blur-md transition-all"
+                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 backdrop-blur-md transition-all"
               >
                 <Compass className="w-4 h-4" /> Explore Destinations
               </Link>
@@ -92,11 +92,11 @@ export default function CustomerDashboard() {
           
           <Link
             to="/favorites"
-            className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
+            className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Saved Places</span>
-              <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Heart className="w-5 h-5 fill-current" />
               </div>
             </div>
@@ -110,11 +110,11 @@ export default function CustomerDashboard() {
 
           <Link
             to="/my-trips"
-            className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
+            className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">My Trips</span>
-              <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Calendar className="w-5 h-5" />
               </div>
             </div>
@@ -128,11 +128,11 @@ export default function CustomerDashboard() {
 
           <Link
             to="/bookings"
-            className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
+            className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Bookings</span>
-              <div className="w-10 h-10 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Building2 className="w-5 h-5" />
               </div>
             </div>
@@ -146,11 +146,11 @@ export default function CustomerDashboard() {
 
           <Link
             to="/my-reviews"
-            className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
+            className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">My Reviews</span>
-              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Star className="w-5 h-5 fill-current" />
               </div>
             </div>
@@ -168,7 +168,7 @@ export default function CustomerDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Upcoming Trip Widget */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
@@ -196,7 +196,7 @@ export default function CustomerDashboard() {
                 {upcomingTrips.map((trip) => (
                   <div
                     key={trip.id}
-                    className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-orange-200 transition-all flex items-center justify-between gap-4"
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-orange-200 transition-all flex items-center justify-between gap-4"
                   >
                     <div className="space-y-1">
                       <h4 className="font-extrabold text-sm text-slate-900">{trip.name}</h4>
@@ -219,7 +219,7 @@ export default function CustomerDashboard() {
           </div>
 
           {/* Upcoming Bookings Widget */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
@@ -247,7 +247,7 @@ export default function CustomerDashboard() {
                 {upcomingBookings.map((b) => (
                   <div
                     key={b.id}
-                    className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all flex items-center justify-between gap-4"
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all flex items-center justify-between gap-4"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -301,7 +301,7 @@ export default function CustomerDashboard() {
 
         {/* Promotions Carousel / Section */}
         {promotions.length > 0 && (
-          <div className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 text-white shadow-xl space-y-6">
+          <div className="bg-orange-600 rounded-xl p-8 text-white shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-orange-200">Exclusive Travel Deals</span>
@@ -317,7 +317,7 @@ export default function CustomerDashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {promotions.map((p) => (
-                <div key={p.id} className="bg-white text-slate-900 rounded-2xl p-4 shadow-md space-y-2">
+                <div key={p.id} className="bg-white text-slate-900 rounded-xl p-4 shadow-md space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
                       {p.discount}

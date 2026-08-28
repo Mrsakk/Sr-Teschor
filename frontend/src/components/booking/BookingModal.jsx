@@ -63,10 +63,10 @@ export default function BookingModal({ business, service = null, isOpen, onClose
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-md border border-slate-100 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white p-6 relative">
+        <div className="bg-orange-600 text-white p-6 relative">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors"
@@ -94,7 +94,7 @@ export default function BookingModal({ business, service = null, isOpen, onClose
             <p className="text-sm text-slate-600 max-w-sm mx-auto">
               Your request has been forwarded to <strong>{business.name}</strong>. You will receive an instant notification as soon as it is confirmed.
             </p>
-            <div className="bg-slate-50 rounded-2xl p-4 text-xs space-y-1.5 text-left border border-slate-100">
+            <div className="bg-slate-50 rounded-xl p-4 text-xs space-y-1.5 text-left border border-slate-100">
               <p className="flex justify-between">
                 <span className="text-slate-500">Booking Reference:</span>
                 <span className="font-mono font-bold text-slate-900">{successBooking.booking_reference}</span>
@@ -256,7 +256,7 @@ export default function BookingModal({ business, service = null, isOpen, onClose
 
             {/* Pricing Summary */}
             {totalPrice > 0 && (
-              <div className="bg-orange-50/70 border border-orange-200/60 rounded-2xl p-3.5 text-xs space-y-1">
+              <div className="bg-orange-50/70 border border-orange-200/60 rounded-xl p-3.5 text-xs space-y-1">
                 <div className="flex justify-between text-slate-600">
                   <span>${unitPrice.toFixed(2)} × {guests} guests</span>
                   <span>${totalPrice.toFixed(2)}</span>
@@ -273,7 +273,7 @@ export default function BookingModal({ business, service = null, isOpen, onClose
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm shadow-lg shadow-orange-500/25 transition-all disabled:opacity-50"
+              className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-sm shadow-lg shadow-sm transition-all disabled:opacity-50"
             >
               {loading ? 'Submitting Request...' : 'Confirm & Send Request'}
             </button>

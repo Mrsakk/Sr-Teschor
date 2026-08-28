@@ -30,11 +30,11 @@ export default function Login() {
 
   return (
     <div className="min-h-[90vh] flex items-center justify-center pt-24 pb-16 px-4">
-      <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-100 shadow-2xl w-full max-w-md space-y-6">
+      <div className="bg-white rounded-xl p-8 sm:p-10 border border-slate-100 shadow-md w-full max-w-md space-y-6">
         
         {/* Header */}
         <div className="text-center space-y-1">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center mx-auto shadow-md shadow-orange-500/20 font-black text-xl mb-3">
+          <div className="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-md shadow-sm font-black text-xl mb-3">
             <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
               <path d="M12 2L9 7H15L12 2ZM7 9L4 14H20L17 9H7ZM2 16L3.5 22H20.5L22 16H2ZM11 18H13V21H11V18Z" />
             </svg>
@@ -48,7 +48,7 @@ export default function Login() {
         </div>
 
         {/* Demo Fast Login Buttons for Evaluation */}
-        <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+        <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 text-center">
             🚀 Quick Demo Login Accounts
           </p>
@@ -121,7 +121,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white font-extrabold text-sm shadow-md shadow-orange-500/25 transition-all disabled:opacity-50 cursor-pointer"
+            className="w-full py-3.5 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-extrabold text-sm shadow-md shadow-sm transition-all disabled:opacity-50 cursor-pointer"
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>

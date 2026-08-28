@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Search, 
   Filter, 
@@ -9,7 +10,8 @@ import {
   List, 
   Sparkles, 
   ArrowUpDown,
-  X
+  X,
+  RefreshCw
 } from 'lucide-react';
 import { destinationApi, categoryApi } from '../api/endpoints';
 import DestinationCard from '../components/destination/DestinationCard';
@@ -18,11 +20,7 @@ import AdBanner from '../components/ads/AdBanner';
 
 export default function Destinations() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [destinations, setDestinations] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
-  const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [viewMode, setViewMode] = useState('grid');
 
   // Filter states from searchParams
   const search = searchParams.get('search') || '';
@@ -33,39 +31,31 @@ export default function Destinations() {
   const sort = searchParams.get('sort') || 'popular';
   const page = parseInt(searchParams.get('page') || '1', 10);
 
-  useEffect(() => {
-    categoryApi.getAll().then((res) => setCategories(Array.isArray(res.data) ? res.data : [])).catch(() => {});
-  }, []);
+  const queryParams = { page, search, category, price_type: priceType, min_rating: minRating, hidden_gems: hiddenGems, sort, per_page: 18 };
 
-  useEffect(() => {
-    const fetchDestinations = async () => {
-      setLoading(true);
-      try {
-        const params = {
-          page,
-          search,
-          category,
-          price_type: priceType,
-          min_rating: minRating,
-          hidden_gems: hiddenGems,
-          sort,
-          per_page: 18,
-        };
-        const res = await destinationApi.getAll(params);
-        setDestinations(res.data.data || []);
-        setPagination({
-          current_page: res.data.current_page,
-          last_page: res.data.last_page,
-          total: res.data.total,
-        });
-      } catch (err) {
-        console.error('Error fetching destinations', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDestinations();
-  }, [searchParams]);
+  // ── Categories (cached forever in session) ──
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryApi.getAll().then(r => r.data),
+    staleTime: Infinity, // categories rarely change
+  });
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
+
+  // ── Destinations (instant from cache on revisit) ──
+  const { data: destData, isLoading, isFetching } = useQuery({
+    queryKey: ['destinations', queryParams],
+    queryFn: () => destinationApi.getAll(queryParams).then(r => r.data),
+    placeholderData: (prev) => prev, // Keep old data visible while fetching new page
+  });
+
+  const destinations = destData?.data || [];
+  const pagination = {
+    current_page: destData?.current_page || 1,
+    last_page: destData?.last_page || 1,
+    total: destData?.total || 0,
+  };
+  // Only show skeleton on FIRST load (no cached data yet)
+  const loading = isLoading && !destData;
 
   const updateParam = (key, value) => {
     const newParams = new URLSearchParams(searchParams);
@@ -90,9 +80,9 @@ export default function Destinations() {
     <div className="pt-20 sm:pt-28 pb-16 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-8">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-orange-950 to-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-10 lg:p-12 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-slate-900 rounded-xl p-5 sm:p-10 lg:p-12 text-white shadow-sm relative overflow-hidden">
         <div className="relative z-10 max-w-2xl space-y-1 sm:space-y-2">
-          <span className="inline-flex items-center text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-orange-500/30 text-orange-300 border border-orange-500/40">
+          <span className="inline-flex items-center text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/10 text-slate-100 border border-white/20">
             Heritage & Exploration
           </span>
           <h1 className="text-2xl sm:text-4xl font-extrabold font-heading leading-tight pt-1">
@@ -105,7 +95,7 @@ export default function Destinations() {
       </div>
 
       {/* Filter and Search Toolbar */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xs border border-slate-100 space-y-3 sm:space-y-4">
+      <div className="bg-white rounded-xl sm:rounded-xl p-3.5 sm:p-6 shadow-xs border border-slate-100 space-y-3 sm:space-y-4">
         
         {/* Search and Sort Row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
@@ -117,7 +107,7 @@ export default function Destinations() {
               value={search}
               onChange={(e) => updateParam('search', e.target.value)}
               placeholder="Search temple name, history, location..."
-              className="w-full pl-9 sm:pl-10 pr-8 sm:pr-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              className="w-full pl-9 sm:pl-10 pr-8 sm:pr-4 py-2 sm:py-2.5 rounded-xl sm:rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
             />
             {search && (
               <button
@@ -132,7 +122,7 @@ export default function Destinations() {
 
           {/* Sort Dropdown */}
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-between sm:justify-start gap-2 px-3 py-2 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 text-[11px] sm:text-xs font-semibold text-slate-700 w-full sm:w-auto">
+            <div className="flex items-center justify-between sm:justify-start gap-2 px-3 py-2 rounded-xl sm:rounded-xl bg-slate-50 border border-slate-200 text-[11px] sm:text-xs font-semibold text-slate-700 w-full sm:w-auto">
               <div className="flex items-center gap-1.5 shrink-0">
                 <ArrowUpDown className="w-3.5 h-3.5 text-orange-500" />
                 <span>Sort:</span>
@@ -158,7 +148,7 @@ export default function Destinations() {
             onClick={() => updateParam('category', '')}
             className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
               !category
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25'
+                ? 'bg-orange-500 text-white shadow-md shadow-sm'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -170,7 +160,7 @@ export default function Destinations() {
               onClick={() => updateParam('category', cat.slug)}
               className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
                 category === cat.slug
-                  ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25'
+                  ? 'bg-orange-500 text-white shadow-md shadow-sm'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -240,6 +230,13 @@ export default function Destinations() {
       <AdBanner placement="search_top" className="mb-4 sm:mb-6" />
 
       {/* Destinations Listing Grid */}
+      {/* Subtle background-refresh indicator (only when data exists + refetching) */}
+      {isFetching && !loading && (
+        <div className="flex items-center justify-center gap-2 text-xs text-orange-500 font-semibold py-1">
+          <RefreshCw className="w-3 h-3 animate-spin" />
+          <span>កំពុងធ្វើបច្ចុប្បន្នភាព...</span>
+        </div>
+      )}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {Array.from({ length: 9 }).map((_, i) => (
@@ -248,7 +245,7 @@ export default function Destinations() {
         </div>
       ) : destinations.length === 0 ? (
         /* Empty State */
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-12 text-center border border-slate-100 max-w-lg mx-auto space-y-3 sm:space-y-4">
+        <div className="bg-white rounded-xl sm:rounded-xl p-6 sm:p-12 text-center border border-slate-100 max-w-lg mx-auto space-y-3 sm:space-y-4">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mx-auto">
             <Compass className="w-7 h-7 sm:w-8 sm:h-8" />
           </div>
@@ -280,9 +277,9 @@ export default function Destinations() {
               <button
                 key={pageNum}
                 onClick={() => updateParam('page', pageNum.toString())}
-                className={`w-10 h-10 rounded-2xl text-xs font-bold transition-all ${
+                className={`w-10 h-10 rounded-xl text-xs font-bold transition-all ${
                   page === pageNum
-                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25 scale-105'
+                    ? 'bg-orange-500 text-white shadow-md shadow-sm scale-105'
                     : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
                 }`}
               >

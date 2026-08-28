@@ -67,7 +67,7 @@ export default function Confirmation() {
         </div>
         <h2 className="text-2xl font-bold text-slate-900">Booking Confirmation</h2>
         <p className="text-xs text-slate-500">{errorMsg || 'Booking not found.'}</p>
-        <Link to="/bookings" className="inline-block px-8 py-3 rounded-2xl bg-orange-500 text-white font-bold text-xs shadow-md">
+        <Link to="/bookings" className="inline-block px-8 py-3 rounded-xl bg-orange-500 text-white font-bold text-xs shadow-md">
           Go to My Bookings
         </Link>
       </div>
@@ -108,7 +108,7 @@ export default function Confirmation() {
         
         {/* Top Success Banner */}
         <div className="text-center space-y-2.5 sm:space-y-3">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20 animate-in zoom-in-90 duration-300">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center mx-auto shadow-sm shadow-sm animate-in zoom-in-90 duration-300">
             <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10" />
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider">
@@ -124,7 +124,7 @@ export default function Confirmation() {
         </div>
 
         {/* Printable E-Ticket Card */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 overflow-hidden print:border-none print:shadow-none">
+        <div className="bg-white rounded-xl sm:rounded-xl shadow-sm border border-slate-100 overflow-hidden print:border-none print:shadow-none">
           
           {/* Ticket Header */}
           <div className="bg-gradient-to-r from-slate-900 via-orange-950 to-slate-900 text-white p-4.5 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
@@ -139,7 +139,7 @@ export default function Confirmation() {
                 Siem Reap, Kingdom of Cambodia
               </p>
             </div>
-            <div className="self-stretch sm:self-auto sm:text-right bg-white/10 backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl border border-white/20 flex items-center justify-between sm:block">
+            <div className="self-stretch sm:self-auto sm:text-right bg-white/10 backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-xl border border-white/20 flex items-center justify-between sm:block">
               <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 block uppercase">
                 លេខយោង (Ref)
               </span>
@@ -221,7 +221,7 @@ export default function Confirmation() {
             </div>
 
             {/* QR Code & Verification Section */}
-            <div className="pt-4 sm:pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 bg-slate-50/70 p-4 sm:p-6 rounded-2xl">
+            <div className="pt-4 sm:pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 bg-slate-50/70 p-4 sm:p-6 rounded-xl">
               <div className="space-y-1 text-center sm:text-left">
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-700 inline-block">
                   Scan at Venue
@@ -234,7 +234,7 @@ export default function Confirmation() {
                   Receipt ID: {receipt_number} • Issued: {issued_at}
                 </p>
               </div>
-              <div className="p-2.5 sm:p-3 bg-white rounded-2xl shadow-xs border border-slate-200 text-center shrink-0">
+              <div className="p-2.5 sm:p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-center shrink-0">
                 <QrCode className="w-20 h-20 sm:w-24 sm:h-24 text-slate-900 mx-auto" />
                 <span className="font-mono text-[8px] sm:text-[9px] font-bold text-slate-500 mt-1 block">
                   VERIFIED #{booking.booking_reference}
@@ -272,7 +272,7 @@ export default function Confirmation() {
               </Link>
               <Link
                 to="/bookings"
-                className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-extrabold transition-all shadow-md shadow-orange-500/20 text-center whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-extrabold transition-all shadow-md shadow-sm text-center whitespace-nowrap"
               >
                 <span>My Bookings</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />

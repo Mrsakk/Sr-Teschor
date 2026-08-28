@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import {
@@ -68,14 +69,14 @@ export default function AdminReports() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-white tracking-tight">User Reports & Moderation Queue</h2>
+        <h2 className="text-xl font-bold text-slate-900 tracking-tight">User Reports & Moderation Queue</h2>
         <p className="text-xs text-slate-400">
           Complaints submitted by tourists regarding incorrect info, suspicious reviews, or listings.
         </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg flex items-center gap-1.5 overflow-x-auto">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-1.5 overflow-x-auto">
         {[
           { label: 'All Reports', value: '' },
           { label: 'Pending Review', value: 'pending' },
@@ -89,7 +90,7 @@ export default function AdminReports() {
             className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
               statusFilter === tab.value
                 ? 'bg-emerald-600 text-white font-semibold shadow-md'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
+                : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
             }`}
           >
             {tab.label}
@@ -98,10 +99,10 @@ export default function AdminReports() {
       </div>
 
       {/* Reports Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-800/80 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-700">
+            <thead className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-200">
               <tr>
                 <th className="px-5 py-3.5">Report #</th>
                 <th className="px-5 py-3.5">Reporter</th>
@@ -115,41 +116,41 @@ export default function AdminReports() {
             <tbody className="divide-y divide-slate-800">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-5 py-12 text-center text-slate-400">
                     Loading reports...
                   </td>
                 </tr>
               ) : reports.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-5 py-12 text-center text-slate-400">
                     No reports in this queue.
                   </td>
                 </tr>
               ) : (
                 reports.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-800/50 transition-colors">
-                    <td className="px-5 py-3.5 font-mono font-bold text-white">
+                  <tr key={r.id} className="hover:bg-transparent hover:bg-slate-50 transition-colors">
+                    <td className="px-5 py-3.5 font-mono font-bold text-slate-900">
                       #{r.id}
                     </td>
 
                     <td className="px-5 py-3.5">
-                      <p className="font-semibold text-slate-200">{r.user?.name || 'Anonymous'}</p>
+                      <p className="font-semibold text-slate-700">{r.user?.name || 'Anonymous'}</p>
                       <p className="text-[10px] text-slate-400 font-mono">{r.user?.email}</p>
                     </td>
 
                     <td className="px-5 py-3.5">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-amber-400 border border-slate-700">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-amber-600 border border-slate-200">
                         {r.report_type.replace('_', ' ')}
                       </span>
                       <p className="text-[10px] text-slate-400 mt-1 capitalize">Target: {r.reportable_type} #{r.reportable_id}</p>
                     </td>
 
                     <td className="px-5 py-3.5 max-w-xs">
-                      <p className="text-slate-300 line-clamp-2 italic leading-relaxed">
+                      <p className="text-slate-700 line-clamp-2 italic leading-relaxed">
                         "{r.reason}"
                       </p>
                       {r.admin_notes && (
-                        <p className="text-[10px] text-emerald-400 mt-1">Notes: {r.admin_notes}</p>
+                        <p className="text-[10px] text-emerald-600 mt-1">Notes: {r.admin_notes}</p>
                       )}
                     </td>
 
@@ -160,10 +161,10 @@ export default function AdminReports() {
                     <td className="px-5 py-3.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                         r.status === 'resolved'
-                          ? 'bg-emerald-500/10 text-emerald-400'
+                          ? 'bg-emerald-50 text-emerald-600'
                           : r.status === 'pending'
                           ? 'bg-rose-500/10 text-rose-400 animate-pulse'
-                          : 'bg-amber-500/10 text-amber-400'
+                          : 'bg-amber-500/10 text-amber-600'
                       }`}>
                         {r.status}
                       </span>
@@ -175,7 +176,7 @@ export default function AdminReports() {
                           setSelectedReport(r);
                           setAdminNotes(r.admin_notes || '');
                         }}
-                        className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold"
+                        className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold"
                       >
                         Investigate
                       </button>
@@ -190,39 +191,39 @@ export default function AdminReports() {
 
       {/* Investigation Modal */}
       {selectedReport && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50/80 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 shadow-md relative text-left">
             <button
               onClick={() => setSelectedReport(null)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-100"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-base font-bold text-white mb-1">
+            <h3 className="text-base font-bold text-slate-900 mb-1">
               Investigate Report #{selectedReport.id}
             </h3>
-            <p className="text-xs text-amber-400 uppercase font-bold mb-4">
+            <p className="text-xs text-amber-600 uppercase font-bold mb-4">
               Category: {selectedReport.report_type.replace('_', ' ')}
             </p>
 
-            <div className="space-y-3 text-xs bg-slate-800/50 p-4 rounded-2xl border border-slate-800 mb-4">
+            <div className="space-y-3 text-xs bg-transparent hover:bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
               <div>
                 <span className="text-slate-400 block mb-0.5">Report Reason from User:</span>
-                <p className="text-slate-200 italic font-medium leading-relaxed">
+                <p className="text-slate-700 italic font-medium leading-relaxed">
                   "{selectedReport.reason}"
                 </p>
               </div>
-              <div className="pt-2 border-t border-slate-700/60">
+              <div className="pt-2 border-t border-slate-100">
                 <span className="text-slate-400 block mb-0.5">Submitted By:</span>
-                <p className="text-white font-semibold">
+                <p className="text-slate-900 font-semibold">
                   {selectedReport.user?.name} ({selectedReport.user?.email})
                 </p>
               </div>
             </div>
 
             <div className="space-y-3 mb-5">
-              <label className="block text-xs font-medium text-slate-300">
+              <label className="block text-xs font-medium text-slate-700">
                 Resolution Notes / Action Taken:
               </label>
               <textarea
@@ -230,7 +231,7 @@ export default function AdminReports() {
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
                 placeholder="Details of investigation or actions taken..."
-                className="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                className="w-full p-3 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
               />
             </div>
 

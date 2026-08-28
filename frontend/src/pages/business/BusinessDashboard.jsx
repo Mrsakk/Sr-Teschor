@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { 
@@ -216,36 +217,59 @@ export default function BusinessDashboard() {
     end_date: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
   });
 
+  const { data: catData } = useQuery({
+    queryKey: ['categories', { type: 'business' }],
+    queryFn: () => categoryApi.getAll({ type: 'business' }).then(r => r.data),
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const { data: dashboardData } = useQuery({
+    queryKey: ['businessDashboardStats'],
+    queryFn: async () => {
+      const [statsRes, allBizRes] = await Promise.all([
+        businessApi.getDashboardStats(),
+        businessApi.getAll({ per_page: 50 }),
+      ]);
+      const myBizList = statsRes.data?.businesses || [];
+      const globalBizList = allBizRes.data?.data || allBizRes.data || [];
+      const combinedBiz = myBizList.length > 0 ? myBizList : globalBizList;
+      return { ...statsRes.data, businesses: combinedBiz };
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: fetchedAdsData } = useQuery({
+    queryKey: ['myAdvertisements'],
+    queryFn: () => advertisementApi.getMyAdvertisements().then(r => r.data),
+    staleTime: 1000 * 60 * 5,
+  });
+
   const fetchAds = async () => {
+    // Kept for backward compatibility in case other functions call it
     try {
       setLoadingAds(true);
       const res = await advertisementApi.getMyAdvertisements();
-      if (res.data) {
-        setAdsData(res.data);
-      }
+      if (res.data) setAdsData(res.data);
     } catch (err) {
-      console.error('Error fetching ads', err);
+      console.error(err);
     } finally {
       setLoadingAds(false);
     }
   };
 
   const fetchData = async () => {
+    // Kept for manual refresh button if needed
     try {
+      setLoading(true);
       const [statsRes, catRes, allBizRes] = await Promise.all([
         businessApi.getDashboardStats(),
         categoryApi.getAll({ type: 'business' }),
         businessApi.getAll({ per_page: 50 }),
       ]);
-
       const myBizList = statsRes.data?.businesses || [];
       const globalBizList = allBizRes.data?.data || allBizRes.data || [];
       const combinedBiz = myBizList.length > 0 ? myBizList : globalBizList;
-
-      setData({
-        ...statsRes.data,
-        businesses: combinedBiz,
-      });
+      setData({ ...statsRes.data, businesses: combinedBiz });
       setCategories(catRes.data || []);
       if (combinedBiz.length > 0) {
         setSelectedBizForAction(combinedBiz[0]);
@@ -254,15 +278,39 @@ export default function BusinessDashboard() {
       }
       fetchAds();
     } catch (err) {
-      console.error('Error fetching dashboard', err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (dashboardData) {
+      setData(dashboardData);
+      const combinedBiz = dashboardData.businesses || [];
+      if (combinedBiz.length > 0 && !selectedBizForAction) {
+        setSelectedBizForAction(combinedBiz[0]);
+        setNewAd(prev => ({ ...prev, business_id: combinedBiz[0].id }));
+      }
+      setLoading(false);
+    }
+  }, [dashboardData, selectedBizForAction]);
+
+  useEffect(() => {
+    if (catData) {
+      setCategories(catData);
+      if (!newBiz.category_id && catData.length > 0) {
+        setNewBiz(prev => ({ ...prev, category_id: catData[0].id }));
+      }
+    }
+  }, [catData, newBiz.category_id]);
+
+  useEffect(() => {
+    if (fetchedAdsData) {
+      setAdsData(fetchedAdsData);
+      setLoadingAds(false);
+    }
+  }, [fetchedAdsData]);
 
   const handlePlacementOrDurationChange = (field, value) => {
     setNewAd((prev) => {
@@ -513,7 +561,7 @@ export default function BusinessDashboard() {
         <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <Link
             to="/pricing"
-            className="px-3.5 sm:px-4 py-2.5 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 font-extrabold text-xs flex items-center justify-center gap-1.5 hover:bg-amber-100 transition-colors shadow-2xs whitespace-nowrap"
+            className="px-3.5 sm:px-4 py-2.5 rounded-xl sm:rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-extrabold text-xs flex items-center justify-center gap-1.5 hover:bg-amber-100 transition-colors shadow-2xs whitespace-nowrap"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
             <span>Upgrade Plan</span>
@@ -521,7 +569,7 @@ export default function BusinessDashboard() {
 
           <button
             onClick={() => setAddBusinessModal(true)}
-            className="px-4 sm:px-5 py-2.5 rounded-xl sm:rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/25 flex items-center justify-center gap-1.5 sm:gap-2 transition-transform hover:scale-102 cursor-pointer whitespace-nowrap"
+            className="px-4 sm:px-5 py-2.5 rounded-xl sm:rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-transform hover:scale-102 cursor-pointer whitespace-nowrap"
           >
             <Plus className="w-4 h-4 shrink-0" />
             <span>+ Add Business</span>
@@ -532,7 +580,7 @@ export default function BusinessDashboard() {
       {/* KPI Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
         
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+        <div className="bg-white rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
             <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
@@ -540,7 +588,7 @@ export default function BusinessDashboard() {
           <p className="text-xl sm:text-2xl font-extrabold text-slate-900">{summary.total_views || 0}</p>
         </div>
 
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+        <div className="bg-white rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
@@ -548,7 +596,7 @@ export default function BusinessDashboard() {
           <p className="text-xl sm:text-2xl font-extrabold text-slate-900">{summary.total_bookings || 0}</p>
         </div>
 
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+        <div className="bg-white rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
             <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
@@ -556,7 +604,7 @@ export default function BusinessDashboard() {
           <p className="text-xl sm:text-2xl font-extrabold text-amber-600">{summary.pending_bookings || 0}</p>
         </div>
 
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+        <div className="bg-white rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
             <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
@@ -564,7 +612,7 @@ export default function BusinessDashboard() {
           <p className="text-xl sm:text-2xl font-extrabold text-slate-900">${summary.total_revenue || 0}</p>
         </div>
 
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+        <div className="bg-white rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
             <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
           </div>
@@ -572,7 +620,7 @@ export default function BusinessDashboard() {
           <p className="text-xl sm:text-2xl font-extrabold text-slate-900">{summary.average_rating || 5.0}</p>
         </div>
 
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
+        <div className="bg-white rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 shadow-xs space-y-1">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
             <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-red-500 text-red-500" />
           </div>
@@ -586,7 +634,7 @@ export default function BusinessDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8">
         
         {/* Performance Chart */}
-        <div className="lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+        <div className="lg:col-span-2 bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 className="font-bold text-base sm:text-lg text-slate-900 font-heading">
@@ -624,7 +672,7 @@ export default function BusinessDashboard() {
         </div>
 
         {/* My Businesses Quick List */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+        <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-base text-slate-900 font-heading">
               My Places ({businesses.length})
@@ -641,7 +689,7 @@ export default function BusinessDashboard() {
             {businesses.map((b) => (
               <div
                 key={b.id}
-                className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 space-y-2 hover:bg-slate-100/60 transition-colors"
+                className="p-3 sm:p-3.5 rounded-xl sm:rounded-xl bg-slate-50 border border-slate-100 space-y-2 hover:bg-slate-100/60 transition-colors"
               >
                 <div className="flex items-center justify-between gap-1.5">
                   <span className="font-bold text-xs text-slate-900 truncate max-w-[170px]">{b.name}</span>
@@ -660,7 +708,7 @@ export default function BusinessDashboard() {
                 <div className="pt-2 border-t border-slate-200/50 flex flex-wrap gap-1">
                   <button
                     onClick={() => { setSelectedBizForBoost(b); setKhqrBoostModal(true); }}
-                    className="flex-1 min-w-[70px] py-1.5 px-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white rounded-lg text-[10px] font-extrabold shadow-2xs flex items-center justify-center gap-1 cursor-pointer"
+                    className="flex-1 min-w-[70px] py-1.5 px-2 bg-orange-600 hover:from-orange-600 text-white rounded-lg text-[10px] font-extrabold shadow-2xs flex items-center justify-center gap-1 cursor-pointer"
                     title="Boost to #1 Top Search"
                   >
                     <Zap className="w-3 h-3 fill-current" />
@@ -701,7 +749,7 @@ export default function BusinessDashboard() {
       </div>
 
       {/* Booking Requests Manager */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
+      <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-lg sm:text-xl text-slate-900 font-heading">
@@ -767,7 +815,7 @@ export default function BusinessDashboard() {
       </div>
 
       {/* Self-Service Ads & Marketing Campaigns Section */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-amber-500/30 text-white shadow-xl space-y-4 sm:space-y-6 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-amber-500/30 text-white shadow-sm space-y-4 sm:space-y-6 relative overflow-hidden">
         {/* Background ambient glow */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-60 h-60 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -790,7 +838,7 @@ export default function BusinessDashboard() {
             <button
               onClick={fetchAds}
               disabled={loadingAds}
-              className="p-2.5 rounded-xl sm:rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+              className="p-2.5 rounded-xl sm:rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
               title="Refresh Ads Data"
             >
               <RefreshCw className={`w-4 h-4 ${loadingAds ? 'animate-spin' : ''}`} />
@@ -809,7 +857,7 @@ export default function BusinessDashboard() {
                 }
                 setAddAdModal(true);
               }}
-              className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right text-slate-950 font-black text-xs shadow-lg shadow-orange-500/25 hover:scale-102 transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+              className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-xl bg-amber-600 bg-[length:200%_auto] hover:bg-right text-slate-950 font-black text-xs shadow-lg shadow-sm hover:scale-102 transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               <Plus className="w-4 h-4 shrink-0" />
               <span>ទិញយុទ្ធនាការផ្សព្វផ្សាយថ្មី (Buy Ad)</span>
@@ -819,7 +867,7 @@ export default function BusinessDashboard() {
 
         {/* Ad Metrics Summary Grid */}
         <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
               <Megaphone className="w-3.5 h-3.5 text-amber-400 shrink-0" /> យុទ្ធនាការសកម្ម
             </span>
@@ -828,7 +876,7 @@ export default function BusinessDashboard() {
             </p>
           </div>
 
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
               <Eye className="w-3.5 h-3.5 text-sky-400 shrink-0" /> ចំនួនមើល Ad
             </span>
@@ -837,7 +885,7 @@ export default function BusinessDashboard() {
             </p>
           </div>
 
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
               <MousePointer className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> ចុចលើ Ad
             </span>
@@ -846,7 +894,7 @@ export default function BusinessDashboard() {
             </p>
           </div>
 
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" /> អត្រាចុច (CTR)
             </span>
@@ -859,8 +907,8 @@ export default function BusinessDashboard() {
         {/* Ads Cards List */}
         <div className="relative z-10 space-y-3">
           {(!adsData.data || adsData.data.length === 0) ? (
-            <div className="py-12 px-4 rounded-2xl bg-slate-800/30 border border-dashed border-slate-700 text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto">
+            <div className="py-12 px-4 rounded-xl bg-slate-800/30 border border-dashed border-slate-700 text-center space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto">
                 <Megaphone className="w-6 h-6" />
               </div>
               <div className="space-y-1 max-w-md mx-auto">
@@ -886,7 +934,7 @@ export default function BusinessDashboard() {
               {adsData.data.map((ad) => (
                 <div
                   key={ad.id}
-                  className={`p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl border transition-all duration-300 flex flex-col justify-between gap-3 ${
                     ad.status === 'active'
                       ? 'bg-slate-800/70 border-amber-500/30 hover:border-amber-400/60 shadow-md'
                       : 'bg-slate-900/50 border-slate-800 opacity-80'
@@ -974,7 +1022,7 @@ export default function BusinessDashboard() {
       {/* Modal: Add Business */}
       {addBusinessModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-md">
             <div className="sticky top-0 bg-white/80 backdrop-blur-xl border-b border-slate-100 p-4 sm:p-6 flex justify-between items-center z-10">
               <h3 className="text-xl font-bold text-slate-900 font-heading">
                 {isEditing ? 'Edit Business Details' : 'Register New Business'}
@@ -1148,7 +1196,7 @@ export default function BusinessDashboard() {
               <div className="pt-2 border-t border-slate-100">
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-2">Pinpoint Location on Map (Required for Map Display)</label>
                 <p className="text-[10px] text-slate-500 mb-2">ចុចលើផែនទីដើម្បីកំណត់ទីតាំង (Latitude / Longitude) ដោយស្វ័យប្រវត្តិ។ ទីតាំងនេះចាំបាច់ណាស់ដើម្បីឲ្យហាងរបស់អ្នកបង្ហាញលើទំព័រផែនទី (Map Page)។</p>
-                <div className="h-[300px] w-full rounded-2xl overflow-hidden border border-slate-200 mb-3 z-0 relative">
+                <div className="h-[300px] w-full rounded-xl overflow-hidden border border-slate-200 mb-3 z-0 relative">
                   <MapContainer 
                     center={[13.3615, 103.8596]} // Default Siem Reap
                     zoom={13} 
@@ -1235,7 +1283,7 @@ export default function BusinessDashboard() {
       {/* Modal: Add Service */}
       {addServiceModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl animate-in zoom-in-95">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4 shadow-md animate-in zoom-in-95">
             <h3 className="font-bold text-lg text-slate-900">Add Service / Menu Item</h3>
             <form onSubmit={handleCreateService} className="space-y-3">
               <div>
@@ -1306,7 +1354,7 @@ export default function BusinessDashboard() {
       {/* Modal: Add Promotion */}
       {addPromoModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl animate-in zoom-in-95">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4 shadow-md animate-in zoom-in-95">
             <h3 className="font-bold text-lg text-slate-900">Create Promotion Offer</h3>
             <form onSubmit={handleCreatePromo} className="space-y-3">
               <div>
@@ -1401,7 +1449,7 @@ export default function BusinessDashboard() {
       {/* Modal: New Self-Service Ad Campaign */}
       {addAdModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 text-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95">
+          <div className="bg-slate-900 border border-slate-700 text-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-md animate-in zoom-in-95">
             <div className="sticky top-0 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 p-5 flex justify-between items-center z-10">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
@@ -1488,7 +1536,7 @@ export default function BusinessDashboard() {
                         onClick={() => handlePlacementOrDurationChange('duration_days', days)}
                         className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                           newAd.duration_days === days
-                            ? 'bg-gradient-to-b from-amber-500 to-orange-500 text-slate-950 font-black border-amber-400'
+                            ? 'bg-amber-600 text-slate-950 font-black border-amber-400'
                             : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'
                         }`}
                       >
@@ -1564,7 +1612,7 @@ export default function BusinessDashboard() {
                 {imageUploadMode === 'upload' && (
                   <div>
                     {!newAd.image_preview ? (
-                      <label className="cursor-pointer flex flex-col items-center justify-center gap-2 w-full py-6 px-4 border-2 border-dashed border-slate-700 rounded-2xl hover:border-amber-400 hover:bg-slate-800/60 transition-all text-center group">
+                      <label className="cursor-pointer flex flex-col items-center justify-center gap-2 w-full py-6 px-4 border-2 border-dashed border-slate-700 rounded-xl hover:border-amber-400 hover:bg-slate-800/60 transition-all text-center group">
                         <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                           <Upload className="w-5 h-5" />
                         </div>
@@ -1580,7 +1628,7 @@ export default function BusinessDashboard() {
                         />
                       </label>
                     ) : (
-                      <div className="relative rounded-2xl overflow-hidden border border-amber-500/40 bg-slate-950 group">
+                      <div className="relative rounded-xl overflow-hidden border border-amber-500/40 bg-slate-950 group">
                         <img
                           src={newAd.image_preview}
                           alt="Ad Preview"
@@ -1635,7 +1683,7 @@ export default function BusinessDashboard() {
                 )}
 
                 {imageUploadMode === 'cover' && (
-                  <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2">
+                  <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
                     {(() => {
                       const biz = businesses.find(b => b.id === Number(newAd.business_id)) || businesses[0];
                       return (
@@ -1659,7 +1707,7 @@ export default function BusinessDashboard() {
               </div>
 
               {/* Total Price Summary Box */}
-              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
                 <div>
                   <span className="text-[11px] font-bold text-amber-300 uppercase">Total Amount</span>
                   <p className="text-xs text-slate-300">Scan instantly with Bakong KHQR</p>
@@ -1682,7 +1730,7 @@ export default function BusinessDashboard() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs hover:from-amber-400 hover:to-orange-400 shadow-lg shadow-orange-500/25 flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-amber-600 text-slate-950 font-black text-xs hover:from-amber-400 hover:to-orange-400 shadow-lg shadow-sm flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Proceed to KHQR Payment</span>
@@ -1696,7 +1744,7 @@ export default function BusinessDashboard() {
       {/* Modal: Renew Ad */}
       {renewAdModal && selectedAdForRenew && (
         <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 text-white rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
+          <div className="bg-slate-900 border border-slate-700 text-white rounded-xl w-full max-w-md p-6 space-y-4 shadow-md animate-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <RefreshCw className="w-4 h-4 text-amber-400" />

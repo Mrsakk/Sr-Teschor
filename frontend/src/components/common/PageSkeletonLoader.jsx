@@ -6,10 +6,10 @@ export default function PageSkeletonLoader() {
     <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 space-y-6 animate-pulse">
       {/* Brand Spinner & Logo */}
       <div className="relative">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-amber-500 flex items-center justify-center shadow-lg shadow-emerald-600/20 animate-bounce">
+        <div className="w-16 h-16 rounded-xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-sm animate-bounce">
           <Sparkles className="w-8 h-8 text-white animate-spin" style={{ animationDuration: '3s' }} />
         </div>
-        <div className="absolute -inset-2 rounded-3xl bg-emerald-500/20 blur-xl -z-10 animate-pulse" />
+        <div className="absolute -inset-2 rounded-xl bg-emerald-500/20 blur-xl -z-10 animate-pulse" />
       </div>
 
       {/* Title placeholder */}
@@ -21,7 +21,7 @@ export default function PageSkeletonLoader() {
       {/* Card Skeletons Grid */}
       <div className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 space-y-3 shadow-xs">
+          <div key={i} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl p-4 space-y-3 shadow-xs">
             <div className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-xl w-full" />
             <div className="h-3.5 bg-slate-200 dark:bg-slate-800 rounded-full w-3/4" />
             <div className="h-2.5 bg-slate-100 dark:bg-slate-800/70 rounded-full w-1/2" />

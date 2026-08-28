@@ -18,7 +18,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Highlight Banner */}
-        <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-10 sm:mb-16 text-white shadow-xl shadow-orange-950/20 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-5 sm:gap-6">
+        <div className="bg-orange-600 rounded-xl sm:rounded-xl p-6 sm:p-8 mb-10 sm:mb-16 text-white shadow-sm shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-5 sm:gap-6">
           <div className="space-y-2">
             <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm inline-block">
               តើអ្នកជាម្ចាស់អាជីវកម្មនៅសៀមរាបមែនទេ?
@@ -32,7 +32,7 @@ export default function Footer() {
           </div>
           <Link
             to="/pricing"
-            className="w-full md:w-auto justify-center whitespace-nowrap px-6 py-3.5 bg-white text-orange-600 hover:bg-orange-50 font-extrabold rounded-xl sm:rounded-2xl shadow-lg hover:scale-102 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+            className="w-full md:w-auto justify-center whitespace-nowrap px-6 py-3.5 bg-white text-orange-600 hover:bg-orange-50 font-extrabold rounded-xl sm:rounded-xl shadow-lg hover:scale-102 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 shrink-0" />
             <span>ចុះឈ្មោះចូលរួម (Partner With Us)</span>
@@ -55,7 +55,7 @@ export default function Footer() {
                   />
                 </div>
               ) : (
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center text-white font-black text-xl shadow-md overflow-hidden shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-orange-600 flex items-center justify-center text-white font-black text-xl shadow-md overflow-hidden shrink-0">
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                     <path d="M12 2L9 7H15L12 2ZM7 9L4 14H20L17 9H7ZM2 16L3.5 22H20.5L22 16H2ZM11 18H13V21H11V18Z" />
                   </svg>

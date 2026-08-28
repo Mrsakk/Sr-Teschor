@@ -79,7 +79,7 @@ class BusinessController extends Controller
         $cacheKey = 'businesses_list_' . md5(json_encode($request->all()));
 
         $businesses = \Illuminate\Support\Facades\Cache::remember($cacheKey, 120, function () use ($query, $perPage) {
-            return $query->paginate($perPage);
+            return $query->paginate($perPage)->toArray();
         });
 
         return response()->json($businesses);

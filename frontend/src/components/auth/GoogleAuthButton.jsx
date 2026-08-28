@@ -200,7 +200,7 @@ export default function GoogleAuthButton({ text = 'Continue with Google', role =
         id="google-auth-btn"
         onClick={handleGoogleClick}
         disabled={isProcessing}
-        className="w-full py-3 px-4 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs font-extrabold flex items-center justify-center gap-3 transition-all shadow-xs hover:shadow-md hover:border-slate-300 disabled:opacity-60 cursor-pointer"
+        className="w-full py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs font-extrabold flex items-center justify-center gap-3 transition-all shadow-xs hover:shadow-md hover:border-slate-300 disabled:opacity-60 cursor-pointer"
       >
         {isProcessing ? (
           <>
@@ -256,9 +256,9 @@ export default function GoogleAuthButton({ text = 'Continue with Google', role =
       {/* Google Cloud Origin Setup Guide Modal */}
       {showConfigModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 space-y-5">
+          <div className="bg-white rounded-xl p-6 sm:p-8 max-w-lg w-full shadow-md border border-slate-100 space-y-5">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 font-bold">
                 <ShieldAlert className="w-5 h-5" />
               </div>
               <div className="space-y-1">
@@ -271,7 +271,7 @@ export default function GoogleAuthButton({ text = 'Continue with Google', role =
               </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3 text-xs text-slate-700">
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3 text-xs text-slate-700">
               <p className="font-bold text-slate-900 flex items-center gap-1.5">
                 <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px]">1</span>
                 បើក Google Cloud Console Credentials:

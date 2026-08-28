@@ -3,22 +3,23 @@ import { Link } from 'react-router-dom';
 import { Tag, Sparkles, Clock, Building2, ArrowRight } from 'lucide-react';
 import { promotionApi } from '../api/endpoints';
 
-export default function Promotions() {
-  const [promotions, setPromotions] = useState([]);
-  const [loading, setLoading] = useState(true);
+import { useQuery } from '@tanstack/react-query';
 
-  useEffect(() => {
-    promotionApi.getAll()
-      .then((res) => setPromotions(res.data.data || []))
-      .catch((e) => console.error(e))
-      .finally(() => setLoading(false));
-  }, []);
+export default function Promotions() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['promotions'],
+    queryFn: () => promotionApi.getAll().then(r => r.data),
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+
+  const promotions = data?.data || [];
+  const loading = isLoading && !data;
 
   return (
     <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-3xl p-6 sm:p-12 text-white shadow-xl">
+      <div className="bg-red-600 rounded-xl p-6 sm:p-12 text-white shadow-sm">
         <div className="max-w-2xl space-y-2">
           <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-md">
             Exclusive Traveler Savings
@@ -42,7 +43,7 @@ export default function Promotions() {
           {promotions.map((promo) => (
             <div
               key={promo.id}
-              className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between card-hover-effect"
+              className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-sm transition-all duration-300 flex flex-col justify-between card-hover-effect"
             >
               <div className="relative aspect-[16/10] bg-slate-900 overflow-hidden">
                 <img

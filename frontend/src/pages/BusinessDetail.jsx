@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { 
   Heart, 
   MapPin, 
@@ -40,9 +41,6 @@ export default function BusinessDetail() {
   const { slug } = useParams();
   const { isFavorited, toggleFavorite } = useFavoriteStore();
 
-  const [business, setBusiness] = useState(null);
-  const [similar, setSimilar] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -50,23 +48,39 @@ export default function BusinessDetail() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPromo, setCopiedPromo] = useState('');
   const [lightboxImg, setLightboxImg] = useState(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchBusiness = async () => {
-      setLoading(true);
+  // ── Business Detail — instant from cache on revisit ──
+  const { data, isLoading } = useQuery({
+    queryKey: ['business', slug],
+    queryFn: async () => {
       window.scrollTo(0, 0);
-      try {
-        const res = await businessApi.getBySlug(slug);
-        setBusiness(res.data.business);
-        setSimilar(res.data.similar || []);
-      } catch (err) {
-        console.error('Business load error', err);
-      } finally {
-        setLoading(false);
+      const res = await businessApi.getBySlug(slug);
+      return res.data;
+    },
+    placeholderData: () => {
+      const businessesQueries = queryClient.getQueriesData({ queryKey: ['businesses'] });
+      for (const [, queryData] of businessesQueries) {
+        let bizList = [];
+        if (Array.isArray(queryData)) {
+          bizList = queryData;
+        } else if (queryData?.data && Array.isArray(queryData.data)) {
+          bizList = queryData.data;
+        }
+        
+        const found = bizList.find(b => b.slug === slug);
+        if (found) {
+          return { business: found, similar: [] };
+        }
       }
-    };
-    fetchBusiness();
-  }, [slug]);
+      return undefined;
+    },
+    staleTime: 1000 * 60 * 3,
+  });
+
+  const business = data?.business || null;
+  const similar = data?.similar || [];
+  const loading = isLoading && !data;
 
   if (loading) {
     return (
@@ -156,7 +170,7 @@ export default function BusinessDetail() {
             onClick={() => toggleFavorite('business', business.id)}
             className={`h-9 sm:h-10 px-3.5 sm:px-4 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer whitespace-nowrap ${
               favorited
-                ? 'bg-rose-500 text-white shadow-rose-500/30'
+                ? 'bg-rose-500 text-white shadow-sm'
                 : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
             }`}
           >
@@ -167,7 +181,7 @@ export default function BusinessDetail() {
       </div>
 
       {/* ── 2. HERO HEADER BANNER ── */}
-      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden min-h-[300px] sm:min-h-[420px] bg-slate-950 shadow-xl flex flex-col justify-end p-4 sm:p-8 md:p-10 border border-slate-800">
+      <div className="relative rounded-xl sm:rounded-xl overflow-hidden min-h-[300px] sm:min-h-[420px] bg-slate-950 shadow-sm flex flex-col justify-end p-4 sm:p-8 md:p-10 border border-slate-800">
         
         {/* Cover Background Image */}
         <img
@@ -239,7 +253,7 @@ export default function BusinessDetail() {
           <div className="pt-1 sm:pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
             <button
               onClick={() => handleOpenBooking()}
-              className="w-full sm:w-auto px-5 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2 transition-transform hover:scale-102 cursor-pointer"
+              className="w-full sm:w-auto px-5 py-3 sm:py-3.5 rounded-xl sm:rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs sm:text-sm shadow-sm shadow-sm flex items-center justify-center gap-2 transition-transform hover:scale-102 cursor-pointer"
             >
               <Calendar className="w-4 h-4 shrink-0" />
               <span>កក់ទុក ឬសាកសួរ (Book / Inquire)</span>
@@ -248,7 +262,7 @@ export default function BusinessDetail() {
             {business.phone && (
               <a
                 href={`tel:${business.phone}`}
-                className="w-full sm:w-auto px-4 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/20 transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-3.5 rounded-xl sm:rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/20 transition-colors"
               >
                 <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>Call Directly</span>
@@ -270,10 +284,10 @@ export default function BusinessDetail() {
               {business.promotions.map((p) => (
                 <div
                   key={p.id}
-                  className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border border-orange-400/30 relative overflow-hidden"
+                  className="bg-red-600 rounded-xl sm:rounded-xl p-4 sm:p-6 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border border-orange-400/30 relative overflow-hidden"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black shrink-0 border border-white/30">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black shrink-0 border border-white/30">
                       <Tag className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                     <div className="space-y-0.5 sm:space-y-1">
@@ -306,7 +320,7 @@ export default function BusinessDetail() {
           )}
 
           {/* About Section */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+          <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
             <div className="border-b border-slate-100 pb-2.5 sm:pb-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
                 ព័ត៌មានលម្អិត (Overview)
@@ -323,7 +337,7 @@ export default function BusinessDetail() {
 
           {/* Photo Gallery Grid */}
           {allImages.length > 1 && (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 sm:pb-3">
                 <div>
                   <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
@@ -343,7 +357,7 @@ export default function BusinessDetail() {
                   <button
                     key={index}
                     onClick={() => setLightboxImg(getFullImageUrl(img))}
-                    className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden group bg-slate-100 border border-slate-200 hover:shadow-md transition-all cursor-pointer"
+                    className="relative aspect-[4/3] rounded-xl sm:rounded-xl overflow-hidden group bg-slate-100 border border-slate-200 hover:shadow-md transition-all cursor-pointer"
                   >
                     <img
                       src={getFullImageUrl(img)}
@@ -368,7 +382,7 @@ export default function BusinessDetail() {
 
           {/* Available Services / Menu Packages */}
           {business.services && business.services.length > 0 && (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 sm:pb-3">
                 <div>
                   <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
@@ -385,7 +399,7 @@ export default function BusinessDetail() {
                 {business.services.map((serv) => (
                   <div
                     key={serv.id}
-                    className="bg-slate-50 hover:bg-slate-100/80 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all"
+                    className="bg-slate-50 hover:bg-slate-100/80 rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all"
                   >
                     <div className="space-y-1 min-w-0">
                       <h4 className="font-bold text-xs sm:text-base text-slate-900 leading-snug">
@@ -407,7 +421,7 @@ export default function BusinessDetail() {
                       </span>
                       <Link
                         to={`/checkout/${serv.id}`}
-                        className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition-transform hover:scale-105 flex items-center gap-1"
+                        className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-bold text-xs shadow-md shadow-sm transition-transform hover:scale-105 flex items-center gap-1"
                       >
                         <span>Book Now</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -420,7 +434,7 @@ export default function BusinessDetail() {
           )}
 
           {/* Customer Reviews Section */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
+          <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b border-slate-100 pb-3 sm:pb-4">
               <div>
                 <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
@@ -436,7 +450,7 @@ export default function BusinessDetail() {
 
               <button
                 onClick={() => setReviewModalOpen(true)}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl sm:rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl sm:rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <MessageSquarePlus className="w-4 h-4 text-emerald-600" />
                 <span>Rate & Review (សរសេរការវាយតម្លៃ)</span>
@@ -451,7 +465,7 @@ export default function BusinessDetail() {
                 </div>
               ) : (
                 business.reviews.map((rev) => (
-                  <div key={rev.id} className="bg-slate-50 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 space-y-2.5">
+                  <div key={rev.id} className="bg-slate-50 rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <UserAvatar user={rev.user} size="sm" />
@@ -490,7 +504,7 @@ export default function BusinessDetail() {
 
         {/* ── RIGHT COLUMN: CONTACT, OPENING HOURS & GPS MAP CARD ── */}
         <div className="space-y-4 sm:space-y-6">
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-7 border border-slate-100 shadow-xl space-y-4 sm:space-y-5 sticky top-24">
+          <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-7 border border-slate-100 shadow-sm space-y-4 sm:space-y-5 sticky top-24">
             
             <div className="border-b border-slate-100 pb-2.5 sm:pb-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
@@ -561,7 +575,7 @@ export default function BusinessDetail() {
 
               {/* Location code */}
               {business.location_code && (
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-cyan-600" />
                     <span className="text-xs font-bold font-mono text-slate-700">
@@ -584,7 +598,7 @@ export default function BusinessDetail() {
             <div className="pt-3 space-y-2.5 border-t border-slate-100">
               <button
                 onClick={() => handleOpenBooking()}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 text-white font-extrabold text-xs shadow-md shadow-orange-500/25 transition-transform hover:scale-102 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-extrabold text-xs shadow-md shadow-sm transition-transform hover:scale-102 cursor-pointer flex items-center justify-center gap-2"
               >
                 <Calendar className="w-4 h-4" />
                 <span>ផ្ញើសំណើកក់តុ / សេវាកម្ម</span>
@@ -595,7 +609,7 @@ export default function BusinessDetail() {
                 href={business.phone ? `https://t.me/+855${business.phone.replace(/[^0-9]/g, '').replace(/^0/, '')}` : 'https://t.me/sr_techor_support'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>ឆាតតាម Telegram (Direct Chat)</span>
@@ -606,7 +620,7 @@ export default function BusinessDetail() {
                 href={business.map_link || `https://www.google.com/maps/search/?api=1&query=${business.latitude || 13.3601},${business.longitude || 103.8550}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 rounded-2xl border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-colors"
+                className="w-full py-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-colors"
               >
                 <Navigation className="w-3.5 h-3.5 text-emerald-600" />
                 <span>មើលផ្លូវលើ Google Maps (GPS)</span>
@@ -665,7 +679,7 @@ export default function BusinessDetail() {
           <img
             src={lightboxImg}
             alt="Gallery preview"
-            className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-md"
             onClick={(e) => e.stopPropagation()}
           />
         </div>

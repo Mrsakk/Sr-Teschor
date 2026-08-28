@@ -99,12 +99,12 @@ export default function AudioGuidePlayer({
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-5 sm:p-6 text-white shadow-xl border border-slate-700/60 space-y-4">
+    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl p-5 sm:p-6 text-white shadow-sm border border-slate-700/60 space-y-4">
       
       {/* Top Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center border border-orange-500/30">
+          <div className="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center border border-orange-500/30">
             <Headphones className="w-5 h-5 animate-pulse" />
           </div>
           <div>
@@ -142,7 +142,7 @@ export default function AudioGuidePlayer({
       </div>
 
       {/* Waveform / Visual Animation */}
-      <div className="bg-slate-950/50 rounded-2xl p-3.5 border border-slate-800 flex items-center gap-3">
+      <div className="bg-slate-950/50 rounded-xl p-3.5 border border-slate-800 flex items-center gap-3">
         <div className="flex items-center gap-1 h-6 px-1">
           {[40, 70, 30, 90, 50, 80, 45, 65, 85, 35].map((h, i) => (
             <div
@@ -173,7 +173,7 @@ export default function AudioGuidePlayer({
           <button
             type="button"
             onClick={handleTogglePlay}
-            className="w-12 h-12 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white flex items-center justify-center shadow-lg shadow-orange-500/25 transition-transform active:scale-95 cursor-pointer"
+            className="w-12 h-12 rounded-xl bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center shadow-lg shadow-sm transition-transform active:scale-95 cursor-pointer"
           >
             {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
           </button>

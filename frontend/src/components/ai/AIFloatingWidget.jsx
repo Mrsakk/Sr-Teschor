@@ -26,7 +26,7 @@ export default function AIFloatingWidget() {
           type="button"
           id="ai-floating-btn"
           onClick={() => setIsChatOpen(true)}
-          className="relative w-14 h-14 rounded-full bg-gradient-to-tr from-orange-500 via-amber-500 to-yellow-400 text-white flex items-center justify-center shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer border-2 border-white/80 group"
+          className="relative w-14 h-14 rounded-full bg-gradient-to-tr from-orange-500 via-amber-500 to-yellow-400 text-white flex items-center justify-center shadow-sm shadow-sm hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer border-2 border-white/80 group"
           title="SR TesChor AI Concierge"
         >
           {/* Subtle Glow Ring */}

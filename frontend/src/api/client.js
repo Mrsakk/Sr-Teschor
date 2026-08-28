@@ -26,10 +26,7 @@ const axiosInstance = axios.create({
   },
 });
 
-const api = setupCache(axiosInstance, {
-  ttl: 1000 * 60 * 3, // Cache GET requests for 3 minutes
-  interpretHeader: false, // Ensure our TTL is respected regardless of default backend cache-control
-});
+const api = axiosInstance;
 
 // Attach bearer token if present
 api.interceptors.request.use((config) => {

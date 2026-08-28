@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Calendar, 
   MapPin, 
@@ -44,30 +45,37 @@ export default function TripPlanner() {
     window.print();
   };
 
-  useEffect(() => {
-    const fetchTrips = async () => {
-      setLoading(true);
-      try {
-        const [tripsRes, destsRes] = await Promise.all([
-          isAuthenticated ? tripApi.getAll() : Promise.resolve({ data: { my_trips: [], public_trips: [] } }),
-          destinationApi.getAll({ per_page: 50 }),
-        ]);
+  const { data: destsData } = useQuery({
+    queryKey: ['destinations', { per_page: 50 }],
+    queryFn: () => destinationApi.getAll({ per_page: 50 }).then(r => r.data),
+    staleTime: 1000 * 60 * 10,
+  });
 
-        const trips = tripsRes.data.my_trips || [];
-        setMyTrips(trips);
-        setPublicTrips(tripsRes.data.public_trips || []);
-        if (trips.length > 0) {
-          setSelectedTrip(trips[0]);
-        }
-        setDestinations(destsRes.data.data || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+  const { data: tripsData, isLoading: tripsLoading } = useQuery({
+    queryKey: ['trips'],
+    queryFn: () => tripApi.getAll().then(r => r.data),
+    enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  useEffect(() => {
+    if (tripsData) {
+      setMyTrips(tripsData.my_trips || []);
+      setPublicTrips(tripsData.public_trips || []);
+      if (!selectedTrip && tripsData.my_trips && tripsData.my_trips.length > 0) {
+        setSelectedTrip(tripsData.my_trips[0]);
       }
-    };
-    fetchTrips();
-  }, [isAuthenticated]);
+      setLoading(false);
+    } else if (!isAuthenticated) {
+      setLoading(false);
+    }
+  }, [tripsData, isAuthenticated, selectedTrip]);
+
+  useEffect(() => {
+    if (destsData) {
+      setDestinations(destsData.data || []);
+    }
+  }, [destsData]);
 
   const handleCreateTrip = async (e) => {
     e.preventDefault();
@@ -157,7 +165,7 @@ export default function TripPlanner() {
         <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <button
             onClick={() => setAiPlannerOpen(true)}
-            className="px-3.5 sm:px-4 py-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs shadow-md shadow-orange-500/25 flex items-center justify-center gap-1.5 sm:gap-2 transition-transform hover:scale-[1.02] cursor-pointer whitespace-nowrap"
+            className="px-3.5 sm:px-4 py-2.5 rounded-xl sm:rounded-xl bg-orange-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs shadow-md shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-transform hover:scale-[1.02] cursor-pointer whitespace-nowrap"
           >
             <Sparkles className="w-4 h-4 text-amber-200 shrink-0" />
             <span>រៀបចំជាមួយ AI</span>
@@ -166,7 +174,7 @@ export default function TripPlanner() {
           {isAuthenticated && (
             <button
               onClick={() => setCreateModalOpen(true)}
-              className="px-3.5 sm:px-5 py-2.5 rounded-xl sm:rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 sm:gap-2 transition-transform hover:scale-[1.02] cursor-pointer whitespace-nowrap"
+              className="px-3.5 sm:px-5 py-2.5 rounded-xl sm:rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 sm:gap-2 transition-transform hover:scale-[1.02] cursor-pointer whitespace-nowrap"
             >
               <Plus className="w-4 h-4 shrink-0" />
               <span>បង្កើតកាលវិភាគ</span>
@@ -204,7 +212,7 @@ export default function TripPlanner() {
         <div className="lg:col-span-2 space-y-6 print:space-y-4">
           
           {selectedTrip ? (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-100 shadow-xs space-y-5 sm:space-y-6 print:border-none print:shadow-none print:p-0 print:space-y-4">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4 sm:p-6 md:p-8 border border-slate-100 shadow-xs space-y-5 sm:space-y-6 print:border-none print:shadow-none print:p-0 print:space-y-4">
               
               {/* Official Print Header (Only visible when printing / saving PDF) */}
               <div className="hidden print:block pb-5 border-b-2 border-slate-900 mb-5">
@@ -275,7 +283,7 @@ export default function TripPlanner() {
 
               {/* Day-by-Day Timeline */}
               {Object.keys(itemsByDay).length === 0 ? (
-                <div className="text-center py-10 sm:py-12 space-y-3 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                <div className="text-center py-10 sm:py-12 space-y-3 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
                   <Compass className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 mx-auto" />
                   <p className="font-bold text-sm text-slate-700">មិនទាន់មានទីតាំងក្នុងកាលវិភាគឡើយ</p>
                   <p className="text-xs text-slate-400 max-w-xs mx-auto">
@@ -302,7 +310,7 @@ export default function TripPlanner() {
                           return (
                             <div
                               key={item.id}
-                              className="relative pl-5 sm:pl-6 bg-slate-50 hover:bg-slate-100/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-100 flex items-center justify-between gap-3 transition-all print:border print:border-slate-200 print:bg-white print:p-2.5"
+                              className="relative pl-5 sm:pl-6 bg-slate-50 hover:bg-slate-100/80 rounded-xl sm:rounded-xl p-3 sm:p-4 border border-slate-100 flex items-center justify-between gap-3 transition-all print:border print:border-slate-200 print:bg-white print:p-2.5"
                             >
                               <div className="absolute -left-[8px] top-5 w-3.5 h-3.5 rounded-full bg-orange-500 border-2 border-white shadow-2xs print:top-3.5" />
                               
@@ -349,7 +357,7 @@ export default function TripPlanner() {
 
             </div>
           ) : (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center border border-slate-100 space-y-3">
+            <div className="bg-white rounded-xl sm:rounded-xl p-8 sm:p-12 text-center border border-slate-100 space-y-3">
               <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 mx-auto" />
               <h3 className="font-bold text-base sm:text-lg text-slate-900">មិនទាន់មានកាលវិភាគនៅឡើយទេ</h3>
               <p className="text-xs text-slate-500">ចូលគណនី និងបង្កើតកាលវិភាគផ្ទាល់ខ្លួនរបស់អ្នក។</p>
@@ -360,14 +368,14 @@ export default function TripPlanner() {
 
         {/* Right Col: Sample Curated Itineraries (Screen only) */}
         <div className="print:hidden space-y-6">
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-6 border border-slate-100 shadow-xs space-y-4">
+          <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-6 border border-slate-100 shadow-xs space-y-4">
             <h3 className="font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-orange-500 shrink-0" />
               <span>គំរូកាលវិភាគណែនាំ (Recommended)</span>
             </h3>
 
             <div className="space-y-3">
-              <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-orange-50/60 border border-orange-100 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-orange-50/60 border border-orange-100 space-y-1.5">
                 <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-200/60 px-2 py-0.5 rounded-md inline-block">
                   Classic 3-Day Tour
                 </span>
@@ -379,7 +387,7 @@ export default function TripPlanner() {
                 </p>
               </div>
 
-              <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-purple-50/60 border border-purple-100 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-purple-50/60 border border-purple-100 space-y-1.5">
                 <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-200/60 px-2 py-0.5 rounded-md inline-block">
                   Hidden Gems 2-Day
                 </span>
@@ -398,7 +406,7 @@ export default function TripPlanner() {
       {/* Modal: Create Trip */}
       {createModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl animate-in zoom-in-95">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4 shadow-md animate-in zoom-in-95">
             <h3 className="font-bold text-lg text-slate-900">Create New Trip Itinerary</h3>
             <form onSubmit={handleCreateTrip} className="space-y-3">
               <div>
@@ -445,7 +453,7 @@ export default function TripPlanner() {
       {/* Add Item Modal */}
       {addItemModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-md space-y-4">
             <h3 className="font-bold text-base text-slate-900">Add Destination to Day {itemDay}</h3>
             
             <form onSubmit={handleAddItem} className="space-y-4">

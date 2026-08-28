@@ -9,7 +9,7 @@ export default function AdminLayout() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex">
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex">
       {/* SaaS Admin Sidebar */}
       <AdminSidebar
         isCollapsed={isCollapsed}

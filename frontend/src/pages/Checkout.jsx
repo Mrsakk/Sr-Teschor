@@ -230,7 +230,7 @@ export default function Checkout() {
         </div>
 
         {errorMsg && (
-          <div className="mb-5 sm:mb-6 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+          <div className="mb-5 sm:mb-6 p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
             <span>{errorMsg}</span>
           </div>
@@ -242,13 +242,13 @@ export default function Checkout() {
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             
             {/* Step 1: Selected Experience Summary */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
               <div className="flex items-start gap-3 sm:gap-4">
                 {item?.image && (
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl object-cover shrink-0 shadow-2xs"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-xl object-cover shrink-0 shadow-2xs"
                   />
                 )}
                 <div className="space-y-1 min-w-0 flex-1">
@@ -269,7 +269,7 @@ export default function Checkout() {
             </div>
 
             {/* Step 2: Schedule & Guests */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
               <h3 className="font-bold text-xs sm:text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-orange-500" />
                 <span>១. កាលបរិច្ឆេទ និងចំនួនភ្ញៀវ (Schedule & Guests)</span>
@@ -338,7 +338,7 @@ export default function Checkout() {
             </div>
 
             {/* Step 3: Contact & Pickup Details */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
               <h3 className="font-bold text-xs sm:text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Users className="w-4 h-4 text-orange-500" />
                 <span>២. ព័ត៌មានទំនាក់ទំនង (Contact Details)</span>
@@ -419,7 +419,7 @@ export default function Checkout() {
             </div>
 
             {/* Step 4: Payment Method Selection */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
               <h3 className="font-bold text-xs sm:text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-orange-500" />
                 <span>៣. ជ្រើសរើសវិធីសាស្ត្រទូទាត់ (Payment Method)</span>
@@ -430,7 +430,7 @@ export default function Checkout() {
                 {/* KHQR (Recommended in Cambodia) */}
                 <div
                   onClick={() => setPaymentMethod('khqr')}
-                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'khqr'
                       ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
@@ -455,7 +455,7 @@ export default function Checkout() {
                 {/* Credit / Debit Card */}
                 <div
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'card'
                       ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
@@ -475,7 +475,7 @@ export default function Checkout() {
                 {/* Bakong Direct */}
                 <div
                   onClick={() => setPaymentMethod('bakong')}
-                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'bakong'
                       ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
@@ -495,7 +495,7 @@ export default function Checkout() {
                 {/* Cash on Arrival */}
                 <div
                   onClick={() => setPaymentMethod('cash')}
-                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-xl sm:rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                     paymentMethod === 'cash'
                       ? 'border-orange-500 bg-orange-50/40 shadow-xs ring-2 ring-orange-500/20'
                       : 'border-slate-200 hover:border-slate-300'
@@ -516,7 +516,7 @@ export default function Checkout() {
 
               {/* KHQR Live Mockup Preview */}
               {paymentMethod === 'khqr' && quote && (
-                <div className="mt-3 sm:mt-4 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-950 via-slate-900 to-slate-950 text-white flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                <div className="mt-3 sm:mt-4 p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-gradient-to-br from-red-950 via-slate-900 to-slate-950 text-white flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
                   <div className="p-2 bg-white rounded-xl shrink-0 shadow-lg text-slate-900 flex flex-col items-center">
                     <QrCode className="w-20 h-20 sm:w-24 sm:h-24 text-slate-900" />
                     <span className="text-[9px] font-extrabold text-red-600 mt-1">KHQR PAY</span>
@@ -542,7 +542,7 @@ export default function Checkout() {
           {/* RIGHT COLUMN: Order Summary & Price Breakdown (5 Cols Sticky) */}
           <div className="lg:col-span-5 space-y-4 sm:space-y-6 lg:sticky lg:top-28">
             
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4.5 sm:p-6 border border-slate-100 shadow-xl space-y-4 sm:space-y-5">
+            <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-6 border border-slate-100 shadow-sm space-y-4 sm:space-y-5">
               <h3 className="font-bold text-sm sm:text-base text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
                 <span>សេចក្តីសង្ខេបនៃការកក់ (Summary)</span>
                 <span className="text-xs font-semibold text-slate-400">
@@ -643,7 +643,7 @@ export default function Checkout() {
               </div>
 
               {/* Security & Guarantees Badge */}
-              <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 text-[10px] sm:text-[11px] text-slate-500 space-y-1 border border-slate-100">
+              <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-xl bg-slate-50 text-[10px] sm:text-[11px] text-slate-500 space-y-1 border border-slate-100">
                 <div className="flex items-center gap-1.5 font-bold text-slate-700">
                   <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>ប្រព័ន្ធសុវត្ថិភាព 256-bit SSL Encrypted</span>
@@ -658,7 +658,7 @@ export default function Checkout() {
                 type="button"
                 onClick={handleSubmitBooking}
                 disabled={processing || calculating || !quote}
-                className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs sm:text-sm shadow-sm shadow-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {processing ? (
                   <>

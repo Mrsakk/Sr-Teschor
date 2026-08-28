@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import {
@@ -75,7 +76,7 @@ export default function AdminAdmins() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Admin Team & Access Control (RBAC)</h2>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Admin Team & Access Control (RBAC)</h2>
           <p className="text-xs text-slate-400">
             Manage administrative staff, assign departmental roles, and enforce granular security privileges.
           </p>
@@ -83,7 +84,7 @@ export default function AdminAdmins() {
 
         <button
           onClick={() => setIsCreateOpen(true)}
-          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition-all"
+          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm shadow-emerald-600/20 flex items-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Add Administrator</span>
@@ -91,14 +92,14 @@ export default function AdminAdmins() {
       </div>
 
       {/* Admin Staff Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-slate-800">
-          <h3 className="text-sm font-bold text-white">Active Platform Administrators</h3>
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div className="p-4 border-b border-slate-200">
+          <h3 className="text-sm font-bold text-slate-900">Active Platform Administrators</h3>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-800/80 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-700">
+            <thead className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-200">
               <tr>
                 <th className="px-5 py-3.5">Administrator</th>
                 <th className="px-5 py-3.5">Assigned Role</th>
@@ -110,31 +111,31 @@ export default function AdminAdmins() {
             <tbody className="divide-y divide-slate-800">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-slate-500">
+                  <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
                     Loading admin team...
                   </td>
                 </tr>
               ) : admins.map((adm) => (
-                <tr key={adm.id} className="hover:bg-slate-800/50 transition-colors">
+                <tr key={adm.id} className="hover:bg-transparent hover:bg-slate-50 transition-colors">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white text-xs">
                         {adm.name.charAt(0)}
                       </div>
                       <div>
-                        <span className="font-bold text-white block">{adm.name}</span>
+                        <span className="font-bold text-slate-900 block">{adm.name}</span>
                         <span className="text-[10px] text-slate-400 font-mono">{adm.email}</span>
                       </div>
                     </div>
                   </td>
 
                   <td className="px-5 py-3.5">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-purple-500/10 text-purple-600 border border-purple-500/20">
                       {adm.admin_role ? adm.admin_role.replace('_', ' ') : 'Super Admin'}
                     </span>
                   </td>
 
-                  <td className="px-5 py-3.5 text-slate-300">
+                  <td className="px-5 py-3.5 text-slate-700">
                     {adm.phone || 'Internal Staff'}
                   </td>
 
@@ -151,7 +152,7 @@ export default function AdminAdmins() {
                   </td>
 
                   <td className="px-5 py-3.5 text-right">
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-500/20">
                       <Check className="w-3 h-3" />
                       Active
                     </span>
@@ -170,8 +171,8 @@ export default function AdminAdmins() {
           { name: 'Content Administrator', desc: 'Authorized to create & edit temples, historical destinations, categories, and review moderation.' },
           { name: 'Finance Administrator', desc: 'Access to platform earnings, Stripe/ABA revenue, subscription MRR, and booking commissions.' },
         ].map((r, i) => (
-          <div key={i} className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
-            <h4 className="text-sm font-bold text-white mb-1">{r.name}</h4>
+          <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h4 className="text-sm font-bold text-slate-900 mb-1">{r.name}</h4>
             <p className="text-xs text-slate-400 leading-relaxed">{r.desc}</p>
           </div>
         ))}
@@ -179,59 +180,59 @@ export default function AdminAdmins() {
 
       {/* Add Admin Modal */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50/80 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 shadow-md relative text-left">
             <button
               onClick={() => setIsCreateOpen(false)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-100"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-base font-bold text-white mb-4">Add Administrator Account</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-4">Add Administrator Account</h3>
 
             <form onSubmit={handleCreate} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Staff Full Name</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Staff Full Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Sothea Chan"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Email Address</label>
                 <input
                   type="email"
                   required
                   placeholder="sothea@teschor.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Phone Number</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Phone Number</label>
                 <input
                   type="text"
                   placeholder="+855 12 999 000"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Assigned Role</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Assigned Role</label>
                 <select
                   value={formData.admin_role}
                   onChange={(e) => setFormData({ ...formData, admin_role: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 >
                   <option value="content_admin">Content Admin (Destinations & Reviews)</option>
                   <option value="business_admin">Business Admin (Partner Verification)</option>
@@ -242,13 +243,13 @@ export default function AdminAdmins() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Password</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Password</label>
                 <input
                   type="text"
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-900"
                 />
               </div>
 
@@ -256,7 +257,7 @@ export default function AdminAdmins() {
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 text-xs font-medium"
+                  className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-medium"
                 >
                   Cancel
                 </button>

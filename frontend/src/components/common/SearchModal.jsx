@@ -71,7 +71,7 @@ export default function SearchModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start justify-center p-4 sm:p-6 sm:pt-20">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white rounded-xl shadow-md border border-slate-100 w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         
         {/* Search Input Box */}
         <form onSubmit={handleSearchSubmit} className="relative flex items-center border-b border-slate-100 px-5 py-4">
@@ -130,7 +130,7 @@ export default function SearchModal({ isOpen, onClose }) {
                   <button
                     key={cat.id}
                     onClick={() => handleSelect(cat.url)}
-                    className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-orange-50/80 group text-left transition-colors"
+                    className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-orange-50/80 group text-left transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs">
@@ -158,7 +158,7 @@ export default function SearchModal({ isOpen, onClose }) {
                   <button
                     key={item.id}
                     onClick={() => handleSelect(item.url)}
-                    className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 group text-left transition-colors"
+                    className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 group text-left transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
@@ -191,7 +191,7 @@ export default function SearchModal({ isOpen, onClose }) {
                   <button
                     key={biz.id}
                     onClick={() => handleSelect(biz.url)}
-                    className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 group text-left transition-colors"
+                    className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 group text-left transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">

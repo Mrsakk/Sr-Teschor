@@ -37,7 +37,7 @@ export default function DestinationCard({ destination, onRequireAuth }) {
   const primaryImage = getFullImageUrl(rawImage);
 
   return (
-    <div className="group bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-100 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col h-full card-hover-effect">
+    <div className="group bg-white rounded-xl sm:rounded-xl overflow-hidden border border-slate-100 shadow-xs hover:shadow-sm transition-all duration-300 flex flex-col h-full card-hover-effect">
       
       {/* Image Container with Badges & Favorite */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">

@@ -157,7 +157,7 @@ export default function TripDetail() {
             </button>
             <button
               onClick={() => setShareOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md shadow-orange-500/20"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md shadow-sm"
             >
               <Share2 className="w-4 h-4" /> Share Trip
             </button>
@@ -165,7 +165,7 @@ export default function TripDetail() {
         </div>
 
         {/* Hero Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">
@@ -181,7 +181,7 @@ export default function TripDetail() {
 
             <button
               onClick={() => setAddStopModalOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-lg shadow-orange-500/25 transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-lg shadow-sm transition-all hover:scale-105"
             >
               <Plus className="w-4 h-4" /> Add Destination to Itinerary
             </button>
@@ -189,19 +189,19 @@ export default function TripDetail() {
 
           {/* Quick Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100 text-center">
-            <div className="p-3 rounded-2xl bg-slate-50">
+            <div className="p-3 rounded-xl bg-slate-50">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Stops</span>
               <p className="text-lg font-extrabold text-slate-900 mt-0.5">{trip.items?.length || 0} Places</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50">
+            <div className="p-3 rounded-xl bg-slate-50">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Duration</span>
               <p className="text-lg font-extrabold text-slate-900 mt-0.5">{sortedDays.length || 1} Days</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50">
+            <div className="p-3 rounded-xl bg-slate-50">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Start Date</span>
               <p className="text-lg font-extrabold text-slate-900 mt-0.5">{trip.start_date || 'Flexible'}</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50">
+            <div className="p-3 rounded-xl bg-slate-50">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Visibility</span>
               <p className="text-lg font-extrabold text-slate-900 mt-0.5">{trip.is_public ? 'Public' : 'Private'}</p>
             </div>
@@ -215,7 +215,7 @@ export default function TripDetail() {
           <div className="lg:col-span-2 space-y-6">
             
             {sortedDays.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 border border-slate-200 text-center space-y-3">
+              <div className="bg-white rounded-xl p-12 border border-slate-200 text-center space-y-3">
                 <p className="text-xs text-slate-500">Your itinerary is currently empty.</p>
                 <button
                   onClick={() => setAddStopModalOpen(true)}
@@ -226,10 +226,10 @@ export default function TripDetail() {
               </div>
             ) : (
               sortedDays.map((day) => (
-                <div key={`day-${day}`} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div key={`day-${day}`} className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-8 h-8 rounded-xl bg-orange-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm shadow-orange-500/20">
+                      <span className="w-8 h-8 rounded-xl bg-orange-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm shadow-sm">
                         D{day}
                       </span>
                       <h3 className="font-extrabold text-base text-slate-900">
@@ -245,7 +245,7 @@ export default function TripDetail() {
                     {daysMap[day].map((item, idx) => (
                       <div
                         key={item.id}
-                        className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start justify-between gap-4 hover:border-orange-200 transition-all"
+                        className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between gap-4 hover:border-orange-200 transition-all"
                       >
                         <div className="flex items-start gap-3">
                           <img
@@ -302,13 +302,13 @@ export default function TripDetail() {
 
           {/* Map Column (1 Column) */}
           <div className="space-y-6">
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4 sticky top-24">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4 sticky top-24">
               <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                 <MapPin className="w-4 h-4 text-orange-500" />
                 <h3 className="font-extrabold text-sm text-slate-900">Itinerary Route Map</h3>
               </div>
 
-              <div className="h-[400px] rounded-2xl overflow-hidden border border-slate-200 shadow-inner relative z-0">
+              <div className="h-[400px] rounded-xl overflow-hidden border border-slate-200 shadow-inner relative z-0">
                 <MapContainer
                   center={[13.3633, 103.8564]}
                   zoom={11}
@@ -342,7 +342,7 @@ export default function TripDetail() {
       {/* Add Stop Modal */}
       {addStopModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden p-6 space-y-4">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-md border border-slate-100 overflow-hidden p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-extrabold text-base text-slate-900">Add Stop to Itinerary</h3>
               <button

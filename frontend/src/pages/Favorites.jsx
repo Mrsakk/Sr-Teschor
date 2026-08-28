@@ -43,7 +43,7 @@ export default function Favorites() {
         <div className="pt-2">
           <Link
             to="/login"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-orange-500/30 hover:scale-102 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-sm hover:scale-102 transition-all"
           >
             <span>ចូលគណនីឥឡូវនេះ (Sign In)</span>
             <ArrowRight className="w-4 h-4" />
@@ -73,7 +73,7 @@ export default function Favorites() {
         </div>
 
         {/* Responsive Tabs (3-column grid on mobile) */}
-        <div className="grid grid-cols-3 sm:flex items-center gap-1 bg-slate-100 p-1 rounded-2xl text-[11px] sm:text-xs font-bold w-full sm:w-auto">
+        <div className="grid grid-cols-3 sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-[11px] sm:text-xs font-bold w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('all')}
             className={`py-2 px-3 sm:px-4 rounded-xl transition-all text-center cursor-pointer ${
@@ -112,7 +112,7 @@ export default function Favorites() {
 
       {/* Empty State */}
       {!loading && totalCount === 0 && (
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-16 text-center border border-slate-100 max-w-lg mx-auto space-y-3 sm:space-y-4">
+        <div className="bg-white rounded-xl sm:rounded-xl p-8 sm:p-16 text-center border border-slate-100 max-w-lg mx-auto space-y-3 sm:space-y-4">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto shadow-xs">
             <Heart className="w-7 h-7 sm:w-8 sm:h-8" />
           </div>
@@ -125,7 +125,7 @@ export default function Favorites() {
           <div className="pt-2">
             <Link
               to="/destinations"
-              className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white font-bold text-xs hover:bg-orange-600 transition-colors shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-xl bg-orange-500 text-white font-bold text-xs hover:bg-orange-600 transition-colors shadow-md"
             >
               <Compass className="w-4 h-4" /> ស្វែងរកគោលដៅទេសចរណ៍
             </Link>
