@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Calendar, 
   MapPin, 
@@ -35,39 +36,38 @@ const stopPin = L.divIcon({
 export default function TripDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [trip, setTrip] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [shareOpen, setShareOpen] = useState(false);
 
   // Add stop modal state
   const [addStopModalOpen, setAddStopModalOpen] = useState(false);
-  const [availableDestinations, setAvailableDestinations] = useState([]);
   const [selectedDestId, setSelectedDestId] = useState('');
   const [dayNumber, setDayNumber] = useState(1);
   const [estimatedTime, setEstimatedTime] = useState('09:00 AM');
   const [stopNotes, setStopNotes] = useState('');
   const [submittingStop, setSubmittingStop] = useState(false);
 
-  const fetchTrip = async () => {
-    try {
-      setLoading(true);
-      const data = await tripService.getById(id);
-      setTrip(data);
-    } catch (err) {
-      console.error(err);
-      navigate('/my-trips');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // 1. Fetch Trip details (instant 0ms cached display)
+  const {
+    data: trip,
+    isLoading: loading,
+    refetch: fetchTrip,
+  } = useQuery({
+    queryKey: ['trip', id],
+    queryFn: () => tripService.getById(id),
+    staleTime: 1000 * 60 * 3,
+    placeholderData: prev => prev,
+    refetchOnMount: true,
+  });
 
-  useEffect(() => {
-    fetchTrip();
-    destinationService.getAll({ per_page: 50 }).then((res) => {
-      setAvailableDestinations(res.data || []);
-      if (res.data?.length > 0) setSelectedDestId(res.data[0].id);
-    });
-  }, [id]);
+  // 2. Fetch Available Destinations
+  const { data: destsResponse } = useQuery({
+    queryKey: ['destinations', 'lookup'],
+    queryFn: () => destinationService.getAll({ per_page: 50 }),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: prev => prev,
+  });
+
+  const availableDestinations = destsResponse?.data || [];
 
   const handleRemoveStop = async (itemId) => {
     if (!confirm('Remove this stop from itinerary?')) return;
@@ -137,7 +137,7 @@ export default function TripDetail() {
 
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         
         {/* Navigation & Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -151,13 +151,13 @@ export default function TripDetail() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 shadow-xs transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4 text-slate-500" /> Print Itinerary
             </button>
             <button
               onClick={() => setShareOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
             >
               <Share2 className="w-4 h-4" /> Share Trip
             </button>
@@ -165,74 +165,74 @@ export default function TripDetail() {
         </div>
 
         {/* Hero Card */}
-        <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-200/90 shadow-xs space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold">
                 <Compass className="w-3.5 h-3.5" /> Siem Reap Travel Plan
               </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-heading">
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 font-heading">
                 {trip.name}
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 max-w-2xl">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-2xl">
                 {trip.description || 'Personalized itinerary designed on Tes Chor.'}
               </p>
             </div>
 
             <button
               onClick={() => setAddStopModalOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-lg shadow-sm transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4" /> Add Destination to Itinerary
+              <Plus className="w-4 h-4" /> Add Destination
             </button>
           </div>
 
           {/* Quick Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100 text-center">
-            <div className="p-3 rounded-xl bg-slate-50">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-4 border-t border-slate-200/80 text-center">
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Stops</span>
-              <p className="text-lg font-extrabold text-slate-900 mt-0.5">{trip.items?.length || 0} Places</p>
+              <p className="text-lg font-extrabold text-slate-900 mt-0.5 font-heading">{trip.items?.length || 0} Places</p>
             </div>
-            <div className="p-3 rounded-xl bg-slate-50">
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Duration</span>
-              <p className="text-lg font-extrabold text-slate-900 mt-0.5">{sortedDays.length || 1} Days</p>
+              <p className="text-lg font-extrabold text-slate-900 mt-0.5 font-heading">{sortedDays.length || 1} Days</p>
             </div>
-            <div className="p-3 rounded-xl bg-slate-50">
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Start Date</span>
-              <p className="text-lg font-extrabold text-slate-900 mt-0.5">{trip.start_date || 'Flexible'}</p>
+              <p className="text-lg font-extrabold text-slate-900 mt-0.5 font-heading">{trip.start_date || 'Flexible'}</p>
             </div>
-            <div className="p-3 rounded-xl bg-slate-50">
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Visibility</span>
-              <p className="text-lg font-extrabold text-slate-900 mt-0.5">{trip.is_public ? 'Public' : 'Private'}</p>
+              <p className="text-lg font-extrabold text-slate-900 mt-0.5 font-heading">{trip.is_public ? 'Public' : 'Private'}</p>
             </div>
           </div>
         </div>
 
         {/* 2-Column: Day-by-Day Timeline + Live Map */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           
           {/* Day-by-Day Timeline (2 Columns) */}
           <div className="lg:col-span-2 space-y-6">
             
             {sortedDays.length === 0 ? (
-              <div className="bg-white rounded-xl p-12 border border-slate-200 text-center space-y-3">
+              <div className="bg-white rounded-2xl p-12 border border-slate-200 text-center space-y-3 shadow-xs">
                 <p className="text-xs text-slate-500">Your itinerary is currently empty.</p>
                 <button
                   onClick={() => setAddStopModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 text-white font-bold text-xs"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
                 >
                   <Plus className="w-4 h-4" /> Add Your First Attraction
                 </button>
               </div>
             ) : (
               sortedDays.map((day) => (
-                <div key={`day-${day}`} className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div key={`day-${day}`} className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-8 h-8 rounded-xl bg-orange-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm shadow-sm">
+                      <span className="w-8 h-8 rounded-xl bg-orange-600 text-white font-extrabold text-xs flex items-center justify-center shadow-xs">
                         D{day}
                       </span>
-                      <h3 className="font-extrabold text-base text-slate-900">
+                      <h3 className="font-extrabold text-base text-slate-900 font-heading">
                         Day {day} Schedule
                       </h3>
                     </div>
@@ -245,7 +245,7 @@ export default function TripDetail() {
                     {daysMap[day].map((item, idx) => (
                       <div
                         key={item.id}
-                        className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between gap-4 hover:border-orange-200 transition-all"
+                        className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-4 hover:border-slate-300 transition-all shadow-xs"
                       >
                         <div className="flex items-start gap-3">
                           <img
@@ -259,7 +259,7 @@ export default function TripDetail() {
                                 {item.estimated_time || 'Morning'}
                               </span>
                               <span className="text-slate-300">•</span>
-                              <h4 className="font-extrabold text-sm text-slate-900">
+                              <h4 className="font-extrabold text-sm text-slate-900 font-heading">
                                 {item.destination?.name || item.custom_title}
                               </h4>
                             </div>
@@ -268,7 +268,7 @@ export default function TripDetail() {
                               {item.destination?.address || 'Siem Reap'}
                             </p>
                             {item.notes && (
-                              <p className="text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md inline-block">
+                              <p className="text-[11px] text-orange-800 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100 inline-block">
                                 💡 {item.notes}
                               </p>
                             )}
@@ -279,14 +279,14 @@ export default function TripDetail() {
                           {item.destination?.slug && (
                             <Link
                               to={`/destinations/${item.destination.slug}`}
-                              className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-100"
+                              className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors shadow-xs"
                             >
                               Details
                             </Link>
                           )}
                           <button
                             onClick={() => handleRemoveStop(item.id)}
-                            className="p-1.5 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                            className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -302,13 +302,13 @@ export default function TripDetail() {
 
           {/* Map Column (1 Column) */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4 sticky top-24">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs space-y-4 sticky top-24">
               <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <MapPin className="w-4 h-4 text-orange-500" />
-                <h3 className="font-extrabold text-sm text-slate-900">Itinerary Route Map</h3>
+                <MapPin className="w-4 h-4 text-emerald-700" />
+                <h3 className="font-extrabold text-sm text-slate-900 font-heading">Itinerary Route Map</h3>
               </div>
 
-              <div className="h-[400px] rounded-xl overflow-hidden border border-slate-200 shadow-inner relative z-0">
+              <div className="h-[400px] rounded-xl overflow-hidden border border-slate-200 relative z-0">
                 <MapContainer
                   center={[13.3633, 103.8564]}
                   zoom={11}

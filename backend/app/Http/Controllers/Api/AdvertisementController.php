@@ -24,13 +24,13 @@ class AdvertisementController extends Controller
         $today = now()->toDateString();
         $cacheKey = 'active_ads_' . md5(json_encode($request->all())) . '_' . $today;
 
-        $ads = \Illuminate\Support\Facades\Cache::remember($cacheKey, 60, function () use ($request, $today) {
+        $ads = \Illuminate\Support\Facades\Cache::remember($cacheKey, 1800, function () use ($request, $today) {
             $query = Advertisement::with('business')
                 ->where('status', 'active')
                 ->where('start_date', '<=', $today)
                 ->where('end_date', '>=', $today);
 
-            if ($request->filled('placement')) {
+            if ($request->filled('placement') && $request->input('placement') !== 'all') {
                 $placements = explode(',', $request->input('placement'));
                 $query->whereIn('placement', $placements);
             }
@@ -40,7 +40,7 @@ class AdvertisementController extends Controller
             }
 
             $limit = min((int)$request->input('limit', 10), 50);
-            return $query->take($limit)->get();
+            return $query->take($limit)->get()->toArray();
         });
 
         return response()->json([
@@ -97,7 +97,7 @@ class AdvertisementController extends Controller
             'title' => 'required|string|max:255',
             'image' => 'required|string',
             'link_url' => 'nullable|string',
-            'placement' => 'required|in:hero_banner,search_top,destination_sidebar,business_sidebar',
+            'placement' => 'required|in:hero_banner,sidebar,destination_footer,search_top',
             'duration_days' => 'required|integer|in:7,15,30,60,90',
             'price' => 'required|numeric|min:1',
             'payment_reference' => 'nullable|string',
@@ -154,6 +154,7 @@ class AdvertisementController extends Controller
             ]);
 
             DB::commit();
+            \Illuminate\Support\Facades\Cache::flush();
 
             return response()->json([
                 'status' => 'success',
@@ -225,6 +226,7 @@ class AdvertisementController extends Controller
             ]);
 
             DB::commit();
+            \Illuminate\Support\Facades\Cache::flush();
 
             return response()->json([
                 'status' => 'success',

@@ -13,8 +13,6 @@ import {
 } from 'lucide-react';
 
 export default function AdminNotifications() {
-  const [notifications, setNotifications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -27,21 +25,20 @@ export default function AdminNotifications() {
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  const {
+    data: notifData,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin', 'notifications'],
+    queryFn: () => adminApi.getNotifications().then(r => r.data?.data || (Array.isArray(r.data) ? r.data : [])),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
 
-  const fetchNotifications = async () => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getNotifications();
-      setNotifications(res.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load notifications history.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const notifications = notifData || [];
 
   const handleBroadcast = async (e) => {
     e.preventDefault();
@@ -56,9 +53,9 @@ export default function AdminNotifications() {
         type: 'information',
         link: '/',
       });
-      fetchNotifications();
+      refetch();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to dispatch notification.');
+      toast.error('Failed to send broadcast notification.');
     } finally {
       setIsSending(false);
     }

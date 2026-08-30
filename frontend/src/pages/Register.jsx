@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Lock, Mail, User, Phone, Building2, Sparkles } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+import { systemApi } from '../api/endpoints';
+import { getFullImageUrl } from '../utils/imageUrl';
 import GoogleAuthButton from '../components/auth/GoogleAuthButton';
 
 export default function Register() {
@@ -17,6 +20,13 @@ export default function Register() {
 
   const { register, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
+
+  const { data: settings = {} } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => systemApi.getSettings().then(r => r.data),
+    staleTime: 1000 * 60 * 10,
+    placeholderData: prev => prev,
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,17 +50,24 @@ export default function Register() {
 
   return (
     <div className="min-h-[90vh] flex items-center justify-center pt-24 pb-16 px-4">
-      <div className="bg-white rounded-xl p-8 sm:p-10 border border-slate-100 shadow-md w-full max-w-md space-y-6">
+      <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-200 shadow-xs w-full max-w-md space-y-6">
         
         {/* Header */}
         <div className="text-center space-y-1">
-          <div className="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-md shadow-sm font-black text-xl mb-3">
-            <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
-              <path d="M12 2L9 7H15L12 2ZM7 9L4 14H20L17 9H7ZM2 16L3.5 22H20.5L22 16H2ZM11 18H13V21H11V18Z" />
-            </svg>
+          <div className="flex justify-center mb-3">
+            <img
+              src={settings.site_logo ? getFullImageUrl(settings.site_logo) : '/logo.png'}
+              alt={settings.site_name || "SR TesChor Logo"}
+              className="h-16 sm:h-20 w-auto max-w-[220px] object-contain drop-shadow-md rounded-2xl transition-transform hover:scale-105"
+              onError={(e) => {
+                if (!e.target.src.endsWith('/logo.png')) {
+                  e.target.src = '/logo.png';
+                }
+              }}
+            />
           </div>
           <h2 className="text-2xl font-extrabold text-slate-900 font-heading">
-            Join Tes Chor
+            {settings.site_name ? `Join ${settings.site_name}` : 'Join Tes Chor'}
           </h2>
           <p className="text-xs text-slate-500">
             Create an account as a Traveler or a Local Business Owner
@@ -58,13 +75,13 @@ export default function Register() {
         </div>
 
         {/* Role Toggle Tabs */}
-        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-xl text-xs font-bold">
+        <div className="grid grid-cols-2 gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs font-bold border border-slate-200/80">
           <button
             type="button"
             onClick={() => setRole('customer')}
-            className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               role === 'customer'
-                ? 'bg-white text-orange-600 shadow-sm'
+                ? 'bg-white text-orange-600 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -73,9 +90,9 @@ export default function Register() {
           <button
             type="button"
             onClick={() => setRole('business')}
-            className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               role === 'business'
-                ? 'bg-white text-emerald-700 shadow-sm'
+                ? 'bg-white text-emerald-700 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -84,7 +101,7 @@ export default function Register() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 text-red-700 rounded-xl text-xs font-semibold border border-red-200">
+          <div className="p-3 bg-rose-50 text-rose-700 rounded-xl text-xs font-semibold border border-rose-200">
             {error}
           </div>
         )}
@@ -102,7 +119,7 @@ export default function Register() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. John Smith"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -119,7 +136,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -135,7 +152,7 @@ export default function Register() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+855 12 345 678"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -152,7 +169,7 @@ export default function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
               />
             </div>
             <div>
@@ -166,7 +183,7 @@ export default function Register() {
                 value={passwordConfirmation}
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -174,10 +191,10 @@ export default function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-3.5 rounded-xl text-white font-extrabold text-sm shadow-md transition-all disabled:opacity-50 cursor-pointer ${
+            className={`w-full py-3.5 rounded-xl text-white font-bold text-sm shadow-xs transition-colors disabled:opacity-50 cursor-pointer ${
               role === 'business'
-                ? 'bg-emerald-600 hover:from-emerald-700 shadow-sm'
-                : 'bg-orange-600 hover:from-orange-600 shadow-sm'
+                ? 'bg-emerald-600 hover:bg-emerald-700'
+                : 'bg-orange-600 hover:bg-orange-700'
             }`}
           >
             {isLoading ? 'Creating Account...' : (role === 'business' ? 'Register Business Owner' : 'Create Traveler Account')}

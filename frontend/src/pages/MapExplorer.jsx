@@ -174,56 +174,56 @@ export default function MapExplorer() {
   };
 
   return (
-    <div className="pt-14 sm:pt-16 lg:pt-20 pb-16 lg:pb-0 h-[100dvh] flex flex-col overflow-hidden bg-slate-900">
+    <div className="pt-14 sm:pt-16 lg:pt-20 pb-16 lg:pb-0 h-[100dvh] flex flex-col overflow-hidden bg-slate-50">
       
       {/* ── TOP CONTROL BAR ── */}
-      <div className="bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-2 z-20 shrink-0 shadow-md">
+      <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2.5 z-20 shrink-0 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           
           {/* Header Title & Switcher Row */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center font-bold shrink-0">
-                <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center font-bold shrink-0">
+                <MapPin className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <h1 className="font-extrabold text-xs sm:text-base text-white leading-tight flex items-center gap-1.5 truncate">
-                  <span translate="no" className="notranslate truncate">ផែនទីសៀមរាប</span>
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-orange-400 border border-slate-700 shrink-0">
+                <h1 className="font-extrabold text-xs sm:text-base text-slate-900 leading-tight flex items-center gap-1.5 truncate font-heading">
+                  <span translate="no" className="notranslate truncate">Map Explorer</span>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                     {loading ? '...' : totalVisible}
                   </span>
                 </h1>
-                <p className="text-[10px] text-slate-400 hidden sm:block truncate">
-                  រុករកប្រាសាទបុរាណ រមណីយដ្ឋាន ភោជនីយដ្ឋាន និងសណ្ឋាគារ
+                <p className="text-[10px] text-slate-500 hidden sm:block truncate">
+                  Explore ancient temples, tourist attractions, restaurants, and hotels
                 </p>
               </div>
             </div>
 
             {/* Mobile Map / List View Toggle Switcher */}
-            <div className="flex sm:hidden items-center bg-slate-800/90 p-0.5 rounded-xl border border-slate-700 shrink-0">
+            <div className="flex sm:hidden items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 shrink-0">
               <button
                 type="button"
                 onClick={() => setMobileView('map')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
                   mobileView === 'map'
-                    ? 'bg-orange-500 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <MapIcon className="w-3 h-3" />
-                <span translate="no" className="notranslate">ផែនទី</span>
+                <span translate="no" className="notranslate">Map</span>
               </button>
               <button
                 type="button"
                 onClick={() => setMobileView('list')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
                   mobileView === 'list'
-                    ? 'bg-orange-500 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <List className="w-3 h-3" />
-                <span translate="no" className="notranslate">បញ្ជី ({loading ? '...' : totalVisible})</span>
+                <span translate="no" className="notranslate">List ({loading ? '...' : totalVisible})</span>
               </button>
             </div>
           </div>
@@ -236,15 +236,15 @@ export default function MapExplorer() {
               type="button"
               onClick={handleLocateMe}
               disabled={locating}
-              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 text-[11px] sm:text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 text-[11px] sm:text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                 userLocation
-                  ? 'bg-blue-600 text-white shadow-lg shadow-sm ring-1 ring-blue-400'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-xs'
               }`}
             >
-              <Crosshair className={`w-3 h-3 text-blue-400 ${locating ? 'animate-spin' : ''}`} />
+              <Crosshair className={`w-3.5 h-3.5 text-emerald-600 ${locating ? 'animate-spin' : ''}`} />
               <span translate="no" className="notranslate whitespace-nowrap">
-                {locating ? 'ស្វែងរក...' : userLocation ? 'GPS ជិតខ្ញុំ' : 'ទីតាំងជិតខ្ញុំ'}
+                {locating ? 'Searching...' : userLocation ? 'GPS Near Me' : 'Near Me'}
               </span>
             </button>
 
@@ -252,37 +252,37 @@ export default function MapExplorer() {
             <div className="flex items-center gap-1.5 shrink-0 text-[11px] sm:text-xs font-semibold">
               <button
                 onClick={() => setFilterType('all')}
-                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl transition-colors cursor-pointer whitespace-nowrap ${
                   filterType === 'all'
-                    ? 'bg-white text-slate-950 font-bold shadow-md'
-                    : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700/80'
+                    ? 'bg-slate-900 text-white font-bold shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-xs'
                 }`}
               >
-                <span translate="no" className="notranslate">ទាំងអស់ ({loading ? '...' : destinations.length + businesses.length})</span>
+                <span translate="no" className="notranslate">All ({loading ? '...' : destinations.length + businesses.length})</span>
               </button>
               
               <button
                 onClick={() => setFilterType('destinations')}
-                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap ${
                   filterType === 'destinations'
-                    ? 'bg-orange-500 text-white font-bold shadow-md shadow-sm'
-                    : 'bg-slate-800 text-orange-400 hover:bg-slate-700/80 border border-orange-500/30'
+                    ? 'bg-orange-600 text-white font-bold shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-xs'
                 }`}
               >
-                <Compass className="w-3 h-3" />
-                <span translate="no" className="notranslate">គោលដៅ ({loading ? '...' : destinations.length})</span>
+                <Compass className="w-3.5 h-3.5 text-orange-600" />
+                <span translate="no" className="notranslate">Destinations ({loading ? '...' : destinations.length})</span>
               </button>
 
               <button
                 onClick={() => setFilterType('businesses')}
-                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap ${
                   filterType === 'businesses'
-                    ? 'bg-emerald-600 text-white font-bold shadow-md shadow-sm'
-                    : 'bg-slate-800 text-emerald-400 hover:bg-slate-700/80 border border-emerald-500/30'
+                    ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-xs'
                 }`}
               >
-                <Building2 className="w-3 h-3" />
-                <span translate="no" className="notranslate">អាជីវកម្ម ({loading ? '...' : businesses.length})</span>
+                <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span translate="no" className="notranslate">Businesses ({loading ? '...' : businesses.length})</span>
               </button>
             </div>
           </div>
@@ -294,43 +294,43 @@ export default function MapExplorer() {
         
         {/* ── LEFT SIDEBAR (DESKTOP ALWAYS, MOBILE WHEN LIST VIEW ACTIVE) ── */}
         <div 
-          className={`w-full md:w-88 lg:w-96 bg-slate-900 border-r border-slate-800 h-full flex flex-col shrink-0 z-10 ${
+          className={`w-full md:w-88 lg:w-96 bg-white border-r border-slate-200 h-full flex flex-col shrink-0 z-10 ${
             mobileView === 'list' ? 'flex' : 'hidden md:flex'
           }`}
         >
           {/* Search Box inside Sidebar */}
-          <div className="p-3 border-b border-slate-800 bg-slate-950/40">
+          <div className="p-3 border-b border-slate-200 bg-slate-50">
             <div className="relative flex items-center">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ស្វែងរកឈ្មោះប្រាសាទ ភោជនីយដ្ឋាន..."
-                className="w-full pl-9 pr-8 py-2 bg-slate-800/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:border-orange-500 transition-colors"
+                placeholder="Search temples, restaurants..."
+                className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-orange-600 transition-colors shadow-xs"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 p-1 text-slate-400 hover:text-white"
+                  className="absolute right-2.5 p-1 text-slate-400 hover:text-slate-700 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
 
-            <div className="flex items-center justify-between mt-2 px-1 text-[11px] text-slate-400 font-medium">
-              <span>{userLocation ? '📍 តម្រៀបតាមចម្ងាយជិតអ្នកបំផុត' : 'ចុចលើទីតាំងដើម្បី Zoom លើផែនទី'}</span>
-              <span className="font-mono text-orange-400">{allVisibleItems.length} លទ្ធផល</span>
+            <div className="flex items-center justify-between mt-2 px-1 text-[11px] text-slate-500 font-medium">
+              <span>{userLocation ? 'Sorted by distance from you' : 'Click on the location to zoom on the map'}</span>
+              <span className="font-mono text-orange-600 font-bold">{allVisibleItems.length} Results</span>
             </div>
           </div>
 
           {/* Scrollable Places List */}
           <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar">
             {allVisibleItems.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 space-y-2">
-                <Compass className="w-8 h-8 mx-auto text-slate-600 animate-pulse" />
-                <p className="text-xs">រកមិនឃើញទីតាំងតាមការស្វែងរកនេះទេ</p>
+              <div className="text-center py-12 text-slate-400 space-y-2">
+                <Compass className="w-8 h-8 mx-auto text-slate-400 animate-pulse" />
+                <p className="text-xs">No results found for this search</p>
               </div>
             ) : (
               allVisibleItems.map((item) => {
@@ -353,11 +353,11 @@ export default function MapExplorer() {
                     onClick={() => handleSelectItem(item)}
                     className={`w-full p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-3 text-left group ${
                       isSelected
-                        ? 'bg-slate-800 border-orange-500 shadow-lg shadow-sm'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/70'
+                        ? 'bg-orange-50/50 border-orange-600 shadow-xs ring-1 ring-orange-600/20'
+                        : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs'
                     }`}
                   >
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-800">
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-100">
                       <img
                         src={imgUrl}
                         alt={item.name}
@@ -370,43 +370,43 @@ export default function MapExplorer() {
                         }}
                       />
                       <span className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase text-white ${
-                        isDest ? 'bg-orange-600/90' : 'bg-emerald-600/90'
+                        isDest ? 'bg-orange-600' : 'bg-emerald-600'
                       }`}>
-                        {isDest ? 'គោលដៅ' : 'អាជីវកម្ម'}
+                        {isDest ? 'DESTINATION' : 'BUSINESS'}
                       </span>
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1 mb-0.5">
                         <span className={`text-[10px] font-bold uppercase truncate ${
-                          isDest ? 'text-orange-400' : 'text-emerald-400'
+                          isDest ? 'text-orange-600' : 'text-emerald-700'
                         }`}>
                           {item.category?.name || (isDest ? 'ទេសចរណ៍' : 'សេវាកម្ម')}
                         </span>
                         {item.distance && (
-                          <span className="text-[10px] font-bold text-blue-400 bg-blue-950/80 border border-blue-800/60 px-1.5 py-0.2 rounded shrink-0">
+                          <span className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.2 rounded shrink-0">
                             {item.distance} km
                           </span>
                         )}
                       </div>
 
-                      <h4 className="font-bold text-xs text-white truncate group-hover:text-amber-300 transition-colors">
+                      <h4 className="font-bold text-xs text-slate-900 truncate group-hover:text-orange-600 transition-colors font-heading">
                         {item.name}
                       </h4>
                       {item.khmer_name && (
-                        <p className="text-[10px] font-khmer text-slate-400 truncate">
+                        <p className="text-[10px] font-khmer text-slate-500 truncate">
                           {item.khmer_name}
                         </p>
                       )}
 
-                      <div className="flex items-center justify-between pt-1 mt-0.5 text-[10px] text-slate-400">
-                        <div className="flex items-center gap-1 font-semibold text-amber-400">
+                      <div className="flex items-center justify-between pt-1 mt-0.5 text-[10px] text-slate-500">
+                        <div className="flex items-center gap-1 font-semibold text-amber-500">
                           <Star className="w-3 h-3 fill-amber-400" />
                           <span>{item.rating || '4.8'}</span>
                         </div>
-                        <span className="text-slate-300 font-medium">
+                        <span className="text-slate-700 font-bold">
                           {isDest 
-                            ? (item.entrance_fee > 0 ? `$${item.entrance_fee}` : 'Free Entry') 
+                            ? (item.entrance_fee > 0 ? `$${item.entrance_fee}` : 'Free') 
                             : (item.price_range || '$$')}
                         </span>
                       </div>
@@ -443,7 +443,7 @@ export default function MapExplorer() {
               <Marker position={userLocation} icon={userLocationIcon}>
                 <Popup>
                   <div className="p-2 text-center">
-                    <p className="font-bold text-xs text-blue-600">📍 ទីតាំងបច្ចុប្បន្នរបស់អ្នក</p>
+                    <p className="font-bold text-xs text-emerald-700">   Your Current Location</p>
                     <p className="text-[10px] text-slate-500">You are here in Siem Reap</p>
                   </div>
                 </Popup>
@@ -462,7 +462,7 @@ export default function MapExplorer() {
                   }}
                 >
                   <Popup>
-                    <div className="w-60 overflow-hidden rounded-xl bg-white text-slate-900 shadow-sm">
+                    <div className="w-60 overflow-hidden rounded-2xl bg-white text-slate-900 shadow-xs border border-slate-200">
                       <div className="relative h-28 w-full bg-slate-100 overflow-hidden">
                         <img
                           src={getFullImageUrl(dest.primary_image?.image || dest.images?.[0]?.image, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80')}
@@ -473,18 +473,18 @@ export default function MapExplorer() {
                             e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80';
                           }}
                         />
-                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-orange-600 text-white shadow-sm">
+                        <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase bg-orange-600 text-white shadow-xs">
                           {dest.category?.name || 'Destination'}
                         </span>
                         {dest.distance && (
-                          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-600 text-white shadow-sm">
+                          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-900 text-white shadow-xs">
                             {dest.distance} km
                           </span>
                         )}
                       </div>
                       
                       <div className="p-3 space-y-1.5">
-                        <h4 className="font-bold text-sm text-slate-900 leading-tight">
+                        <h4 className="font-bold text-sm text-slate-900 leading-tight font-heading">
                           {dest.name}
                         </h4>
                         {dest.khmer_name && (
@@ -500,9 +500,9 @@ export default function MapExplorer() {
                         </div>
                         <Link
                           to={`/destinations/${dest.slug}`}
-                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white rounded-xl transition-colors shadow-xs flex items-center justify-center gap-1.5"
                         >
-                          <span>មើលព័ត៌មានលម្អិត</span>
+                          <span>View Details</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
@@ -524,7 +524,7 @@ export default function MapExplorer() {
                   }}
                 >
                   <Popup>
-                    <div className="w-60 overflow-hidden rounded-xl bg-white text-slate-900 shadow-sm">
+                    <div className="w-60 overflow-hidden rounded-2xl bg-white text-slate-900 shadow-xs border border-slate-200">
                       <div className="relative h-28 w-full bg-slate-100 overflow-hidden">
                         <img
                           src={getFullImageUrl(biz.cover_image || biz.logo, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&auto=format&fit=crop&q=80')}
@@ -535,18 +535,18 @@ export default function MapExplorer() {
                             e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&auto=format&fit=crop&q=80';
                           }}
                         />
-                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-emerald-600 text-white shadow-sm">
+                        <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase bg-emerald-600 text-white shadow-xs">
                           {biz.category?.name || 'Business'}
                         </span>
                         {biz.distance && (
-                          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-600 text-white shadow-sm">
+                          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-900 text-white shadow-xs">
                             {biz.distance} km
                           </span>
                         )}
                       </div>
 
                       <div className="p-3 space-y-1.5">
-                        <h4 className="font-bold text-sm text-slate-900 leading-tight">
+                        <h4 className="font-bold text-sm text-slate-900 leading-tight font-heading">
                           {biz.name}
                         </h4>
                         {biz.khmer_name && (
@@ -562,9 +562,9 @@ export default function MapExplorer() {
                         </div>
                         <Link
                           to={`/businesses/${biz.slug}`}
-                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+                          className="mt-2 w-full py-2 text-center text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors shadow-xs flex items-center justify-center gap-1.5"
                         >
-                          <span>មើលព័ត៌មានអាជីវកម្ម</span>
+                          <span>View Business Details</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
@@ -578,15 +578,15 @@ export default function MapExplorer() {
           {/* ── MOBILE FLOATING ACTIVE CARD DRAWER ── */}
           {activeItem && (
             <div className="md:hidden absolute bottom-4 inset-x-3 z-30 animate-in slide-in-from-bottom-6 duration-300">
-              <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-xl p-3 shadow-md flex items-center gap-3 relative">
+              <div className="bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl p-3.5 shadow-xl flex items-center gap-3 relative">
                 <button
                   onClick={() => setActiveItem(null)}
-                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center shadow-md text-xs"
+                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-slate-200 text-slate-500 flex items-center justify-center shadow-xs text-xs cursor-pointer hover:bg-slate-50"
                 >
                   ✕
                 </button>
 
-                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-800">
+                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-100">
                   <img
                     src={getFullImageUrl(
                       activeItem.itemType === 'destination'
@@ -606,29 +606,29 @@ export default function MapExplorer() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">
                     <span className={`text-[10px] font-bold uppercase ${
-                      activeItem.itemType === 'destination' ? 'text-orange-400' : 'text-emerald-400'
+                      activeItem.itemType === 'destination' ? 'text-orange-600' : 'text-emerald-700'
                     }`}>
                       {activeItem.category?.name}
                     </span>
                     {activeItem.distance && (
-                      <span className="text-[10px] font-bold text-blue-400">
+                      <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
                         {activeItem.distance} km
                       </span>
                     )}
                   </div>
-                  <h4 className="font-bold text-xs text-white truncate">
+                  <h4 className="font-bold text-xs text-slate-900 truncate font-heading">
                     {activeItem.name}
                   </h4>
                   <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center gap-1 text-[10px] text-amber-400 font-bold">
+                    <div className="flex items-center gap-1 text-[10px] text-amber-500 font-bold">
                       <Star className="w-3 h-3 fill-amber-400" />
                       <span>{activeItem.rating || '4.9'}</span>
                     </div>
                     <Link
                       to={activeItem.itemType === 'destination' ? `/destinations/${activeItem.slug}` : `/businesses/${activeItem.slug}`}
-                      className="px-2.5 py-1 rounded-lg bg-orange-500 text-white font-bold text-[10px] flex items-center gap-1"
+                      className="px-2.5 py-1 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-bold text-[10px] flex items-center gap-1 transition-colors shadow-xs"
                     >
-                      <span>បើកមើល</span>
+                      <span>View Details</span>
                       <ChevronRight className="w-3 h-3" />
                     </Link>
                   </div>

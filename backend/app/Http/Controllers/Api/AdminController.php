@@ -23,6 +23,7 @@ use App\Models\Subscription;
 use App\Models\TravelPackage;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -38,14 +39,19 @@ class AdminController extends Controller
     {
         $this->authorizeAdmin($request);
 
-        $totalUsers = User::count();
-        $totalBusinesses = Business::count();
-        $totalDestinations = Destination::count();
-        $totalBookings = Booking::count();
-        $totalRevenue = Payment::where('status', 'completed')->sum('amount');
-        $pendingApprovals = Business::where('verification_status', 'pending')->count();
-        $totalReviews = Review::count();
-        $activePromotions = Promotion::where('status', 'active')->count();
+        if ($request->boolean('refresh')) {
+            Cache::forget('admin_dashboard_metrics');
+        }
+
+        $payload = Cache::remember('admin_dashboard_metrics', 60, function () {
+            $totalUsers = User::count();
+            $totalBusinesses = Business::count();
+            $totalDestinations = Destination::count();
+            $totalBookings = Booking::count();
+            $totalRevenue = Payment::where('status', 'completed')->sum('amount');
+            $pendingApprovals = Business::where('verification_status', 'pending')->count();
+            $totalReviews = Review::count();
+            $activePromotions = Promotion::where('status', 'active')->count();
 
         // Previous period comparison stats
         $stats = [
@@ -213,7 +219,9 @@ class AdminController extends Controller
                     'name' => $cat->name,
                     'value' => $cat->destinations_count + $cat->businesses_count,
                 ];
-            });
+            })
+            ->values()
+            ->toArray();
 
         $popularDestinations = Destination::orderBy('views_count', 'desc')
             ->take(6)
@@ -224,7 +232,9 @@ class AdminController extends Controller
                     'views' => $d->views_count,
                     'rating' => $d->rating,
                 ];
-            });
+            })
+            ->values()
+            ->toArray();
 
         // Dynamic Real-time Recent Activity Stream from Database
         $dbLogs = AdminActivityLog::with('user')->latest()->take(6)->get();
@@ -276,26 +286,29 @@ class AdminController extends Controller
             $recentActivities = $recentBookings->concat($recentReviews)->concat($recentBusinesses)->take(6)->values()->toArray();
         }
 
-        return response()->json([
-            'stats' => $stats,
-            'charts' => [
-                'user_growth' => $userGrowth,
-                'business_growth' => $businessGrowth,
-                'revenue_trend' => $revenueTrend,
-                'bookings_trend' => $bookingsTrend,
-                'categories_distribution' => $categoriesDistribution,
-                'popular_destinations' => $popularDestinations,
-            ],
-            'recent_activities' => $recentActivities,
-            'quick_counts' => [
-                'destinations' => $totalDestinations,
-                'categories' => Category::count(),
-                'businesses' => $totalBusinesses,
-                'promotions' => $activePromotions,
-                'advertisements' => Advertisement::count(),
-                'reports' => Report::where('status', 'pending')->count(),
-            ],
-        ]);
+            return [
+                'stats' => $stats,
+                'charts' => [
+                    'user_growth' => $userGrowth,
+                    'business_growth' => $businessGrowth,
+                    'revenue_trend' => $revenueTrend,
+                    'bookings_trend' => $bookingsTrend,
+                    'categories_distribution' => $categoriesDistribution,
+                    'popular_destinations' => $popularDestinations,
+                ],
+                'recent_activities' => $recentActivities,
+                'quick_counts' => [
+                    'destinations' => $totalDestinations,
+                    'categories' => Category::count(),
+                    'businesses' => $totalBusinesses,
+                    'promotions' => $activePromotions,
+                    'advertisements' => Advertisement::count(),
+                    'reports' => Report::where('status', 'pending')->count(),
+                ],
+            ];
+        });
+
+        return response()->json($payload);
     }
 
     /*
@@ -367,6 +380,7 @@ class AdminController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $user = User::create($validated);
 
+        $this->flushCache();
         AdminActivityLog::log('Created User', 'users', $user->name, "Created account with email: {$user->email}");
 
         return response()->json([
@@ -397,6 +411,7 @@ class AdminController extends Controller
 
         $user->update($validated);
 
+        $this->flushCache();
         AdminActivityLog::log('Updated User', 'users', $user->name, "Updated user settings/status");
 
         return response()->json([
@@ -413,6 +428,7 @@ class AdminController extends Controller
         $newStatus = $user->status === 'active' ? 'disabled' : 'active';
         $user->update(['status' => $newStatus]);
 
+        $this->flushCache();
         AdminActivityLog::log($newStatus === 'active' ? 'Unblocked User' : 'Blocked User', 'users', $user->name);
 
         return response()->json([
@@ -433,6 +449,7 @@ class AdminController extends Controller
         $name = $user->name;
         $user->delete();
 
+        $this->flushCache();
         AdminActivityLog::log('Deleted User', 'users', $name);
 
         return response()->json(['message' => "User {$name} deleted successfully"]);
@@ -507,6 +524,7 @@ class AdminController extends Controller
             'link' => '/businesses/' . $business->slug,
         ]);
 
+        $this->flushCache();
         AdminActivityLog::log('Approved Business', 'businesses', $business->name, $notes);
 
         return response()->json([
@@ -535,6 +553,7 @@ class AdminController extends Controller
             'link' => '/business/dashboard',
         ]);
 
+        $this->flushCache();
         AdminActivityLog::log('Rejected Business', 'businesses', $business->name, $notes);
 
         return response()->json([
@@ -551,6 +570,7 @@ class AdminController extends Controller
         $newStatus = $business->status === 'active' ? 'suspended' : 'active';
         $business->update(['status' => $newStatus]);
 
+        $this->flushCache();
         AdminActivityLog::log($newStatus === 'suspended' ? 'Suspended Business' : 'Reactivated Business', 'businesses', $business->name);
 
         return response()->json([
@@ -567,6 +587,7 @@ class AdminController extends Controller
         $name = $business->name;
         $business->delete();
 
+        $this->flushCache();
         AdminActivityLog::log('Deleted Business', 'businesses', $name);
 
         return response()->json(['message' => "Business {$name} deleted."]);
@@ -652,6 +673,7 @@ class AdminController extends Controller
         }
 
         AdminActivityLog::log('Created Destination', 'destinations', $destination->name);
+        Cache::forget('admin_dashboard_metrics');
 
         return response()->json([
             'message' => 'Destination published successfully',
@@ -707,6 +729,7 @@ class AdminController extends Controller
         }
 
         AdminActivityLog::log('Updated Destination', 'destinations', $destination->name);
+        Cache::forget('admin_dashboard_metrics');
 
         return response()->json([
             'message' => 'Destination updated successfully',
@@ -743,6 +766,7 @@ class AdminController extends Controller
         $destination->delete();
 
         AdminActivityLog::log('Deleted Destination', 'destinations', $name);
+        Cache::forget('admin_dashboard_metrics');
 
         return response()->json(['message' => "Destination {$name} deleted."]);
     }
@@ -780,6 +804,10 @@ class AdminController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
         $category = Category::create($validated);
 
+        Cache::forget('categories_list_all');
+        Cache::forget('categories_list_destination');
+        Cache::forget('categories_list_business');
+        Cache::forget('admin_dashboard_metrics');
         AdminActivityLog::log('Created Category', 'categories', $category->name);
 
         return response()->json([
@@ -805,6 +833,10 @@ class AdminController extends Controller
 
         $category->update($validated);
 
+        Cache::forget('categories_list_all');
+        Cache::forget('categories_list_destination');
+        Cache::forget('categories_list_business');
+        Cache::forget('admin_dashboard_metrics');
         AdminActivityLog::log('Updated Category', 'categories', $category->name);
 
         return response()->json([
@@ -821,6 +853,10 @@ class AdminController extends Controller
         $name = $category->name;
         $category->delete();
 
+        Cache::forget('categories_list_all');
+        Cache::forget('categories_list_destination');
+        Cache::forget('categories_list_business');
+        Cache::forget('admin_dashboard_metrics');
         AdminActivityLog::log('Deleted Category', 'categories', $name);
 
         return response()->json(['message' => "Category {$name} deleted."]);
@@ -1028,6 +1064,7 @@ class AdminController extends Controller
 
         $validated['image'] = $this->processImageValue($validated['image']);
         $ad = Advertisement::create($validated);
+        \Illuminate\Support\Facades\Cache::flush();
 
         AdminActivityLog::log('Created Advertisement', 'advertisements', $ad->title);
 
@@ -1040,6 +1077,7 @@ class AdminController extends Controller
 
         $ad = Advertisement::findOrFail($id);
         $ad->delete();
+        \Illuminate\Support\Facades\Cache::flush();
 
         AdminActivityLog::log('Deleted Advertisement', 'advertisements', $ad->title);
 
@@ -1585,6 +1623,15 @@ class AdminController extends Controller
     | Guard
     |--------------------------------------------------------------------------
     */
+    private function flushCache()
+    {
+        try {
+            Cache::flush();
+        } catch (\Throwable $e) {
+            // Ignore cache flush errors
+        }
+    }
+
     private function authorizeAdmin(Request $request)
     {
         if (!$request->user() || !$request->user()->isAdmin()) {

@@ -65,9 +65,9 @@ function ProtectedBusinessRoute({ children }) {
 // Protected Route Wrapper for Admin Only
 function ProtectedAdminRoute({ children }) {
   const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/admin/login" replace />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (user?.role !== 'admin') {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/login" replace />;
   }
   return children;
 }
@@ -119,8 +119,8 @@ export default function AppRoutes() {
           />
         </Route>
 
-        {/* Admin Authentication Screen */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Admin Authentication Screen - Redirects to unified Login */}
+        <Route path="/admin/login" element={<Navigate to="/login" replace />} />
 
         {/* Admin SaaS Control Center */}
         <Route

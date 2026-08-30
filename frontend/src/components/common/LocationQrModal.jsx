@@ -49,7 +49,7 @@ export default function LocationQrModal({ isOpen, onClose, placeName, url, khmer
           <h3 className="font-extrabold text-base text-slate-900 pt-1">{placeName}</h3>
           {khmerName && <p className="text-xs text-orange-600 font-semibold">{khmerName}</p>}
           <p className="text-[11px] text-slate-500">
-            ស្កេនដើម្បីបើកមើលព័ត៌មានលម្អិត ឬចែករំលែកបន្ត
+            Scan to view details or share
           </p>
         </div>
 

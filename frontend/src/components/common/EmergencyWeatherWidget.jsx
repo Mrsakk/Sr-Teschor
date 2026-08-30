@@ -17,7 +17,7 @@ export default function EmergencyWeatherWidget() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-slate-900/5 border border-orange-200/70 rounded-xl p-3.5 sm:p-5 shadow-xs">
+    <div className="bg-white border border-slate-200 rounded-[1.5rem] p-5 sm:p-6 lg:p-7 shadow-xs">
       
       {/* Top Row: Weather & Sunrise Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -32,7 +32,7 @@ export default function EmergencyWeatherWidget() {
             <div>
               <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-amber-800">
                 <MapPin className="w-3 h-3" />
-                <span>សៀមរាប ថ្ងៃនេះ (Siem Reap Today)</span>
+                <span>Siem Reap Today</span>
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-lg sm:text-xl font-extrabold text-slate-900">31°C</span>
@@ -45,12 +45,12 @@ export default function EmergencyWeatherWidget() {
           <div className="flex items-center gap-2 text-[11px] sm:text-xs bg-white/90 px-3 py-1.5 rounded-xl border border-orange-100 shadow-2xs">
             <div className="flex items-center gap-1 text-orange-700 font-bold">
               <Sun className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span>ថ្ងៃរះ: 05:45 AM</span>
+              <span>Sunrise: 05:45 AM</span>
             </div>
             <div className="w-px h-3.5 bg-slate-200" />
             <div className="flex items-center gap-1 text-slate-700 font-semibold">
               <Sunset className="w-3.5 h-3.5 text-orange-500 shrink-0" />
-              <span>ថ្ងៃលិច: 06:18 PM</span>
+              <span>Sunset: 06:18 PM</span>
             </div>
           </div>
         </div>
@@ -59,10 +59,10 @@ export default function EmergencyWeatherWidget() {
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer w-full sm:w-auto"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer active:scale-95"
         >
           <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
-          <span>លេខសង្គ្រោះបន្ទាន់ (Emergency)</span>
+          <span>Emergency</span>
           {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </button>
 
@@ -82,7 +82,7 @@ export default function EmergencyWeatherWidget() {
             </div>
             <div className="min-w-0">
               <div className="text-[11px] font-bold text-slate-800 group-hover:text-orange-600 transition-colors">
-                ប៉ូលិសទេសចរណ៍ (Tourist Police)
+                Tourist Police
               </div>
               <div className="text-xs font-black text-blue-600">063 963 440</div>
             </div>
@@ -98,7 +98,7 @@ export default function EmergencyWeatherWidget() {
             </div>
             <div className="min-w-0">
               <div className="text-[11px] font-bold text-slate-800 group-hover:text-orange-600 transition-colors">
-                មន្ទីរពេទ្យកុមារអង្គរ (AHC Hospital)
+                AHC Hospital
               </div>
               <div className="text-xs font-black text-red-600">063 963 409</div>
             </div>
@@ -114,7 +114,7 @@ export default function EmergencyWeatherWidget() {
             </div>
             <div className="min-w-0">
               <div className="text-[11px] font-bold text-slate-800 group-hover:text-orange-600 transition-colors">
-                សង្គ្រោះបន្ទាន់ទូទាំងប្រទេស (National)
+                National
               </div>
               <div className="text-xs font-black text-amber-600">119 / 117</div>
             </div>

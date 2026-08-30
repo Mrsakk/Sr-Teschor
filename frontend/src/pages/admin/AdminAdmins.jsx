@@ -14,11 +14,6 @@ import {
 } from 'lucide-react';
 
 export default function AdminAdmins() {
-  const [admins, setAdmins] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [permissions, setPermissions] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -32,23 +27,22 @@ export default function AdminAdmins() {
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchAdmins();
-  }, []);
+  const {
+    data: adminData,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin', 'admins'],
+    queryFn: () => adminApi.getAdmins().then(r => r.data),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 3,
+    refetchOnMount: true,
+  });
 
-  const fetchAdmins = async () => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getAdmins();
-      setAdmins(res.data.admins || []);
-      setRoles(res.data.roles || []);
-      setPermissions(res.data.permissions || {});
-    } catch (err) {
-      toast.error('Failed to load admin team.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const admins = adminData?.admins || [];
+  const roles = adminData?.roles || [];
+  const permissions = adminData?.permissions || {};
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -64,7 +58,7 @@ export default function AdminAdmins() {
         password: 'password123',
         admin_role: 'content_admin',
       });
-      fetchAdmins();
+      refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add admin.');
     } finally {

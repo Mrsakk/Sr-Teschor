@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
+import { invalidateAllCaches } from './queryClient';
 
 const getBaseURL = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -37,9 +38,20 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor for session expiry
+// Response interceptor for session expiry and instant cache invalidation
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const method = response.config?.method?.toUpperCase();
+    // Whenever a mutation succeeds, automatically invalidate and update caches across all webpages
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+      try {
+        invalidateAllCaches(response.config?.url, method);
+      } catch (err) {
+        console.warn('Cache invalidation notice:', err);
+      }
+    }
+    return response;
+  },
   (error) => {
     if (error.response && error.response.status === 401) {
       // If unauthorized and has token, clear token

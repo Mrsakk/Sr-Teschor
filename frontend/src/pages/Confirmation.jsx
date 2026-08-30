@@ -113,23 +113,23 @@ export default function Confirmation() {
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>ការកក់ត្រូវបានបញ្ជាក់ជោគជ័យ (Verified)</span>
+            <span>Booking confirmed Successfully!</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 font-heading">
-            ការកក់របស់អ្នកទទួលបានជោគជ័យ!
+            Booking confirmed Successfully!
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-            សំបុត្រអេឡិចត្រូនិច (E-Ticket) និងបង្កាន់ដៃត្រូវបានផ្ញើជូនទៅកាន់ <strong>{booking.contact_email}</strong>។
+            Your e-ticket and receipt have been sent to <strong>{booking.contact_email}</strong>.
           </p>
         </div>
 
         {/* Printable E-Ticket Card */}
-        <div className="bg-white rounded-xl sm:rounded-xl shadow-sm border border-slate-100 overflow-hidden print:border-none print:shadow-none">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden print:border-none print:shadow-none">
           
           {/* Ticket Header */}
-          <div className="bg-gradient-to-r from-slate-900 via-orange-950 to-slate-900 text-white p-4.5 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="bg-slate-900 text-white p-5 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <span className="text-[9px] sm:text-[10px] font-extrabold tracking-widest text-amber-400 uppercase">
+              <span className="text-[9px] sm:text-[10px] font-extrabold tracking-widest text-orange-400 uppercase">
                 Official E-Ticket & Boarding Voucher
               </span>
               <h2 className="text-lg sm:text-2xl font-extrabold font-heading text-white mt-0.5">
@@ -139,65 +139,65 @@ export default function Confirmation() {
                 Siem Reap, Kingdom of Cambodia
               </p>
             </div>
-            <div className="self-stretch sm:self-auto sm:text-right bg-white/10 backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-xl border border-white/20 flex items-center justify-between sm:block">
+            <div className="self-stretch sm:self-auto sm:text-right bg-white/10 backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl border border-white/20 flex items-center justify-between sm:block">
               <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 block uppercase">
-                លេខយោង (Ref)
+                Reference Number (Ref)
               </span>
-              <span translate="no" className="notranslate font-mono text-sm sm:text-base font-extrabold text-amber-300">
+              <span translate="no" className="notranslate font-mono text-sm sm:text-base font-extrabold text-orange-400">
                 #{booking.booking_reference}
               </span>
             </div>
           </div>
 
           {/* Ticket Body */}
-          <div className="p-4.5 sm:p-8 space-y-4 sm:space-y-6">
+          <div className="p-5 sm:p-8 space-y-5 sm:space-y-6">
             
             {/* Experience & Business Info */}
             <div className="border-b border-slate-100 pb-4 sm:pb-6 space-y-1.5">
-              <span className="text-[9px] sm:text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 uppercase">
+              <span className="text-[9px] sm:text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200 uppercase">
                 {booking.service_type || 'Reserved Activity'}
               </span>
-              <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+              <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug font-heading">
                 {booking.service?.name || 'Curated Siem Reap Tour Experience'}
               </h3>
               {booking.business && (
                 <p className="text-xs text-slate-600 font-semibold flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4 text-orange-500 shrink-0" />
-                  <span>រៀបចំដោយ៖ <strong translate="no" className="notranslate text-slate-800">{booking.business.name}</strong></span>
+                  <Building2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <span>Organized by: <strong translate="no" className="notranslate text-slate-900">{booking.business.name}</strong></span>
                 </p>
               )}
             </div>
 
             {/* Travel Specs Grid */}
-            <div translate="no" className="notranslate grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 py-2 border-b border-slate-100">
-              <div className="bg-slate-50/80 p-3 sm:p-3.5 rounded-xl border border-slate-100/60">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">កាលបរិច្ឆេទ</span>
+            <div translate="no" className="notranslate grid grid-cols-2 sm:grid-cols-4 gap-3 py-2 border-b border-slate-100">
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Date</span>
                 <div className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                  <Calendar className="w-3.5 h-3.5 text-orange-600 shrink-0" />
                   <span className="truncate">{formatDateDisplay(booking.booking_date)}</span>
                 </div>
               </div>
 
-              <div className="bg-slate-50/80 p-3 sm:p-3.5 rounded-xl border border-slate-100/60">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">ម៉ោងចេញដំណើរ</span>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Time</span>
                 <div className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                  <Clock className="w-3.5 h-3.5 text-orange-600 shrink-0" />
                   <span className="truncate">{formatTimeDisplay(booking.booking_time)}</span>
                 </div>
               </div>
 
-              <div className="bg-slate-50/80 p-3 sm:p-3.5 rounded-xl border border-slate-100/60">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">ចំនួនភ្ញៀវ</span>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Number of Guests</span>
                 <div className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-orange-500 shrink-0" />
-                  <span>{booking.guests || 1} នាក់</span>
+                  <Users className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                  <span>{booking.guests || 1}</span>
                 </div>
               </div>
 
-              <div className="bg-slate-50/80 p-3 sm:p-3.5 rounded-xl border border-slate-100/60">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">ស្ថានភាពទូទាត់</span>
-                <div className="text-xs sm:text-sm font-extrabold text-emerald-600 flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Payment Status</span>
+                <div className="text-xs sm:text-sm font-extrabold text-emerald-700 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span className="font-mono">Paid (${Number(booking.total_amount || 0).toFixed(2)})</span>
                 </div>
               </div>
@@ -206,14 +206,14 @@ export default function Confirmation() {
             {/* Guest & Pickup Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
               <div className="space-y-1">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block">ភ្ញៀវតំណាង</span>
-                <p translate="no" className="notranslate font-bold text-slate-800">{booking.contact_name}</p>
+                <span className="text-[10px] uppercase font-bold text-slate-400 block">Guest Name</span>
+                <p translate="no" className="notranslate font-bold text-slate-900">{booking.contact_name}</p>
                 <p translate="no" className="notranslate text-slate-500">{booking.contact_phone} • {booking.contact_email}</p>
               </div>
               {booking.notes && (
                 <div className="space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">ទីតាំងទទួល & សំណើ</span>
-                  <p className="text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Pickup & Requests</span>
+                  <p className="text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                     {booking.notes}
                   </p>
                 </div>
@@ -221,20 +221,20 @@ export default function Confirmation() {
             </div>
 
             {/* QR Code & Verification Section */}
-            <div className="pt-4 sm:pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 bg-slate-50/70 p-4 sm:p-6 rounded-xl">
+            <div className="pt-4 sm:pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 bg-slate-50 p-4 sm:p-6 rounded-xl border border-slate-200/80">
               <div className="space-y-1 text-center sm:text-left">
-                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-700 inline-block">
+                <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200 inline-block">
                   Scan at Venue
                 </span>
-                <h4 className="font-bold text-xs sm:text-sm text-slate-900">បង្ហាញ QR Code នេះជូនមគ្គុទ្ទេសក៍ ឬសណ្ឋាគារ</h4>
+                <h4 className="font-bold text-xs sm:text-sm text-slate-900">Show this QR code to the tour guide or hotel.</h4>
                 <p className="text-[11px] text-slate-500 leading-snug">
-                  បង្ហាញលើអេក្រង់ទូរស័ព្ទរបស់អ្នក ឬបង្ហាញសំបុត្រដែលបានបោះពុម្ពពេលទៅដល់។
+                  Show on your phone screen or present the printed ticket upon arrival.
                 </p>
                 <p className="text-[10px] font-mono text-slate-400 pt-0.5">
                   Receipt ID: {receipt_number} • Issued: {issued_at}
                 </p>
               </div>
-              <div className="p-2.5 sm:p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-center shrink-0">
+              <div className="p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-center shrink-0">
                 <QrCode className="w-20 h-20 sm:w-24 sm:h-24 text-slate-900 mx-auto" />
                 <span className="font-mono text-[8px] sm:text-[9px] font-bold text-slate-500 mt-1 block">
                   VERIFIED #{booking.booking_reference}
@@ -245,18 +245,18 @@ export default function Confirmation() {
           </div>
 
           {/* Ticket Footer Actions */}
-          <div className="bg-slate-50 p-4 sm:px-8 sm:py-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 print:hidden">
+          <div className="bg-slate-50 p-4 sm:px-8 sm:py-4 border-t border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 print:hidden">
             <div className="grid grid-cols-2 sm:flex sm:items-center gap-2">
               <button
                 onClick={handlePrint}
-                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all shadow-2xs cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition-colors shadow-xs cursor-pointer whitespace-nowrap"
               >
                 <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                 <span>Print Ticket</span>
               </button>
               <button
                 onClick={() => setShowInvoiceModal(true)}
-                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer whitespace-nowrap"
               >
                 <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400 shrink-0" />
                 <span>E-Invoice</span>
@@ -265,14 +265,14 @@ export default function Confirmation() {
             <div className="grid grid-cols-2 sm:flex sm:items-center gap-2">
               <Link
                 to="/my-trips"
-                className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all shadow-2xs text-center whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition-colors shadow-xs text-center whitespace-nowrap"
               >
-                <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-500 shrink-0" />
+                <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" />
                 <span>Trip Plan</span>
               </Link>
               <Link
                 to="/bookings"
-                className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-extrabold transition-all shadow-md shadow-sm text-center whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-colors shadow-xs text-center whitespace-nowrap"
               >
                 <span>My Bookings</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />

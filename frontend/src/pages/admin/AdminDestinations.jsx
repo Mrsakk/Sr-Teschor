@@ -102,12 +102,9 @@ function LocationPicker({ formData, setFormData }) {
 }
 
 export default function AdminDestinations() {
-  const [destinations, setDestinations] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [pagination, setPagination] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [submittedSearch, setSubmittedSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -146,49 +143,62 @@ export default function AdminDestinations() {
 
   const toast = useToastStore();
 
+  // 1. Fetch categories instantly (0ms)
+  const { data: categories = [] } = useQuery({
+    queryKey: ['admin', 'categories'],
+    queryFn: () => adminApi.getCategories().then(r => r.data || []),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Auto-set category_id in form if empty
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    fetchDestinations(1);
-  }, [categoryFilter, statusFilter]);
-
-  const fetchCategories = async () => {
-    try {
-      const res = await adminApi.getCategories();
-      setCategories(res.data || []);
-      if (res.data?.length > 0 && !formData.category_id) {
-        setFormData(prev => ({ ...prev, category_id: res.data[0].id }));
-      }
-    } catch (err) {}
-  };
-
-  const fetchDestinations = async (page = 1) => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getDestinations({
-        page,
-        search,
-        category_id: categoryFilter || undefined,
-        status: statusFilter || undefined,
-      });
-      setDestinations(res.data.data || []);
-      setPagination({
-        current_page: res.data.current_page,
-        last_page: res.data.last_page,
-        total: res.data.total,
-      });
-    } catch (err) {
-      toast.error('Failed to load destinations.');
-    } finally {
-      setIsLoading(false);
+    if (categories?.length > 0 && !formData.category_id) {
+      setFormData(prev => ({ ...prev, category_id: categories[0].id }));
     }
+  }, [categories, formData.category_id]);
+
+  // 2. Fetch destinations instantly (0ms from cache on open)
+  const {
+    data: destResponse,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: [
+      'admin',
+      'destinations',
+      {
+        page,
+        search: submittedSearch,
+        category_id: categoryFilter,
+        status: statusFilter,
+      },
+    ],
+    queryFn: () =>
+      adminApi
+        .getDestinations({
+          page,
+          search: submittedSearch || undefined,
+          category_id: categoryFilter || undefined,
+          status: statusFilter || undefined,
+        })
+        .then(r => r.data),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
+
+  const destinations = destResponse?.data || [];
+  const pagination = {
+    current_page: destResponse?.current_page || page,
+    last_page: destResponse?.last_page || 1,
+    total: destResponse?.total || 0,
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchDestinations(1);
+    setPage(1);
+    setSubmittedSearch(search);
   };
 
   const handleMapLinkBlur = async (urlToResolve = null) => {
@@ -380,7 +390,7 @@ export default function AdminDestinations() {
         toast.success(`Destination '${formData.name}' published.`);
       }
       setIsFormOpen(false);
-      fetchDestinations(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to save destination.');
     } finally {
@@ -395,7 +405,7 @@ export default function AdminDestinations() {
       await adminApi.deleteDestination(destToDelete.id);
       toast.success(`Destination '${destToDelete.name}' deleted.`);
       setDestToDelete(null);
-      fetchDestinations(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error('Failed to delete destination.');
     } finally {
@@ -603,14 +613,14 @@ export default function AdminDestinations() {
             <div className="flex items-center gap-2">
               <button
                 disabled={pagination.current_page <= 1}
-                onClick={() => fetchDestinations(pagination.current_page - 1)}
+                onClick={() => setPage(pagination.current_page - 1)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 text-slate-900"
               >
                 Previous
               </button>
               <button
                 disabled={pagination.current_page >= pagination.last_page}
-                onClick={() => fetchDestinations(pagination.current_page + 1)}
+                onClick={() => setPage(pagination.current_page + 1)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 text-slate-900"
               >
                 Next

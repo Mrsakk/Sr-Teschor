@@ -5,6 +5,7 @@ import Footer from '../components/common/Footer';
 import BottomNav from '../components/common/BottomNav';
 import SearchModal from '../components/common/SearchModal';
 import AITravelConciergeWidget from '../components/tourist/AITravelConciergeWidget';
+import SponsoredAdPopup from '../components/ads/SponsoredAdPopup';
 
 export default function PublicLayout() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -34,6 +35,11 @@ export default function PublicLayout() {
       {/* 24/7 AI Travel Assistant Floating Concierge */}
       <div className="print:hidden">
         <AITravelConciergeWidget />
+      </div>
+
+      {/* Entry Promotional Sponsored Ad Popup */}
+      <div className="print:hidden">
+        <SponsoredAdPopup />
       </div>
 
       {/* Global Cmd+K Search Modal */}

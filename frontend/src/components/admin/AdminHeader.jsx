@@ -89,10 +89,6 @@ export default function AdminHeader({ setIsMobileOpen, isCollapsed }) {
       combo.value = lang.code;
       combo.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
   };
 
   const handleSearchSubmit = (e) => {
@@ -104,7 +100,7 @@ export default function AdminHeader({ setIsMobileOpen, isCollapsed }) {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin/login');
+    navigate('/login');
   };
 
   // Generate breadcrumb title based on path

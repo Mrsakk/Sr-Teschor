@@ -98,14 +98,33 @@ class DestinationController extends Controller
 
         $data = Cache::remember($cacheKey, 120, function () use ($slug) {
             $destination = Destination::where('slug', $slug)
+                ->orWhere('slug', 'like', $slug . '-%')
+                ->orWhere('id', is_numeric($slug) ? (int)$slug : 0)
                 ->with([
                     'category',
-                    'images',
+                    'images' => function ($q) {
+                        $q->orderBy('is_primary', 'desc')->orderBy('display_order', 'asc');
+                    },
                     'reviews' => function ($q) {
                         $q->where('status', 'approved')->with('user')->latest();
                     },
                 ])
-                ->firstOrFail();
+                ->first();
+
+            if (!$destination) {
+                // Fallback by lower hyphens name
+                $destination = Destination::whereRaw("LOWER(REPLACE(name, ' ', '-')) = ?", [strtolower($slug)])
+                    ->with([
+                        'category',
+                        'images' => function ($q) {
+                            $q->orderBy('is_primary', 'desc')->orderBy('display_order', 'asc');
+                        },
+                        'reviews' => function ($q) {
+                            $q->where('status', 'approved')->with('user')->latest();
+                        },
+                    ])
+                    ->firstOrFail();
+            }
 
             $similarDestinations = Destination::where('category_id', $destination->category_id)
                 ->where('id', '!=', $destination->id)
@@ -115,8 +134,8 @@ class DestinationController extends Controller
                 ->get();
 
             return [
-                'destination' => $destination,
-                'similar' => $similarDestinations,
+                'destination' => $destination->toArray(),
+                'similar' => $similarDestinations->toArray(),
             ];
         });
 

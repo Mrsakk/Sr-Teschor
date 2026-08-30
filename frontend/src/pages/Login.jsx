@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Lock, Mail, ArrowRight, Sparkles, ShieldCheck, Building2, User } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+import { systemApi } from '../api/endpoints';
+import { getFullImageUrl } from '../utils/imageUrl';
 import GoogleAuthButton from '../components/auth/GoogleAuthButton';
 
 export default function Login() {
@@ -12,6 +15,13 @@ export default function Login() {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || '/';
+
+  const { data: settings = {} } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => systemApi.getSettings().then(r => r.data),
+    staleTime: 1000 * 60 * 10,
+    placeholderData: prev => prev,
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,17 +40,24 @@ export default function Login() {
 
   return (
     <div className="min-h-[90vh] flex items-center justify-center pt-24 pb-16 px-4">
-      <div className="bg-white rounded-xl p-8 sm:p-10 border border-slate-100 shadow-md w-full max-w-md space-y-6">
+      <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-200 shadow-xs w-full max-w-md space-y-6">
         
         {/* Header */}
         <div className="text-center space-y-1">
-          <div className="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-md shadow-sm font-black text-xl mb-3">
-            <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
-              <path d="M12 2L9 7H15L12 2ZM7 9L4 14H20L17 9H7ZM2 16L3.5 22H20.5L22 16H2ZM11 18H13V21H11V18Z" />
-            </svg>
+          <div className="flex justify-center mb-3">
+            <img
+              src={settings.site_logo ? getFullImageUrl(settings.site_logo) : '/logo.png'}
+              alt={settings.site_name || "SR TesChor Logo"}
+              className="h-16 sm:h-20 w-auto max-w-[220px] object-contain drop-shadow-md rounded-2xl transition-transform hover:scale-105"
+              onError={(e) => {
+                if (!e.target.src.endsWith('/logo.png')) {
+                  e.target.src = '/logo.png';
+                }
+              }}
+            />
           </div>
           <h2 className="text-2xl font-extrabold text-slate-900 font-heading">
-            Welcome to Tes Chor
+            {settings.site_name ? `Welcome to ${settings.site_name}` : 'Welcome to Tes Chor'}
           </h2>
           <p className="text-xs text-slate-500">
             Sign in to access your saved places, bookings & itineraries
@@ -48,7 +65,7 @@ export default function Login() {
         </div>
 
         {/* Demo Fast Login Buttons for Evaluation */}
-        <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+        <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 text-center">
             🚀 Quick Demo Login Accounts
           </p>
@@ -56,21 +73,21 @@ export default function Login() {
             <button
               type="button"
               onClick={() => handleQuickLogin('admin@teschor.com', 'password')}
-              className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl border border-purple-200 transition-colors flex items-center justify-center gap-1"
+              className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl border border-purple-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
             >
               <ShieldCheck className="w-3 h-3" /> Admin
             </button>
             <button
               type="button"
               onClick={() => handleQuickLogin('owner@angkorresort.com', 'password')}
-              className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl border border-emerald-200 transition-colors flex items-center justify-center gap-1"
+              className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl border border-emerald-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
             >
               <Building2 className="w-3 h-3" /> Business
             </button>
             <button
               type="button"
               onClick={() => handleQuickLogin('emma.travels@gmail.com', 'password')}
-              className="py-1.5 px-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-xl border border-orange-200 transition-colors flex items-center justify-center gap-1"
+              className="py-1.5 px-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-xl border border-orange-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
             >
               <User className="w-3 h-3" /> Tourist
             </button>
@@ -78,7 +95,7 @@ export default function Login() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 text-red-700 rounded-xl text-xs font-semibold border border-red-200">
+          <div className="p-3 bg-rose-50 text-rose-700 rounded-xl text-xs font-semibold border border-rose-200">
             {error}
           </div>
         )}
@@ -96,7 +113,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -113,7 +130,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -121,7 +138,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-extrabold text-sm shadow-md shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+            className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>

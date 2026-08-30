@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../api/endpoints';
 import { useToastStore } from '../../store/useToastStore';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
@@ -26,14 +27,6 @@ import {
 } from 'lucide-react';
 
 export default function AdminPackages() {
-  const [packages, setPackages] = useState([]);
-  const [stats, setStats] = useState({
-    total_packages: 0,
-    active_packages: 0,
-    avg_price: 0,
-    avg_rating: 5.0,
-  });
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -69,37 +62,34 @@ export default function AdminPackages() {
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchPackages();
-  }, [searchQuery, statusFilter]);
-
-  const fetchPackages = async () => {
-    try {
-      setIsLoading(true);
+  const {
+    data: pkgData,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin', 'packages', { search: searchQuery.trim(), status: statusFilter }],
+    queryFn: async () => {
       const params = {};
       if (searchQuery.trim()) params.search = searchQuery.trim();
       if (statusFilter !== 'all') params.status = statusFilter;
-
       const res = await adminApi.getPackages(params);
-      const rawPackages = res.data?.packages?.data || res.data?.packages || (Array.isArray(res.data) ? res.data : []);
-      setPackages(rawPackages);
-      if (res.data?.stats) {
-        setStats(res.data.stats);
-      } else {
-        setStats({
-          total_packages: rawPackages.length,
-          active_packages: rawPackages.filter(p => p.is_active).length,
-          avg_price: rawPackages.length > 0 ? (rawPackages.reduce((acc, p) => acc + Number(p.selling_price || 0), 0) / rawPackages.length).toFixed(2) : 0,
-          avg_rating: 4.9,
-        });
-      }
-    } catch (err) {
-      toast.error('Failed to load travel packages.');
-      setPackages([]);
-    } finally {
-      setIsLoading(false);
-    }
+      return res.data;
+    },
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
+
+  const packages = pkgData?.packages?.data || pkgData?.packages || (Array.isArray(pkgData) ? pkgData : []);
+  const stats = pkgData?.stats || {
+    total_packages: packages.length,
+    active_packages: packages.filter(p => p.is_active).length,
+    avg_price: packages.length > 0 ? (packages.reduce((acc, p) => acc + Number(p.selling_price || 0), 0) / packages.length).toFixed(2) : 0,
+    avg_rating: 4.9,
   };
+
+  const fetchPackages = () => refetch();
 
   const handleOpenCreate = () => {
     setEditingPackage(null);

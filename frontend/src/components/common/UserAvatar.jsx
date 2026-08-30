@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getFullImageUrl } from '../../utils/imageUrl';
 
 export default function UserAvatar({
   user,
@@ -23,11 +24,14 @@ export default function UserAvatar({
   const ringClass = ring ? 'ring-2 ring-orange-300/80 shadow-xs' : '';
   const currentSize = sizeClasses[size] || sizeClasses.md;
 
+  const rawAvatar = user?.avatar || user?.profile_photo_url || user?.avatar_url || user?.image || user?.photo_url || user?.picture;
+  const avatarUrl = rawAvatar ? getFullImageUrl(rawAvatar, '') : '';
+
   // If user has an avatar and it hasn't failed to load, show image
-  if (user?.avatar && !imageError) {
+  if (avatarUrl && !imageError) {
     return (
       <img
-        src={user.avatar}
+        src={avatarUrl}
         alt={name}
         onError={() => setImageError(true)}
         className={`${currentSize} rounded-xl object-cover flex-shrink-0 ${ringClass} ${className}`}

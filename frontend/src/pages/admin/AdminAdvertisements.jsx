@@ -17,9 +17,6 @@ import {
 } from 'lucide-react';
 
 export default function AdminAdvertisements() {
-  const [ads, setAds] = useState([]);
-  const [businesses, setBusinesses] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [adToDelete, setAdToDelete] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -38,37 +35,34 @@ export default function AdminAdvertisements() {
 
   const toast = useToastStore();
 
+  // 1. Fetch businesses instantly (0ms)
+  const { data: bizData } = useQuery({
+    queryKey: ['admin', 'businesses', 'lookup'],
+    queryFn: () => adminApi.getBusinesses({ per_page: 50 }).then(r => r.data?.data || (Array.isArray(r.data) ? r.data : [])),
+    staleTime: 1000 * 60 * 5,
+  });
+  const businesses = bizData || [];
+
   useEffect(() => {
-    fetchAds();
-    fetchBusinesses();
-  }, []);
-
-  const fetchAds = async () => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getAdvertisements();
-      const rawData = res.data?.data || (Array.isArray(res.data) ? res.data : []);
-      setAds(rawData);
-    } catch (err) {
-      toast.error('Failed to load advertisements.');
-      setAds([]);
-    } finally {
-      setIsLoading(false);
+    if (businesses.length > 0 && !formData.business_id) {
+      setFormData(prev => ({ ...prev, business_id: businesses[0].id }));
     }
-  };
+  }, [businesses, formData.business_id]);
 
-  const fetchBusinesses = async () => {
-    try {
-      const res = await adminApi.getBusinesses({ per_page: 50 });
-      const rawData = res.data?.data || (Array.isArray(res.data) ? res.data : []);
-      setBusinesses(rawData);
-      if (rawData.length > 0 && !formData.business_id) {
-        setFormData(prev => ({ ...prev, business_id: rawData[0].id }));
-      }
-    } catch (err) {
-      setBusinesses([]);
-    }
-  };
+  // 2. Fetch advertisements instantly (0ms)
+  const {
+    data: adsData,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin', 'advertisements'],
+    queryFn: () => adminApi.getAdvertisements().then(r => r.data?.data || (Array.isArray(r.data) ? r.data : [])),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
+  const ads = adsData || [];
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -77,7 +71,7 @@ export default function AdminAdvertisements() {
       await adminApi.createAdvertisement(formData);
       toast.success('Ad placement activated successfully.');
       setIsModalOpen(false);
-      fetchAds();
+      refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create advertisement.');
     } finally {
@@ -92,7 +86,7 @@ export default function AdminAdvertisements() {
       await adminApi.deleteAdvertisement(adToDelete.id);
       toast.success('Advertisement removed successfully.');
       setAdToDelete(null);
-      await fetchAds();
+      refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to delete ad.');
     } finally {

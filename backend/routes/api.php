@@ -95,7 +95,11 @@ Route::get('/promotions', [PromotionController::class, 'index']);
 
 // Advertisements (Public Banners & Click Tracking)
 Route::get('/advertisements', [AdvertisementController::class, 'index']);
-Route::post('/advertisements/{id}/click', [AdvertisementController::class, 'trackClick']);
+Route::get('/promoted-banners', [AdvertisementController::class, 'index']);
+Route::get('/sponsored-highlights', [AdvertisementController::class, 'index']);
+Route::get('/featured-placements', [AdvertisementController::class, 'index']);
+Route::post('/featured-placements/{id}/click', [AdvertisementController::class, 'trackClick']);
+Route::post('/promoted-banners/{id}/click', [AdvertisementController::class, 'trackClick']);
 
 // Reviews
 Route::get('/reviews', [ReviewController::class, 'index']);

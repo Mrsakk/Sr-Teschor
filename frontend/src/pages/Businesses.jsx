@@ -42,7 +42,9 @@ export default function Businesses() {
   const { data: bizData, isLoading, isFetching } = useQuery({
     queryKey: ['businesses', queryParams],
     queryFn: () => businessApi.getAll(queryParams).then(r => r.data),
+    staleTime: 1000 * 60 * 5,
     placeholderData: (prev) => prev,
+    refetchOnMount: true,
   });
 
   const businesses = bizData?.data || [];
@@ -71,25 +73,26 @@ export default function Businesses() {
   };
 
   return (
-    <div className="pt-20 sm:pt-28 pb-20 sm:pb-24 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+    <div className="pt-24 sm:pt-28 pb-20 sm:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
       
-      {/* Header Banner */}
-      <div className="bg-slate-900 rounded-xl p-6 sm:p-12 text-white shadow-sm relative overflow-hidden">
-        <div className="relative z-10 max-w-2xl">
-          <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-slate-100 border border-white/20">
+      {/* Clean Light SaaS Header Banner */}
+      <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-6 sm:p-10 lg:p-12 text-slate-900 shadow-xs relative overflow-hidden">
+        <div className="relative z-10 max-w-2xl space-y-2">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+            <Building2 className="w-3.5 h-3.5" />
             Local Businesses & Hospitality
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold mt-3 font-heading">
+          <h1 className="text-2xl sm:text-4xl font-extrabold font-heading text-slate-900 leading-tight pt-1">
             Hotels, Cafés & Local Services in Siem Reap
           </h1>
-          <p className="text-sm text-slate-300 mt-2 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
             Support local enterprises! Explore verified boutique retreats, organic dining, licensed temple tour guides, and circus performances.
           </p>
         </div>
       </div>
 
       {/* Filter and Search Toolbar */}
-      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-slate-100 space-y-4">
+      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xs border border-slate-200 space-y-4">
         
         {/* Search and Sort Row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
@@ -100,19 +103,19 @@ export default function Businesses() {
               value={search}
               onChange={(e) => updateParam('search', e.target.value)}
               placeholder="Search hotel name, restaurant, tour guide..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+              className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:border-emerald-600 focus:outline-none transition-colors"
             />
             {search && (
               <button
                 onClick={() => updateParam('search', '')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+          <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
             <ArrowUpDown className="w-3.5 h-3.5 text-emerald-600" />
             <span>Sort:</span>
             <select
@@ -129,13 +132,13 @@ export default function Businesses() {
         </div>
 
         {/* Category Filter Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <button
             onClick={() => updateParam('category', '')}
-            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
               !category
-                ? 'bg-emerald-700 text-white shadow-md shadow-sm'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                ? 'bg-emerald-700 text-white shadow-xs'
+                : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
             }`}
           >
             All Businesses
@@ -144,10 +147,10 @@ export default function Businesses() {
             <button
               key={cat.id}
               onClick={() => updateParam('category', cat.slug)}
-              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
                 category === cat.slug
-                  ? 'bg-emerald-700 text-white shadow-md shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
               }`}
             >
               {cat.name}
@@ -164,10 +167,10 @@ export default function Businesses() {
               <button
                 key={tier}
                 onClick={() => updateParam('price_range', priceRange === tier ? '' : tier)}
-                className={`px-3 py-1.5 rounded-xl border font-bold transition-colors ${
+                className={`px-3 py-1.5 rounded-lg border font-bold transition-colors cursor-pointer ${
                   priceRange === tier
-                    ? 'bg-emerald-100 border-emerald-300 text-emerald-800'
-                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                    ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
+                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                 }`}
               >
                 {tier}
@@ -177,20 +180,20 @@ export default function Businesses() {
             {/* Featured Only */}
             <button
               onClick={() => updateParam('featured', featured ? '' : 'true')}
-              className={`px-3 py-1.5 rounded-xl border font-semibold flex items-center gap-1.5 transition-colors ${
+              className={`px-3 py-1.5 rounded-lg border font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 featured
-                  ? 'bg-amber-100 border-amber-300 text-amber-800'
-                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                  ? 'bg-orange-600 text-white border-orange-600 shadow-xs'
+                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>Featured Partners Only</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>★ Featured Partners</span>
             </button>
 
             {(search || category || priceRange || minRating || featured) && (
               <button
                 onClick={clearAllFilters}
-                className="text-red-600 hover:underline font-bold text-xs ml-2"
+                className="text-orange-600 hover:underline font-bold text-xs ml-2 cursor-pointer"
               >
                 Reset Filters
               </button>
@@ -205,29 +208,29 @@ export default function Businesses() {
 
       {/* Listing Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
       ) : businesses.length === 0 ? (
-        <div className="bg-white rounded-xl p-12 text-center border border-slate-100 max-w-lg mx-auto space-y-4">
-          <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-            <Building2 className="w-8 h-8" />
+        <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-slate-200 max-w-lg mx-auto space-y-4 shadow-xs">
+          <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto border border-emerald-100">
+            <Building2 className="w-7 h-7" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">No businesses match your selection</h3>
+          <h3 className="text-lg font-bold text-slate-900">No businesses found</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Try adjusting your search terms or clearing selected price tiers.
           </p>
           <button
             onClick={clearAllFilters}
-            className="px-6 py-2.5 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition-colors shadow-md"
+            className="px-5 py-2.5 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition-colors shadow-xs cursor-pointer"
           >
             Clear Filters
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {businesses.map((biz) => (
             <BusinessCard key={biz.id} business={biz} />
           ))}
@@ -243,9 +246,9 @@ export default function Businesses() {
               <button
                 key={pageNum}
                 onClick={() => updateParam('page', pageNum.toString())}
-                className={`w-10 h-10 rounded-xl text-xs font-bold transition-all ${
+                className={`w-10 h-10 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   page === pageNum
-                    ? 'bg-emerald-700 text-white shadow-md shadow-sm scale-105'
+                    ? 'bg-emerald-700 text-white shadow-xs font-extrabold'
                     : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
                 }`}
               >

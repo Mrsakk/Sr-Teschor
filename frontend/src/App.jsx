@@ -25,9 +25,9 @@ export default function App() {
     systemApi.getSettings()
       .then((res) => {
         const data = res.data || {};
-        if (data.site_name) {
-          document.title = data.site_name;
-        }
+        const siteTitle = data.site_name || 'SR TesChor';
+        window.__appSiteTitle = siteTitle;
+        document.title = siteTitle;
         if (data.site_logo) {
           let link = document.querySelector("link[rel~='icon']");
           if (!link) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Search, 
   Filter, 
@@ -58,11 +59,6 @@ export default function Explore() {
   const [viewMode, setViewMode] = useState('grid');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const [destinations, setDestinations] = useState([]);
-  const [businesses, setBusinesses] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-
   const districts = [
     'Siem Reap City',
     'Banteay Srei',
@@ -75,49 +71,50 @@ export default function Explore() {
     'Soutr Nikom',
   ];
 
-  // Fetch categories on mount
-  useEffect(() => {
-    catService.getCategories().then((res) => setCategories(res || []));
-  }, []);
+  // 1. Fetch categories (cached 0ms)
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => catService.getCategories().then(res => res || []),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: prev => prev,
+  });
 
-  // Fetch results based on filters
-  useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        setLoading(true);
+  const destParams = {
+    search: searchQuery || undefined,
+    category: selectedCategory || undefined,
+    price_type: priceFilter === 'free' ? 'free' : (priceFilter === 'paid' ? 'paid' : undefined),
+    min_rating: minRating || undefined,
+    sort: sortBy === 'recommended' ? 'popular' : sortBy,
+    per_page: 24,
+  };
 
-        const destParams = {
-          search: searchQuery || undefined,
-          category: selectedCategory || undefined,
-          price_type: priceFilter === 'free' ? 'free' : (priceFilter === 'paid' ? 'paid' : undefined),
-          min_rating: minRating || undefined,
-          sort: sortBy === 'recommended' ? 'popular' : sortBy,
-          per_page: 24,
-        };
+  const bizParams = {
+    search: searchQuery || undefined,
+    category: selectedCategory || undefined,
+    per_page: 24,
+  };
 
-        const bizParams = {
-          search: searchQuery || undefined,
-          category: selectedCategory || undefined,
-          per_page: 24,
-        };
+  // 2. Fetch destinations with useQuery (instant 0ms cached load)
+  const { data: destRes, isLoading: loadingDest } = useQuery({
+    queryKey: ['explore', 'destinations', destParams],
+    queryFn: () => destinationService.getAll(destParams),
+    staleTime: 1000 * 60 * 3,
+    placeholderData: prev => prev,
+    refetchOnMount: true,
+  });
 
-        const [destRes, bizRes] = await Promise.all([
-          destinationService.getAll(destParams),
-          businessService.getAll(bizParams),
-        ]);
+  // 3. Fetch businesses with useQuery (instant 0ms cached load)
+  const { data: bizRes, isLoading: loadingBiz } = useQuery({
+    queryKey: ['explore', 'businesses', bizParams],
+    queryFn: () => businessService.getAll(bizParams),
+    staleTime: 1000 * 60 * 3,
+    placeholderData: prev => prev,
+    refetchOnMount: true,
+  });
 
-        setDestinations(destRes.data || []);
-        setBusinesses(bizRes.data || []);
-      } catch (err) {
-        console.error('Failed to load explore data', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const timer = setTimeout(fetchResults, 200);
-    return () => clearTimeout(timer);
-  }, [searchQuery, selectedCategory, selectedDistrict, priceFilter, minRating, sortBy]);
+  const destinations = destRes?.data || [];
+  const businesses = bizRes?.data || [];
+  const loading = (loadingDest && !destRes) || (loadingBiz && !bizRes);
 
   // Combine items for display
   const filteredDestinations = activeTab === 'all' || activeTab === 'destinations' ? destinations : [];
@@ -140,7 +137,7 @@ export default function Explore() {
     <div className="min-h-screen bg-slate-50 pt-24 pb-20">
       
       {/* Top Banner & Search Header */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -149,11 +146,11 @@ export default function Explore() {
                 <span className="text-xs font-bold uppercase tracking-wider text-orange-600">
                   Siem Reap Discovery Engine
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
                   Live Results
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-heading mt-1">
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 font-heading mt-1">
                 Explore Destinations & Local Places
               </h1>
             </div>
@@ -162,18 +159,18 @@ export default function Explore() {
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setMobileFilterOpen(true)}
-                className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200"
+                className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 shadow-xs cursor-pointer"
               >
-                <SlidersHorizontal className="w-4 h-4 text-orange-500" />
-                Filters {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-orange-500" />}
+                <SlidersHorizontal className="w-4 h-4 text-orange-600" />
+                Filters {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-orange-600" />}
               </button>
 
-              <div className="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200">
+              <div className="flex items-center p-1 bg-white rounded-xl border border-slate-200 shadow-xs">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     viewMode === 'grid'
-                      ? 'bg-white text-slate-900 shadow-sm'
+                      ? 'bg-slate-900 text-white shadow-xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -181,13 +178,13 @@ export default function Explore() {
                 </button>
                 <button
                   onClick={() => setViewMode('map')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     viewMode === 'map'
-                      ? 'bg-white text-slate-900 shadow-sm'
+                      ? 'bg-slate-900 text-white shadow-xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
-                  <MapIcon className="w-4 h-4 text-orange-500" /> Map View
+                  <MapIcon className="w-4 h-4 text-emerald-600" /> Map View
                 </button>
               </div>
             </div>
@@ -201,12 +198,12 @@ export default function Explore() {
               placeholder="Search attractions, temples, boutique hotels, cafés, tour guides..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-10 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none transition-all shadow-inner"
+              className="w-full pl-12 pr-10 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 focus:border-orange-600 focus:outline-none transition-colors shadow-xs"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-slate-600"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -226,10 +223,10 @@ export default function Explore() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-xl whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === tab.id
-                    ? 'bg-slate-900 text-white shadow-md'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-orange-600 text-white shadow-xs'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 {tab.label}
@@ -246,7 +243,7 @@ export default function Explore() {
           
           {/* Desktop Left Sidebar Filters */}
           <aside className="hidden lg:block lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-6 sticky top-24">
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-6 sticky top-24">
               
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <span className="font-extrabold text-sm text-slate-900 flex items-center gap-2">

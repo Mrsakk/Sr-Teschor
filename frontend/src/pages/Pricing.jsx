@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { 
   Check, 
@@ -70,6 +71,7 @@ const fallbackPlans = [
 export default function Pricing() {
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { data: plansData } = useQuery({
     queryKey: ['plans'],
@@ -154,19 +156,19 @@ export default function Pricing() {
   const roiPct = Math.round((netProfit / (billingCycle === 'annual' ? 8 : 10)) * 100);
 
   return (
-    <div className="pt-20 sm:pt-28 pb-28 sm:pb-24 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-16 notranslate" translate="no">
+    <div className="pt-20 sm:pt-28 pb-28 sm:pb-24 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-16">
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
         <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-orange-100 text-orange-700 inline-flex items-center gap-1.5 shadow-2xs">
           <Sparkles className="w-3.5 h-3.5 shrink-0" />
-          <span>កញ្ចប់សមាជិកភាព និងផ្សព្វផ្សាយ (Partner Growth)</span>
+          <span>{t('pricing.partner_growth', 'Partner Growth')}</span>
         </span>
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 font-heading leading-tight">
-          បង្កើនអតិថិជន និងប្រាក់ចំណូលអាជីវកម្មរបស់អ្នក
+          {t('pricing.title', 'Increase Customers & Business Revenue')}
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
-          ភ្ជាប់ទំនាក់ទំនងជាមួយភ្ញៀវទេសចរជាតិ និងអន្តរជាតិរាប់ពាន់នាក់នៅសៀមរាប។ ជ្រើសរើសកញ្ចប់ដែលស័ក្តិសមបំផុតសម្រាប់អាជីវកម្មរបស់អ្នក។
+          {t('pricing.subtitle', 'Connect with thousands of domestic and international tourists in Siem Reap. Choose the perfect plan for your business.')}
         </p>
 
         {/* Billing Cycle Switch */}
@@ -180,7 +182,7 @@ export default function Pricing() {
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            បង់ប្រចាំខែ (Monthly)
+            {t('pricing.monthly', 'Monthly')}
           </button>
           <button
             type="button"
@@ -191,7 +193,7 @@ export default function Pricing() {
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            <span>ប្រចាំឆ្នាំ (Annual)</span>
+            <span>{t('pricing.annual', 'Annual')}</span>
             <span className="text-[9px] sm:text-[10px] bg-amber-300 text-amber-900 font-black px-1.5 py-0.2 rounded-md">
               -20%
             </span>
@@ -200,7 +202,7 @@ export default function Pricing() {
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8 items-stretch pt-2 sm:pt-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch pt-2 sm:pt-0">
         {plans.map((plan) => {
           const isPro = plan.id === 'pro';
           const isPremium = plan.id === 'premium';
@@ -213,33 +215,33 @@ export default function Pricing() {
           return (
             <div
               key={plan.id}
-              className={`rounded-xl sm:rounded-xl p-5 sm:p-8 flex flex-col justify-between transition-all relative ${
+              className={`rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all relative ${
                 isPro
-                  ? 'bg-slate-900 text-white shadow-md ring-2 ring-orange-500 sm:scale-102'
+                  ? 'bg-slate-900 text-white shadow-md ring-2 ring-orange-600 sm:scale-102'
                   : isPremium
-                  ? 'bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 text-white border border-amber-500/40 shadow-sm'
-                  : 'bg-white text-slate-900 border border-slate-100 shadow-md'
+                  ? 'bg-slate-950 text-white border border-slate-800 shadow-xs'
+                  : 'bg-white text-slate-900 border border-slate-200 shadow-xs'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-orange-600 text-white font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full shadow-md flex items-center gap-1 whitespace-nowrap">
-                  <Zap className="w-3 h-3" /> ពេញនិយមបំផុត (Most Popular)
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-orange-600 text-white font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs flex items-center gap-1 whitespace-nowrap">
+                  <Zap className="w-3 h-3" /> {t('pricing.most_popular', 'Most Popular')}
                 </div>
               )}
 
               {isPremium && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-[10px] sm:text-[11px] uppercase tracking-wider px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full shadow-md flex items-center gap-1 whitespace-nowrap">
-                  <Crown className="w-3.5 h-3.5" /> VIP បង្ហាញមុខមុនគេ (Highest Exposure)
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-600 text-white font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs flex items-center gap-1 whitespace-nowrap">
+                  <Crown className="w-3.5 h-3.5" /> {t('pricing.vip_partner', 'VIP Partner')}
                 </div>
               )}
 
               <div className="space-y-4 sm:space-y-6">
                 <div>
                   <h3 className={`text-lg sm:text-xl font-black ${isPro || isPremium ? 'text-white' : 'text-slate-900'} font-heading`}>
-                    {plan.name}
+                    {t(`pricing.plans.${plan.id}.name`, plan.name)}
                   </h3>
                   <p className={`text-xs mt-1 ${isPro || isPremium ? 'text-slate-300' : 'text-slate-500'} leading-relaxed`}>
-                    {plan.description}
+                    {t(`pricing.plans.${plan.id}.description`, plan.description)}
                   </p>
                 </div>
 
@@ -247,8 +249,8 @@ export default function Pricing() {
                   <span className={`text-3xl sm:text-4xl font-extrabold ${isPro || isPremium ? 'text-white' : 'text-slate-900'}`}>
                     ${displayPrice}
                   </span>
-                  <span className={`text-xs ${isPro || isPremium ? 'text-slate-400' : 'text-slate-400'}`}>
-                    /{billingCycle === 'annual' && plan.price > 0 ? 'year' : plan.period}
+                  <span className={`text-xs ${isPro || isPremium ? 'text-slate-400' : 'text-slate-500'}`}>
+                    /{billingCycle === 'annual' && plan.price > 0 ? t('pricing.year', 'year') : t(`pricing.period.${plan.period.replace(' ', '_')}`, plan.period)}
                   </span>
                 </div>
 
@@ -258,15 +260,15 @@ export default function Pricing() {
                     <li key={idx} className="flex items-center gap-2.5">
                       <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
                         isPremium 
-                          ? 'bg-amber-400 text-slate-950 font-bold' 
+                          ? 'bg-emerald-600 text-white font-bold' 
                           : isPro 
-                          ? 'bg-orange-500 text-white' 
-                          : 'bg-emerald-100 text-emerald-700'
+                          ? 'bg-orange-600 text-white' 
+                          : 'bg-emerald-100 text-emerald-800 font-bold'
                       }`}>
                         <Check className="w-3 h-3" />
                       </div>
                       <span className={isPro || isPremium ? 'text-slate-200' : 'text-slate-700'}>
-                        {feat}
+                        {t(`pricing.plans.${plan.id}.features.${idx}`, feat)}
                       </span>
                     </li>
                   ))}
@@ -276,19 +278,19 @@ export default function Pricing() {
               <div className="pt-6 sm:pt-8">
                 <button
                   onClick={() => handleSelectPlan(plan)}
-                  className={`w-full py-3 sm:py-3.5 rounded-xl sm:rounded-xl font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer ${
+                  className={`w-full py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm shadow-xs transition-colors cursor-pointer ${
                     isPremium
-                      ? 'bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 shadow-sm'
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                       : isPro
-                      ? 'bg-orange-600 hover:from-orange-600 text-white shadow-sm'
+                      ? 'bg-orange-600 hover:bg-orange-700 text-white'
                       : 'bg-slate-900 hover:bg-slate-800 text-white'
                   }`}
                 >
                   {isAuthenticated 
                     ? (user?.role === 'business' || user?.role === 'admin' 
-                        ? `ជ្រើសរើស ${plan.name}` 
-                        : 'ចូលផ្ទាំងគ្រប់គ្រង (Dashboard)') 
-                    : 'ចុះឈ្មោះអាជីវកម្ម (Register Business)'}
+                        ? t('pricing.select_plan', { planName: t(`pricing.plans.${plan.id}.name`, plan.name) })
+                        : t('pricing.dashboard', ' Dashboard')) 
+                    : t('pricing.register_business', 'Register Business')}
                 </button>
               </div>
             </div>
@@ -297,38 +299,38 @@ export default function Pricing() {
       </div>
 
       {/* ── 2. INTERACTIVE ROI REVENUE CALCULATOR FOR BUSINESSES ── */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-xl sm:rounded-xl p-5 sm:p-10 text-white border border-slate-700/60 shadow-md space-y-6 sm:space-y-8 notranslate" translate="no">
+      <div className="bg-slate-50 rounded-2xl p-6 sm:p-10 text-slate-900 border border-slate-200/90 shadow-xs space-y-6 sm:space-y-8">
         
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 border-b border-slate-700/60 pb-4 sm:pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 border-b border-slate-200 pb-4 sm:pb-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-[11px] sm:text-xs font-extrabold border border-orange-500/30 mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-[11px] sm:text-xs font-extrabold border border-orange-200/80 mb-2">
               <TrendingUp className="w-3.5 h-3.5" />
-              <span>ម៉ាស៊ីនគណនាប្រាក់ចំណេញ (ROI Calculator)</span>
+              <span>{t('pricing.calc_badge', 'Revenue Calculator')}</span>
             </div>
-            <h2 className="text-xl sm:text-3xl font-extrabold text-white font-heading">
-              តើអាជីវកម្មរបស់អ្នកនឹងចំណេញប៉ុន្មានជាមួយ SR TesChor?
+            <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 font-heading">
+              {t('pricing.calc_title', 'How much profit will your business make with SR TesChor?')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1">
-              ប៉ាន់ស្មានប្រាក់ចំណូល និងផលចំណេញប្រចាំខែពីចំនួនភ្ញៀវទេសចរនៅលើប្រព័ន្ធរបស់យើង។
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+              {t('pricing.calc_desc', 'Estimate monthly revenue and profit from the number of tourists on our platform.')}
             </p>
           </div>
-          <div className="text-left sm:text-right pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800 shrink-0">
-            <span className="text-[11px] sm:text-xs text-slate-400 block font-semibold">តម្លៃកញ្ចប់ Pro Partner:</span>
-            <span className="text-lg sm:text-xl font-black text-orange-400">$10.00 / ខែ</span>
+          <div className="text-left sm:text-right pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200 shrink-0">
+            <span className="text-[11px] sm:text-xs text-slate-500 block font-semibold">{t('pricing.calc_pro_price_label', 'Pro Partner Package Price:')}</span>
+            <span className="text-lg sm:text-xl font-black text-orange-600">${billingCycle === 'annual' ? '8.00' : '10.00'} / {t('pricing.calc_month', 'Month')}</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center notranslate" translate="no">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center">
           
           {/* Sliders Input */}
-          <div className="space-y-6 bg-slate-950/50 p-4 sm:p-6 rounded-xl border border-slate-800 shadow-inner notranslate" translate="no">
+          <div className="space-y-6 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs">
             
             {/* Slider 1: Average Spend per Guest */}
-            <div className="space-y-2.5 notranslate" translate="no">
-              <div className="flex justify-between items-center text-xs font-bold notranslate" translate="no">
-                <span className="text-slate-300 notranslate" translate="no">ការចំណាយជាមធ្យម / ភ្ញៀវម្នាក់</span>
-                <span key={`spend-${calcSpend}`} className="text-orange-400 font-extrabold text-base px-2.5 py-0.5 rounded-lg bg-orange-500/10 border border-orange-500/20 notranslate" translate="no">
-                  ${calcSpend} / ភ្ញៀវ
+            <div className="space-y-2.5">
+              <div className="flex justify-between items-center text-xs font-bold">
+                <span className="text-slate-700">{t('pricing.calc_avg_spend', 'Average Spend per Guest')}</span>
+                <span key={`spend-${calcSpend}`} className="text-orange-700 font-extrabold text-base px-2.5 py-0.5 rounded-lg bg-orange-50 border border-orange-200">
+                  ${calcSpend} / {t('pricing.calc_guest', 'Guest')}
                 </span>
               </div>
               <input
@@ -338,26 +340,25 @@ export default function Pricing() {
                 max="150"
                 step="5"
                 value={calcSpend}
-                className="w-full accent-orange-500 cursor-pointer h-2.5 bg-slate-800 rounded-lg touch-none"
+                className="w-full accent-orange-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg touch-none"
                 onChange={(e) => setCalcSpend(Number(e.target.value))}
                 onInput={(e) => setCalcSpend(Number(e.target.value))}
               />
               
               {/* Quick Presets for Spend */}
-              <div className="flex items-center gap-1.5 pt-1 notranslate" translate="no">
-                <span className="text-[10px] text-slate-400 shrink-0 notranslate" translate="no">រើសរហ័ស:</span>
+              <div className="flex items-center gap-1.5 pt-1">
+                <span className="text-[10px] text-slate-500 shrink-0">{t('pricing.calc_quick_select', 'Quick Select:')}</span>
                 {[10, 25, 50, 100].map((val) => (
                   <button
                     key={`btn-spend-${val}`}
                     id={`btn-spend-${val}`}
                     type="button"
                     onClick={() => setCalcSpend(val)}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer notranslate ${
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer ${
                       calcSpend === val
-                        ? 'bg-orange-500 text-white ring-2 ring-orange-400'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                        ? 'bg-orange-600 text-white'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
-                    translate="no"
                   >
                     ${val}
                   </button>
@@ -366,11 +367,11 @@ export default function Pricing() {
             </div>
 
             {/* Slider 2: Additional Guests per Month */}
-            <div className="space-y-2.5 notranslate" translate="no">
-              <div className="flex justify-between items-center text-xs font-bold notranslate" translate="no">
-                <span className="text-slate-300 notranslate" translate="no">ចំនួនភ្ញៀវប៉ាន់ស្មានបន្ថែម / ខែ</span>
-                <span key={`guests-${calcGuests}`} className="text-emerald-400 font-extrabold text-base px-2.5 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 notranslate" translate="no">
-                  {calcGuests} នាក់ / ខែ
+            <div className="space-y-2.5">
+              <div className="flex justify-between items-center text-xs font-bold">
+                <span className="text-slate-700">{t('pricing.calc_add_guests', 'Additional Guests')}</span>
+                <span key={`guests-${calcGuests}`} className="text-emerald-700 font-extrabold text-base px-2.5 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200">
+                  {calcGuests} {t('pricing.calc_guests_per_month', 'Guests / Month')}
                 </span>
               </div>
               <input
@@ -380,28 +381,27 @@ export default function Pricing() {
                 max="200"
                 step="5"
                 value={calcGuests}
-                className="w-full accent-emerald-500 cursor-pointer h-2.5 bg-slate-800 rounded-lg touch-none"
+                className="w-full accent-emerald-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg touch-none"
                 onChange={(e) => setCalcGuests(Number(e.target.value))}
                 onInput={(e) => setCalcGuests(Number(e.target.value))}
               />
 
               {/* Quick Presets for Guests */}
-              <div className="flex items-center gap-1.5 pt-1 notranslate" translate="no">
-                <span className="text-[10px] text-slate-400 shrink-0 notranslate" translate="no">រើសរហ័ស:</span>
+              <div className="flex items-center gap-1.5 pt-1">
+                <span className="text-[10px] text-slate-500 shrink-0">{t('pricing.calc_quick_select', 'Quick Select:')}</span>
                 {[20, 40, 80, 150].map((val) => (
                   <button
                     key={`btn-guests-${val}`}
                     id={`btn-guests-${val}`}
                     type="button"
                     onClick={() => setCalcGuests(val)}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer notranslate ${
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer ${
                       calcGuests === val
-                        ? 'bg-emerald-500 text-white ring-2 ring-emerald-400'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                        ? 'bg-emerald-700 text-white'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
-                    translate="no"
                   >
-                    {val} នាក់
+                    {val} {t('pricing.calc_guests', 'Guests')}
                   </button>
                 ))}
               </div>
@@ -410,32 +410,32 @@ export default function Pricing() {
           </div>
 
           {/* Calculator Output Display Card */}
-          <div className="bg-gradient-to-br from-orange-600/20 via-amber-600/10 to-transparent p-5 sm:p-6 rounded-xl sm:rounded-xl border border-orange-500/30 text-center space-y-4 notranslate" translate="no">
+          <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-2xl border border-slate-800 text-center space-y-4 shadow-sm">
             
-            <div className="space-y-1 notranslate" translate="no">
-              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-orange-300 notranslate" translate="no">
-                ប្រាក់ចំណូលប៉ាន់ស្មានប្រចាំខែ
+            <div className="space-y-1">
+              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-orange-400">
+                {t('pricing.calc_est_rev', 'Estimated Monthly Revenue')}
               </span>
-              <div key={`rev-${totalRev}`} className="text-3xl sm:text-5xl font-black text-white font-heading tracking-tight notranslate" translate="no">
+              <div key={`rev-${totalRev}`} className="text-3xl sm:text-5xl font-black text-white font-heading tracking-tight">
                 +${totalRev.toLocaleString()}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 pt-3 border-t border-slate-700/60 text-left notranslate" translate="no">
-              <div className="bg-slate-900/80 p-3 sm:p-3.5 rounded-xl sm:rounded-xl border border-slate-800 notranslate" translate="no">
-                <span className="text-[10px] text-slate-400 font-bold block notranslate" translate="no">ប្រាក់ចំណេញសុទ្ធ</span>
-                <span key={`profit-${netProfit}`} className="text-base sm:text-xl font-extrabold text-emerald-400 mt-0.5 block truncate notranslate" translate="no">
+            <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800 text-left">
+              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                <span className="text-[10px] text-slate-400 font-bold block">{t('pricing.calc_net_profit', 'Net Profit')}</span>
+                <span key={`profit-${netProfit}`} className="text-base sm:text-xl font-extrabold text-emerald-400 mt-0.5 block truncate">
                   +${netProfit.toLocaleString()}
                 </span>
-                <span className="text-[9px] sm:text-[10px] text-slate-500 truncate block notranslate" translate="no">ដកថ្លៃកញ្ចប់ $10</span>
+                <span className="text-[9px] sm:text-[10px] text-slate-500 truncate block">{t('pricing.calc_after_fee', { fee: billingCycle === 'annual' ? 8 : 10 }, 'After ${{fee}} Package Fee')}</span>
               </div>
 
-              <div className="bg-slate-900/80 p-3 sm:p-3.5 rounded-xl sm:rounded-xl border border-slate-800 notranslate" translate="no">
-                <span className="text-[10px] text-slate-400 font-bold block notranslate" translate="no">ផលចំណេញ (ROI)</span>
-                <span key={`roi-${roiPct}`} className="text-base sm:text-xl font-extrabold text-amber-400 mt-0.5 block truncate notranslate" translate="no">
+              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                <span className="text-[10px] text-slate-400 font-bold block">{t('pricing.calc_roi', 'Return on Investment (ROI)')}</span>
+                <span key={`roi-${roiPct}`} className="text-base sm:text-xl font-extrabold text-amber-400 mt-0.5 block truncate">
                   +{roiPct.toLocaleString()}%
                 </span>
-                <span className="text-[9px] sm:text-[10px] text-slate-500 truncate block notranslate" translate="no">ទទួលបានផលចំណេញខ្ពស់</span>
+                <span className="text-[9px] sm:text-[10px] text-slate-500 truncate block">{t('pricing.calc_high_roi', 'High Return on Investment')}</span>
               </div>
             </div>
 
@@ -450,7 +450,7 @@ export default function Pricing() {
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-xl p-6 sm:p-8 w-full max-w-md space-y-5 shadow-md animate-in zoom-in-95">
             <h3 className="font-extrabold text-xl text-slate-900">
-              Upgrade to {selectedPlan.name} Plan
+              {t('pricing.modal.title', { plan: t(`pricing.plans.${selectedPlan.id}.name`, selectedPlan.name) }, 'Upgrade to {{plan}} Plan')}
             </h3>
 
             {successMessage ? (
@@ -461,10 +461,10 @@ export default function Pricing() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                    Select Your Business Listing
+                    {t('pricing.modal.select_business', 'Select Your Business Listing')}
                   </label>
                   {myBusinesses.length === 0 ? (
-                    <p className="text-xs text-red-600">Please register a business first before subscribing.</p>
+                    <p className="text-xs text-red-600">{t('pricing.modal.no_business_error', 'Please register a business first before subscribing.')}</p>
                   ) : (
                     <select
                       value={selectedBusinessId}
@@ -473,7 +473,7 @@ export default function Pricing() {
                     >
                       {myBusinesses.map((b) => (
                         <option key={b.id} value={b.id}>
-                          {b.name} (Current: {b.subscription_plan || 'free'})
+                          {b.name} ({t('pricing.modal.current', 'Current:')} {t(`pricing.plans.${b.subscription_plan || 'free'}.name`, b.subscription_plan || 'FREE')})
                         </option>
                       ))}
                     </select>
@@ -481,11 +481,11 @@ export default function Pricing() {
                 </div>
 
                 <div className="p-4 bg-orange-50 rounded-xl border border-orange-100 text-xs space-y-1">
-                  <p className="font-bold text-slate-900">Subscription Summary:</p>
-                  <p className="text-slate-600">Plan: <strong>{selectedPlan.name}</strong></p>
-                  <p className="text-slate-600">Price: <strong>${selectedPlan.price} / month</strong></p>
+                  <p className="font-bold text-slate-900">{t('pricing.modal.summary', 'Subscription Summary:')}</p>
+                  <p className="text-slate-600">{t('pricing.modal.plan', 'Plan:')} <strong>{t(`pricing.plans.${selectedPlan.id}.name`, selectedPlan.name)}</strong></p>
+                  <p className="text-slate-600">{t('pricing.modal.price', 'Price:')} <strong>${selectedPlan.price} / {t('pricing.calc_month', 'month')}</strong></p>
                   <p className="text-slate-500 text-[11px] pt-1">
-                    Payment Gateway: <strong>Bakong Universal KHQR (Scan & Pay)</strong>
+                    {t('pricing.modal.payment_gateway', 'Payment Gateway:')} <strong>{t('pricing.modal.khqr', 'Bakong Universal KHQR (Scan & Pay)')}</strong>
                   </p>
                 </div>
 
@@ -495,7 +495,7 @@ export default function Pricing() {
                     onClick={() => setSelectedPlan(null)}
                     className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
                   >
-                    Cancel
+                    {t('pricing.modal.cancel', 'Cancel')}
                   </button>
                   <button
                     type="button"
@@ -504,7 +504,7 @@ export default function Pricing() {
                     className="px-5 py-2.5 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-bold text-xs shadow-md disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
                   >
                     <QrCode className="w-3.5 h-3.5" />
-                    <span>Proceed to KHQR Pay</span>
+                    <span>{t('pricing.modal.proceed', 'Proceed to KHQR Pay')}</span>
                   </button>
                 </div>
               </div>
@@ -518,7 +518,10 @@ export default function Pricing() {
         <KhqrPaymentModal
           isOpen={khqrModalOpen}
           onClose={() => setKhqrModalOpen(false)}
-          itemTitle={`${selectedPlan.name} Plan Subscription (${currentBusinessObj?.name || 'Business'})`}
+          itemTitle={t('pricing.modal.khqr_title', { 
+            plan: t(`pricing.plans.${selectedPlan.id}.name`, selectedPlan.name),
+            business: currentBusinessObj?.name || t('pricing.modal.business', 'Business')
+          }, '{{plan}} Plan Subscription ({{business}})')}
           amount={selectedPlan.price}
           type="subscription"
           businessId={selectedBusinessId ? Number(selectedBusinessId) : null}

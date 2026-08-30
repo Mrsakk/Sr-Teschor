@@ -31,6 +31,7 @@ export default function AdminBookings() {
     queryKey: ['admin', 'bookings', statusFilter, page],
     queryFn: () => adminApi.getBookings({ page, status: statusFilter || undefined }).then(r => r.data),
     staleTime: 1000 * 60 * 2,
+    placeholderData: prev => prev,
     refetchOnMount: true,
   });
 

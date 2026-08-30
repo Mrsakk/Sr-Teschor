@@ -18,6 +18,8 @@ import {
   ShieldCheck,
   Sparkles,
   ExternalLink,
+  RefreshCw,
+  CheckCircle2,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -39,15 +41,31 @@ import {
 } from 'recharts';
 
 export default function AdminDashboard() {
-  // ── Instant from cache on revisit (stale 2min) ──
-  const { data, isLoading: isLoading } = useQuery({
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+
+  // ── Instant from cache on revisit with zero-flicker background sync ──
+  const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['admin', 'dashboard'],
-    queryFn: () => adminApi.getDashboard().then(r => r.data),
-    staleTime: 1000 * 60 * 2,
-    refetchOnMount: true,
+    queryFn: async () => {
+      const res = await adminApi.getDashboard();
+      setLastUpdated(new Date());
+      return res.data;
+    },
+    staleTime: 1000 * 60 * 2,          // 2 minutes cached for instant 0ms reload
+    placeholderData: (prev) => prev,   // Prevent screen flickering on re-fetch
+    refetchInterval: 30000,            // Silent real-time auto-sync every 30s
+    refetchOnWindowFocus: true,        // Refresh automatically when admin focuses tab
   });
 
-  const fetchDashboardData = () => {}; // kept for any manual refresh buttons
+  const handleForceRefresh = async () => {
+    try {
+      await adminApi.getDashboard({ refresh: true });
+      await refetch();
+      setLastUpdated(new Date());
+    } catch (e) {
+      refetch();
+    }
+  };
 
   if (isLoading) {
     return (
@@ -66,9 +84,17 @@ export default function AdminDashboard() {
     );
   }
 
+  const toArray = (val) => (Array.isArray(val) ? val : (val && typeof val === 'object' ? Object.values(val) : []));
+
   const stats = data?.stats || {};
   const charts = data?.charts || {};
-  const recentActivities = data?.recent_activities || [];
+  const userGrowth = toArray(charts?.user_growth);
+  const businessGrowth = toArray(charts?.business_growth);
+  const revenueTrend = toArray(charts?.revenue_trend);
+  const bookingsTrend = toArray(charts?.bookings_trend);
+  const categoriesDistribution = toArray(charts?.categories_distribution);
+  const popularDestinations = toArray(charts?.popular_destinations);
+  const recentActivities = toArray(data?.recent_activities);
   const quickCounts = data?.quick_counts || {};
 
   const PIE_COLORS = ['#10B981', '#06B6D4', '#6366F1', '#EC4899', '#F59E0B', '#8B5CF6', '#14B8A6'];
@@ -114,10 +140,13 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-50 via-white to-white border border-emerald-200 p-5 rounded-xl shadow-sm">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-600 border border-emerald-500/30">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-700 border border-emerald-500/30 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
               Live Monitoring
             </span>
-            <span className="text-xs text-slate-400">Siem Reap, Cambodia</span>
+            <span className="text-[11px] text-slate-400">
+              Synced {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </span>
           </div>
           <h2 className="text-xl font-bold text-slate-900">Platform Health & Growth Overview</h2>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -125,7 +154,17 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <button
+            onClick={handleForceRefresh}
+            disabled={isFetching}
+            title="Force refresh live data from database"
+            className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 disabled:opacity-70"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${isFetching ? 'animate-spin' : ''}`} />
+            <span>{isFetching ? 'Syncing...' : 'Sync Live'}</span>
+          </button>
+
           <Link
             to="/admin/businesses/pending"
             className="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-600 text-xs font-semibold flex items-center gap-1.5 transition-colors"
@@ -191,17 +230,16 @@ export default function AdminDashboard() {
           link="/admin/revenue"
         />
         <StatCard
-          title="Pending Approvals"
+          title="Pending Verifications"
           value={stats.pending_approvals?.value || 0}
           change={stats.pending_approvals?.change}
           trend={stats.pending_approvals?.trend}
-          description="requires review"
           icon={AlertCircle}
           color="amber"
           link="/admin/businesses/pending"
         />
         <StatCard
-          title="Customer Reviews"
+          title="Community Reviews"
           value={stats.reviews_count?.value || 0}
           change={stats.reviews_count?.change}
           trend={stats.reviews_count?.trend}
@@ -236,7 +274,7 @@ export default function AdminDashboard() {
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={charts.revenue_trend || []}>
+              <AreaChart data={revenueTrend}>
                 <defs>
                   <linearGradient id="subColor" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10B981" stopOpacity={0.4}/>
@@ -274,7 +312,7 @@ export default function AdminDashboard() {
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={charts.user_growth || []}>
+              <LineChart data={userGrowth}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />
                 <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} />
                 <YAxis stroke="#94A3B8" fontSize={11} />
@@ -304,7 +342,7 @@ export default function AdminDashboard() {
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={charts.bookings_trend || []}>
+              <BarChart data={bookingsTrend}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />
                 <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} />
                 <YAxis stroke="#94A3B8" fontSize={11} />
@@ -331,7 +369,7 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={charts.categories_distribution || []}
+                  data={categoriesDistribution}
                   cx="50%"
                   cy="50%"
                   innerRadius={50}
@@ -339,7 +377,7 @@ export default function AdminDashboard() {
                   paddingAngle={4}
                   dataKey="value"
                 >
-                  {(charts.categories_distribution || []).map((entry, index) => (
+                  {categoriesDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                   ))}
                 </Pie>
@@ -349,7 +387,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="grid grid-cols-2 gap-1.5 mt-2 text-[11px]">
-            {(charts.categories_distribution || []).slice(0, 4).map((cat, idx) => (
+            {categoriesDistribution.slice(0, 4).map((cat, idx) => (
               <div key={idx} className="flex items-center gap-1.5 truncate text-slate-700">
                 <div
                   className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -380,7 +418,7 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 layout="vertical"
-                data={charts.popular_destinations || []}
+                data={popularDestinations}
                 margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />

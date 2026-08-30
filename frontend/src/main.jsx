@@ -46,20 +46,7 @@ if (typeof Node === 'function' && Node.prototype) {
   };
 }
 
-// TanStack Query global client
-// staleTime=5min → data cached 5 min, shows INSTANTLY on revisit (no skeleton flash)
-// gcTime=10min  → keeps data in memory 10min after leaving page
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,      // 5 minutes: show cached data instantly on revisit
-      gcTime: 1000 * 60 * 10,        // 10 minutes: keep in memory after unmount
-      refetchOnWindowFocus: false,    // Don't refetch on tab switch
-      refetchOnMount: 'always',       // Silently check for updates in background
-      retry: 1,                       // Retry once on failure
-    },
-  },
-});
+import { queryClient } from './api/queryClient';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

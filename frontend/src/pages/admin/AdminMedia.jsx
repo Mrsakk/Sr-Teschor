@@ -16,10 +16,9 @@ import {
 } from 'lucide-react';
 
 export default function AdminMedia() {
-  const [mediaItems, setMediaItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState('');
   const [search, setSearch] = useState('');
+  const [submittedSearch, setSubmittedSearch] = useState('');
 
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
@@ -35,24 +34,26 @@ export default function AdminMedia() {
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchMedia();
-  }, [categoryFilter]);
+  const {
+    data: mediaResponse,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin', 'media', { category: categoryFilter, search: submittedSearch }],
+    queryFn: () =>
+      adminApi
+        .getMedia({
+          category: categoryFilter || undefined,
+          search: submittedSearch || undefined,
+        })
+        .then(r => r.data),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 3,
+    refetchOnMount: true,
+  });
 
-  const fetchMedia = async () => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getMedia({
-        category: categoryFilter || undefined,
-        search,
-      });
-      setMediaItems(res.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load media assets.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const mediaItems = mediaResponse?.data || (Array.isArray(mediaResponse) ? mediaResponse : []);
 
   const handleCopyUrl = (url, id) => {
     navigator.clipboard.writeText(url);
@@ -74,7 +75,7 @@ export default function AdminMedia() {
         category: 'destinations',
         alt_text: '',
       });
-      fetchMedia();
+      refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add media.');
     } finally {
@@ -89,7 +90,7 @@ export default function AdminMedia() {
       await adminApi.deleteMedia(itemToDelete.id);
       toast.success('Media asset removed.');
       setItemToDelete(null);
-      fetchMedia();
+      refetch();
     } catch (err) {
       toast.error('Failed to delete media asset.');
     } finally {

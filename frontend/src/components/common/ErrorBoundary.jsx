@@ -56,14 +56,14 @@ export default class ErrorBoundary extends React.Component {
                 className="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-lg shadow-sm flex items-center gap-2 transition-all cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
-                <span>ព្យាយាមម្តងទៀត (Try Again)</span>
+                <span>Try Again</span>
               </button>
               <button
                 onClick={this.handleGoHome}
                 className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Home className="w-4 h-4" />
-                <span>ទំព័រដើម (Home)</span>
+                <span>Home</span>
               </button>
             </div>
           </div>

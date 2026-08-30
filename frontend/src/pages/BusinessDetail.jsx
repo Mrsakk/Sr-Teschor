@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { 
@@ -13,18 +13,21 @@ import {
   Tag, 
   CheckCircle2, 
   ArrowLeft, 
-  Navigation,
-  MessageSquarePlus,
-  Calendar,
-  Copy,
-  X,
-  QrCode,
-  MessageCircle,
-  Share2,
-  ExternalLink,
-  ChevronRight,
-  ShieldCheck,
-  Award
+  Navigation, 
+  MessageSquarePlus, 
+  Calendar, 
+  Copy, 
+  X, 
+  QrCode, 
+  MessageCircle, 
+  Share2, 
+  ExternalLink, 
+  ChevronRight, 
+  ChevronLeft, 
+  ShieldCheck, 
+  Award, 
+  Camera, 
+  Building2 
 } from 'lucide-react';
 import { businessApi } from '../api/endpoints';
 import RatingStars from '../components/common/RatingStars';
@@ -47,7 +50,8 @@ export default function BusinessDetail() {
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPromo, setCopiedPromo] = useState('');
-  const [lightboxImg, setLightboxImg] = useState(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const queryClient = useQueryClient();
 
   // ── Business Detail — instant from cache on revisit ──
@@ -75,12 +79,34 @@ export default function BusinessDetail() {
       }
       return undefined;
     },
-    staleTime: 1000 * 60 * 3,
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: true,
   });
 
   const business = data?.business || null;
   const similar = data?.similar || [];
   const loading = isLoading && !data;
+
+  const rawImages = business ? [
+    ...(business.cover_image ? [business.cover_image] : []),
+    ...(business.gallery_images || []),
+  ].filter(Boolean) : [];
+
+  const allImages = rawImages.length > 0
+    ? rawImages.map(img => getFullImageUrl(img))
+    : ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&auto=format&fit=crop&q=80'];
+
+  // Keyboard navigation for Lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setLightboxOpen(false);
+      if (e.key === 'ArrowLeft') setActiveImageIndex((i) => (i === 0 ? allImages.length - 1 : i - 1));
+      if (e.key === 'ArrowRight') setActiveImageIndex((i) => (i === allImages.length - 1 ? 0 : i + 1));
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen, allImages.length]);
 
   if (loading) {
     return (
@@ -104,13 +130,23 @@ export default function BusinessDetail() {
 
   const favorited = isFavorited('business', business.id);
 
-  const allImages = [
-    ...(business.cover_image ? [business.cover_image] : []),
-    ...(business.gallery_images || []),
-  ].filter(Boolean);
-
   const rawCover = allImages[0] || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&auto=format&fit=crop&q=80';
   const coverImg = getFullImageUrl(rawCover, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&auto=format&fit=crop&q=80');
+
+  const openLightbox = (index) => {
+    setActiveImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const handlePrevImage = (e) => {
+    if (e) e.stopPropagation();
+    setActiveImageIndex((i) => (i === 0 ? allImages.length - 1 : i - 1));
+  };
+
+  const handleNextImage = (e) => {
+    if (e) e.stopPropagation();
+    setActiveImageIndex((i) => (i === allImages.length - 1 ? 0 : i + 1));
+  };
 
   const handleOpenBooking = (serviceItem = null) => {
     setSelectedService(serviceItem);
@@ -181,13 +217,13 @@ export default function BusinessDetail() {
       </div>
 
       {/* ── 2. HERO HEADER BANNER ── */}
-      <div className="relative rounded-xl sm:rounded-xl overflow-hidden min-h-[300px] sm:min-h-[420px] bg-slate-950 shadow-sm flex flex-col justify-end p-4 sm:p-8 md:p-10 border border-slate-800">
+      <div className="relative rounded-2xl overflow-hidden min-h-[300px] sm:min-h-[420px] bg-slate-950 shadow-xs flex flex-col justify-end p-5 sm:p-8 md:p-10 border border-slate-800">
         
         {/* Cover Background Image */}
         <img
           src={coverImg}
           alt={business.name}
-          className="absolute inset-0 w-full h-full object-cover opacity-75"
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&auto=format&fit=crop&q=80';
@@ -201,31 +237,31 @@ export default function BusinessDetail() {
           {/* Category & Status Badges */}
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {business.category && (
-              <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 sm:py-1 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30">
                 {business.category.name}
               </span>
             )}
             {business.verification_status === 'approved' && (
-              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white shadow-xs">
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs">
                 <CheckCircle2 className="w-3 h-3 shrink-0" />
                 <span>Verified Business</span>
               </span>
             )}
             {business.subscription_plan === 'premium' && (
-              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-900 shadow-xs">
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-600 text-white shadow-xs">
                 <Award className="w-3 h-3 shrink-0" />
-                <span>Gold Partner</span>
+                <span>Featured Partner</span>
               </span>
             )}
           </div>
 
           {/* Main Title & Khmer Subtitle */}
           <div className="space-y-0.5 sm:space-y-1">
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black font-heading text-white leading-tight drop-shadow-md">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black font-heading text-white leading-tight">
               {business.name}
             </h1>
             {business.khmer_name && (
-              <p className="text-xs sm:text-lg font-khmer text-amber-300 drop-shadow-xs font-medium">
+              <p className="text-sm sm:text-lg font-khmer text-orange-200 font-medium">
                 {business.khmer_name}
               </p>
             )}
@@ -233,13 +269,13 @@ export default function BusinessDetail() {
 
           {/* Location & Rating Meta Row */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] sm:text-xs text-slate-200">
-            <div className="flex items-center gap-1 text-amber-400 font-bold bg-black/40 backdrop-blur-sm px-2.5 py-0.5 sm:py-1 rounded-xl">
+            <div className="flex items-center gap-1 text-amber-400 font-bold bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-xl">
               <Star className="w-3.5 h-3.5 fill-amber-400 shrink-0" />
               <span>{Number(business.rating || 5).toFixed(1)}</span>
               <span className="text-slate-300 font-normal">({business.review_count || 0})</span>
             </div>
 
-            <span className="text-white font-bold bg-white/15 px-2 py-0.5 rounded-lg text-[10px] sm:text-xs">
+            <span className="text-white font-bold bg-white/20 px-2.5 py-1 rounded-xl text-[10px] sm:text-xs">
               {business.price_range || '$$ (Moderate)'}
             </span>
 
@@ -250,19 +286,19 @@ export default function BusinessDetail() {
           </div>
 
           {/* CTA Action Button */}
-          <div className="pt-1 sm:pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
             <button
               onClick={() => handleOpenBooking()}
-              className="w-full sm:w-auto px-5 py-3 sm:py-3.5 rounded-xl sm:rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs sm:text-sm shadow-sm shadow-sm flex items-center justify-center gap-2 transition-transform hover:scale-102 cursor-pointer"
+              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <Calendar className="w-4 h-4 shrink-0" />
-              <span>កក់ទុក ឬសាកសួរ (Book / Inquire)</span>
+              <span>Book / Inquire Now</span>
             </button>
 
             {business.phone && (
               <a
                 href={`tel:${business.phone}`}
-                className="w-full sm:w-auto px-4 py-2.5 sm:py-3.5 rounded-xl sm:rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/20 transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-3 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-xs text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/20 transition-colors"
               >
                 <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>Call Directly</span>
@@ -276,28 +312,30 @@ export default function BusinessDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
         
         {/* Left Column: Promotions, About, Gallery, Services, Reviews */}
-        <div className="lg:col-span-2 space-y-5 sm:space-y-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           
           {/* Active Promotions Voucher Alert */}
-          {business.promotions && business.promotions.length > 0 && (
+          {business.promotions && business.promotions.some(p => p.status === 'active' && new Date(p.end_date) >= new Date(new Date().setHours(0,0,0,0))) && (
             <div className="space-y-3">
-              {business.promotions.map((p) => (
+              {business.promotions
+                .filter(p => p.status === 'active' && new Date(p.end_date) >= new Date(new Date().setHours(0,0,0,0)))
+                .map((p) => (
                 <div
                   key={p.id}
-                  className="bg-red-600 rounded-xl sm:rounded-xl p-4 sm:p-6 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border border-orange-400/30 relative overflow-hidden"
+                  className="bg-orange-50 rounded-2xl p-5 sm:p-6 text-slate-900 border border-orange-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 shadow-xs"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black shrink-0 border border-white/30">
-                      <Tag className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-100 flex items-center justify-center font-black shrink-0 text-orange-600">
+                      <Tag className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     <div className="space-y-0.5 sm:space-y-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider bg-white text-red-600 px-2 py-0.5 rounded-md shadow-2xs inline-block">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider bg-orange-600 text-white px-2 py-0.5 rounded-md inline-block shadow-xs">
                         {p.discount}
                       </span>
-                      <h4 className="font-extrabold text-sm sm:text-base text-white leading-tight font-heading">
+                      <h4 className="font-extrabold text-sm sm:text-base text-slate-900 leading-tight font-heading">
                         {p.title}
                       </h4>
-                      <p className="text-xs text-orange-100 leading-relaxed max-w-md">
+                      <p className="text-xs text-slate-600 leading-relaxed max-w-md">
                         {p.description}
                       </p>
                     </div>
@@ -307,7 +345,7 @@ export default function BusinessDetail() {
                     <button
                       type="button"
                       onClick={() => handleCopyPromo(p.promo_code)}
-                      className="w-full sm:w-auto px-4 py-2 rounded-xl bg-black/30 hover:bg-black/40 border border-white/30 text-amber-200 font-mono font-bold text-xs flex items-center justify-center gap-2 shrink-0 transition-all cursor-pointer"
+                      className="w-full sm:w-auto px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-orange-700 font-mono font-bold text-xs flex items-center justify-center gap-2 shrink-0 transition-colors cursor-pointer shadow-xs"
                       title="Click to copy promo code"
                     >
                       <Copy className="w-3.5 h-3.5" />
@@ -320,10 +358,10 @@ export default function BusinessDetail() {
           )}
 
           {/* About Section */}
-          <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
-            <div className="border-b border-slate-100 pb-2.5 sm:pb-3">
+          <div className="bg-white rounded-2xl p-5 sm:p-8 border border-slate-200 shadow-xs space-y-3 sm:space-y-4">
+            <div className="border-b border-slate-100 pb-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
-                ព័ត៌មានលម្អិត (Overview)
+                Overview
               </span>
               <h3 className="text-lg sm:text-2xl font-extrabold text-slate-900 font-heading mt-0.5">
                 About {business.name}
@@ -337,11 +375,11 @@ export default function BusinessDetail() {
 
           {/* Photo Gallery Grid */}
           {allImages.length > 1 && (
-            <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 sm:pb-3">
+            <div className="bg-white rounded-2xl p-5 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                   <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
-                    រូបភាពទេសភាព (Gallery)
+                    Gallery
                   </span>
                   <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">
                     Photo Gallery ({allImages.length})
@@ -352,25 +390,26 @@ export default function BusinessDetail() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {allImages.map((img, index) => (
                   <button
                     key={index}
-                    onClick={() => setLightboxImg(getFullImageUrl(img))}
-                    className="relative aspect-[4/3] rounded-xl sm:rounded-xl overflow-hidden group bg-slate-100 border border-slate-200 hover:shadow-md transition-all cursor-pointer"
+                    type="button"
+                    onClick={() => openLightbox(index)}
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden group bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all cursor-pointer"
                   >
                     <img
-                      src={getFullImageUrl(img)}
+                      src={img}
                       alt={`${business.name} gallery ${index + 1}`}
-                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop&q=80';
                       }}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center">
-                      <span className="text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2.5 py-1 rounded-lg">
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                      <span className="text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 px-2.5 py-1 rounded-lg">
                         View Photo
                       </span>
                     </div>
@@ -382,24 +421,24 @@ export default function BusinessDetail() {
 
           {/* Available Services / Menu Packages */}
           {business.services && business.services.length > 0 && (
-            <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-3 sm:space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 sm:pb-3">
+            <div className="bg-white rounded-2xl p-5 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                   <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
-                    សេវាកម្ម និងកញ្ចប់ (Services & Menu)
+                    Services & Menu
                   </span>
                   <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">
                     Experiences & Services Offered
                   </h3>
                 </div>
-                <span className="text-[10px] sm:text-xs text-slate-400 font-medium">Instant Booking</span>
+                <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider">Instant Booking</span>
               </div>
 
-              <div className="space-y-2.5 sm:space-y-3">
+              <div className="space-y-3">
                 {business.services.map((serv) => (
                   <div
                     key={serv.id}
-                    className="bg-slate-50 hover:bg-slate-100/80 rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all"
+                    className="bg-slate-50 hover:bg-slate-100/70 rounded-xl p-4 sm:p-5 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-colors"
                   >
                     <div className="space-y-1 min-w-0">
                       <h4 className="font-bold text-xs sm:text-base text-slate-900 leading-snug">
@@ -421,7 +460,8 @@ export default function BusinessDetail() {
                       </span>
                       <Link
                         to={`/checkout/${serv.id}`}
-                        className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-bold text-xs shadow-md shadow-sm transition-transform hover:scale-105 flex items-center gap-1"
+                        state={{ item: serv, business }}
+                        className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1"
                       >
                         <span>Book Now</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -434,11 +474,11 @@ export default function BusinessDetail() {
           )}
 
           {/* Customer Reviews Section */}
-          <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-8 border border-slate-100 shadow-xs space-y-4 sm:space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b border-slate-100 pb-3 sm:pb-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-8 border border-slate-200 shadow-xs space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
               <div>
                 <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
-                  មតិយោបល់ភ្ញៀវទេសចរ (Reviews)
+                  Reviews
                 </span>
                 <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">
                   Reviews & Customer Ratings ({business.reviews?.length || 0})
@@ -450,22 +490,22 @@ export default function BusinessDetail() {
 
               <button
                 onClick={() => setReviewModalOpen(true)}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl sm:rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-emerald-200"
               >
-                <MessageSquarePlus className="w-4 h-4 text-emerald-600" />
-                <span>Rate & Review (សរសេរការវាយតម្លៃ)</span>
+                <MessageSquarePlus className="w-4 h-4 text-emerald-700" />
+                <span>Write a Review</span>
               </button>
             </div>
 
             <div className="space-y-3 sm:space-y-4">
               {(!business.reviews || business.reviews.length === 0) ? (
-                <div className="text-center py-6 sm:py-8 text-slate-400 text-xs space-y-1">
+                <div className="text-center py-8 text-slate-400 text-xs space-y-1 bg-slate-50 rounded-xl p-4 border border-slate-200">
                   <Star className="w-6 h-6 text-slate-300 mx-auto mb-1" />
-                  <p>មិនទាន់មានការវាយតម្លៃនៅឡើយទេ។ សូមក្លាយជាអ្នកដំបូងដែលសរសេរ Review សម្រាប់ {business.name}!</p>
+                  <p>No reviews yet. Be the first to share your experience at {business.name}!</p>
                 </div>
               ) : (
                 business.reviews.map((rev) => (
-                  <div key={rev.id} className="bg-slate-50 rounded-xl sm:rounded-xl p-3.5 sm:p-5 border border-slate-100 space-y-2.5">
+                  <div key={rev.id} className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <UserAvatar user={rev.user} size="sm" />
@@ -486,7 +526,7 @@ export default function BusinessDetail() {
                     {rev.reply && (
                       <div className="bg-white rounded-xl p-3 border-l-4 border-emerald-600 text-xs space-y-0.5 shadow-2xs">
                         <p className="font-bold text-slate-900 flex items-center gap-1.5">
-                          <span>ឆ្លើយតបពី {business.name}</span>
+                          <span>Reply from {business.name}</span>
                           <span className="text-[10px] text-slate-400 font-normal">
                             {rev.reply_date ? new Date(rev.reply_date).toLocaleDateString() : ''}
                           </span>
@@ -504,25 +544,25 @@ export default function BusinessDetail() {
 
         {/* ── RIGHT COLUMN: CONTACT, OPENING HOURS & GPS MAP CARD ── */}
         <div className="space-y-4 sm:space-y-6">
-          <div className="bg-white rounded-xl sm:rounded-xl p-4.5 sm:p-7 border border-slate-100 shadow-sm space-y-4 sm:space-y-5 sticky top-24">
+          <div className="bg-white rounded-2xl p-5 sm:p-7 border border-slate-200 shadow-xs space-y-5 sticky top-24">
             
-            <div className="border-b border-slate-100 pb-2.5 sm:pb-3">
+            <div className="border-b border-slate-100 pb-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
-                ទំនាក់ទំនង & ទីតាំង
+                Contact & Location
               </span>
               <h4 className="font-extrabold text-base sm:text-lg text-slate-900 font-heading mt-0.5">
-                Contact & Location
+                Business Information
               </h4>
             </div>
 
             <div className="space-y-3.5 text-xs">
               {/* Hours */}
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
                   <Clock className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-800 block">ម៉ោងបើកដំណើរការ (Opening Hours)</span>
+                  <span className="font-bold text-slate-800 block">Opening Hours</span>
                   <span className="text-slate-500 font-medium">{business.opening_hours || 'Open Daily (07:00 AM - 10:00 PM)'}</span>
                 </div>
               </div>
@@ -530,7 +570,7 @@ export default function BusinessDetail() {
               {/* Phone */}
               {business.phone && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
@@ -545,7 +585,7 @@ export default function BusinessDetail() {
               {/* Official Website */}
               {business.website && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
                     <Globe className="w-4 h-4" />
                   </div>
                   <div>
@@ -564,31 +604,31 @@ export default function BusinessDetail() {
 
               {/* Address */}
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-800 block">អាសយដ្ឋាន (Address)</span>
+                  <span className="font-bold text-slate-800 block">Address</span>
                   <span className="text-slate-500">{business.address}</span>
                 </div>
               </div>
 
               {/* Location code */}
               {business.location_code && (
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-cyan-600" />
+                    <MapPin className="w-4 h-4 text-emerald-700" />
                     <span className="text-xs font-bold font-mono text-slate-700">
                       {business.location_code}
                     </span>
                   </div>
                   <button
                     onClick={() => navigator.clipboard.writeText(business.location_code)}
-                    className="p-1.5 text-slate-400 hover:text-cyan-600 rounded-lg hover:bg-cyan-50 transition-colors text-xs font-bold flex items-center gap-1"
-                    title="ចម្លងកូដទីតាំង"
+                    className="p-1.5 text-slate-500 hover:text-emerald-700 rounded-lg hover:bg-slate-100 transition-colors text-xs font-bold flex items-center gap-1 cursor-pointer"
+                    title="Copy location code"
                   >
                     <Copy className="w-3.5 h-3.5" />
-                    <span>ចម្លង</span>
+                    <span>Copy</span>
                   </button>
                 </div>
               )}
@@ -598,10 +638,10 @@ export default function BusinessDetail() {
             <div className="pt-3 space-y-2.5 border-t border-slate-100">
               <button
                 onClick={() => handleOpenBooking()}
-                className="w-full py-3.5 rounded-xl bg-orange-600 hover:from-orange-600 text-white font-extrabold text-xs shadow-md shadow-sm transition-transform hover:scale-102 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
                 <Calendar className="w-4 h-4" />
-                <span>ផ្ញើសំណើកក់តុ / សេវាកម្ម</span>
+                <span>Send Booking / Inquiry</span>
               </button>
 
               {/* Telegram Inquiry */}
@@ -609,10 +649,10 @@ export default function BusinessDetail() {
                 href={business.phone ? `https://t.me/+855${business.phone.replace(/[^0-9]/g, '').replace(/^0/, '')}` : 'https://t.me/sr_techor_support'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>ឆាតតាម Telegram (Direct Chat)</span>
+                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                <span>Telegram Direct Chat</span>
               </a>
 
               {/* GPS Map Link */}
@@ -622,8 +662,8 @@ export default function BusinessDetail() {
                 rel="noopener noreferrer"
                 className="w-full py-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-colors"
               >
-                <Navigation className="w-3.5 h-3.5 text-emerald-600" />
-                <span>មើលផ្លូវលើ Google Maps (GPS)</span>
+                <Navigation className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Google Maps (GPS)</span>
               </a>
             </div>
           </div>
@@ -664,24 +704,100 @@ export default function BusinessDetail() {
         url={typeof window !== 'undefined' ? window.location.href : ''}
       />
 
-      {/* Lightbox Modal */}
-      {lightboxImg && (
+      {/* Lightbox Luxury Glassmorphism Modal */}
+      {lightboxOpen && (
         <div
-          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setLightboxImg(null)}
+          className="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 animate-in fade-in duration-200 select-none"
+          onClick={() => setLightboxOpen(false)}
         >
-          <button
-            className="absolute top-4 right-4 text-white/70 hover:text-white p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
-            onClick={() => setLightboxImg(null)}
-          >
-            <X className="w-6 h-6" />
-          </button>
-          <img
-            src={lightboxImg}
-            alt="Gallery preview"
-            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-md"
-            onClick={(e) => e.stopPropagation()}
-          />
+          {/* Top Bar */}
+          <div className="w-full max-w-6xl mx-auto flex items-center justify-between z-20 pb-2" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3">
+              <div className="bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg">
+                <Camera className="w-3.5 h-3.5 text-emerald-400" />
+                <span>📸 {activeImageIndex + 1} / {allImages.length} រូបភាព</span>
+              </div>
+              <span className="hidden sm:inline-block text-white/70 font-semibold text-xs truncate max-w-xs">
+                {business.name}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white hover:text-orange-400 border border-white/20 transition-all duration-200 cursor-pointer shadow-lg active:scale-95"
+              onClick={() => setLightboxOpen(false)}
+              title="បិទ (ESC)"
+            >
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+          </div>
+
+          {/* Main Image Stage with Next/Prev Controls */}
+          <div className="relative w-full flex-1 flex items-center justify-center p-2 sm:p-6">
+            
+            {/* Prev Button */}
+            {allImages.length > 1 && (
+              <button
+                type="button"
+                className="absolute left-2 sm:left-6 z-20 p-3 sm:p-4 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-md border border-white/20 hover:border-emerald-400 transition-all duration-200 cursor-pointer shadow-2xl hover:scale-110 active:scale-95"
+                onClick={handlePrevImage}
+                title="រូបមុន (Arrow Left)"
+              >
+                <ChevronLeft className="w-5 h-5 sm:w-7 sm:h-7" />
+              </button>
+            )}
+
+            <div className="relative max-w-5xl max-h-[72vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={allImages[activeImageIndex]}
+                alt={`${business.name} full view`}
+                className="max-w-full max-h-[72vh] object-contain rounded-2xl sm:rounded-3xl shadow-2xl border border-white/15 animate-in zoom-in-95 duration-200"
+              />
+
+              {/* Watermark / Place Name pill */}
+              <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 px-3.5 py-1.5 rounded-xl bg-slate-950/70 backdrop-blur-md border border-white/15 text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg pointer-events-none">
+                <Building2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{business.name}</span>
+                {business.khmer_name && (
+                  <span className="text-white/60 text-[11px] font-normal font-khmer">({business.khmer_name})</span>
+                )}
+              </div>
+            </div>
+
+            {/* Next Button */}
+            {allImages.length > 1 && (
+              <button
+                type="button"
+                className="absolute right-2 sm:right-6 z-20 p-3 sm:p-4 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-md border border-white/20 hover:border-emerald-400 transition-all duration-200 cursor-pointer shadow-2xl hover:scale-110 active:scale-95"
+                onClick={handleNextImage}
+                title="រូបបន្ទាប់ (Arrow Right)"
+              >
+                <ChevronRight className="w-5 h-5 sm:w-7 sm:h-7" />
+              </button>
+            )}
+          </div>
+
+          {/* Bottom Thumbnails Filmstrip Dock */}
+          {allImages.length > 1 && (
+            <div className="w-full max-w-2xl mx-auto z-20 pt-2" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-center gap-2 p-2 rounded-2xl bg-slate-900/60 backdrop-blur-md border border-white/15 overflow-x-auto shadow-2xl">
+                {allImages.map((thumb, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden shrink-0 transition-all duration-200 cursor-pointer ${
+                      idx === activeImageIndex
+                        ? 'ring-2 ring-emerald-500 scale-105 border-2 border-white'
+                        : 'opacity-50 hover:opacity-100 hover:scale-100'
+                    }`}
+                  >
+                    <img src={thumb} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

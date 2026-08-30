@@ -17,13 +17,13 @@ import {
   Bell,
   Tag,
   ChevronDown,
-  Settings,
-  Star,
-  BookOpen,
-  CheckCircle,
   Globe,
   Award,
   Package,
+  BookOpen,
+  Map,
+  Layers,
+  Gift
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useFavoriteStore } from '../../store/useFavoriteStore';
@@ -35,7 +35,10 @@ export default function Navbar({ onOpenSearch }) {
   const { user, isAuthenticated, logout } = useAuthStore();
   const { destinationIds, businessIds } = useFavoriteStore();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [settings, setSettings] = useState({});
+  const [settings, setSettings] = useState(() => {
+    const cached = localStorage.getItem('site_settings');
+    return cached ? JSON.parse(cached) : {};
+  });
   const [logoError, setLogoError] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -58,22 +61,25 @@ export default function Navbar({ onOpenSearch }) {
   const transparent = !isScrolled && isHome;
 
   const languages = [
-    { code: 'km', name: 'ខ្មែរ', short: 'KM' },
-    { code: 'en', name: 'English', short: 'EN' },
-    { code: 'zh-CN', name: '中文', short: 'ZH' },
-    { code: 'fr', name: 'Français', short: 'FR' },
-    { code: 'ko', name: '한국어', short: 'KO' },
-    { code: 'ja', name: '日本語', short: 'JA' },
-    { code: 'vi', name: 'Tiếng Việt', short: 'VI' },
+    { code: 'km', name: 'ខ្មែរ', short: 'KM', flag: '🇰🇭' },
+    { code: 'en', name: 'English', short: 'EN', flag: '🇬🇧' },
+    { code: 'zh-CN', name: '中文', short: 'ZH', flag: '🇨🇳' },
+    { code: 'fr', name: 'Français', short: 'FR', flag: '🇫🇷' },
+    { code: 'ko', name: '한국어', short: 'KO', flag: '🇰🇷' },
+    { code: 'ja', name: '日本語', short: 'JA', flag: '🇯🇵' },
+    { code: 'vi', name: 'Tiếng Việt', short: 'VI', flag: '🇻🇳' },
   ];
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    const handleScroll = () => setIsScrolled(window.scrollY > 12);
     window.addEventListener('scroll', handleScroll);
     
     // Fetch Settings
     systemApi.getSettings().then((res) => {
-      setSettings(res.data || {});
+      if (res.data) {
+        setSettings(res.data);
+        localStorage.setItem('site_settings', JSON.stringify(res.data));
+      }
     }).catch(() => {});
 
     return () => window.removeEventListener('scroll', handleScroll);
@@ -104,17 +110,13 @@ export default function Navbar({ onOpenSearch }) {
       const found = languages.find(l => l.code === code);
       if (found) setCurrentLang(found);
     } else {
-      setCurrentLang({ code: 'km', name: 'ខ្មែរ', short: 'KM' });
+      setCurrentLang({ code: 'km', name: 'ខ្មែរ', short: 'KM', flag: '🇰🇭' });
     }
   }, []);
 
   const handleTranslate = (lang) => {
     setCurrentLang(lang);
     setLangDropdownOpen(false);
-    
-    // Clear old cookies first
-    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${window.location.hostname}; path=/;`;
     
     // Set Google Translate cookies directly
     document.cookie = `googtrans=/en/${lang.code}; path=/`;
@@ -125,10 +127,6 @@ export default function Navbar({ onOpenSearch }) {
       combo.value = lang.code;
       combo.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
   };
 
   useEffect(() => {
@@ -152,30 +150,29 @@ export default function Navbar({ onOpenSearch }) {
   const navLinks = [
     { name: 'Destinations', path: '/destinations', icon: Compass },
     { name: 'Businesses', path: '/businesses', icon: Building2 },
-    { name: 'Pricing', path: '/pricing', icon: Sparkles },
-    { name: 'Packages', path: '/packages', icon: Award },
+    { name: 'Packages', path: '/packages', icon: Package },
     { name: 'Map', path: '/map', icon: MapPin },
-    { name: 'Promotions', path: '/promotions', icon: Tag },
     { name: 'Trips', path: '/my-trips', icon: Calendar },
+    { name: 'Promos', path: '/promotions', icon: Tag, badge: 'Hot' },
   ];
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           transparent
             ? 'bg-transparent'
-            : 'bg-white/95 backdrop-blur-xl shadow-[0_1px_30px_rgba(0,0,0,0.08)] border-b border-slate-100'
+            : 'bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-200/90'
         }`}
-      style={{ minWidth: 0 }}
+        style={{ minWidth: 0 }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-3">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-15 sm:h-16 gap-2 sm:gap-4">
 
-            {/* ── BRAND LOGO ── */}
-            <Link to="/" className="flex items-center gap-3 shrink-0 group">
+            {/* ── 1. BRAND LOGO ── */}
+            <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
               {settings.site_logo && !logoError ? (
-                <div className="relative h-9 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-300">
+                <div className="relative h-8 sm:h-9 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
                   <img 
                     src={getFullImageUrl(settings.site_logo)} 
                     alt="Logo" 
@@ -184,27 +181,23 @@ export default function Navbar({ onOpenSearch }) {
                   />
                 </div>
               ) : (
-                <div className="relative w-9 h-9 rounded-xl bg-orange-600 flex items-center justify-center shadow-md shadow-sm group-hover:scale-105 transition-all duration-300 shrink-0 overflow-hidden">
-                  <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24">
-                    <path d="M12 2L9.5 6.5H14.5L12 2ZM7 8.5L4 13.5H20L17 8.5H7ZM2 15.5L3.5 22H20.5L22 15.5H2ZM10.5 17.5H13.5V21H10.5V17.5Z" />
-                  </svg>
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0 overflow-hidden text-white font-black text-sm">
+                  SR
                 </div>
               )}
 
-              <div className="hidden sm:flex flex-col leading-none">
-                <div className="flex items-center gap-1">
-                  <span
-                    translate="no"
-                    className={`notranslate font-black text-base tracking-tight transition-colors duration-300 ${
-                      transparent ? 'text-white' : 'text-slate-900'
-                    }`}
-                  >
-                    {settings.site_name || 'Tes Chor'}
-                  </span>
-                </div>
+              <div className="flex flex-col leading-none">
                 <span
-                  className={`text-[10px] font-medium transition-colors duration-300 ${
-                    transparent ? 'text-white/55' : 'text-slate-400'
+                  translate="no"
+                  className={`notranslate font-black text-sm sm:text-base tracking-tight transition-colors duration-200 font-heading ${
+                    transparent ? 'text-white' : 'text-slate-900'
+                  }`}
+                >
+                  {settings.site_name || 'SR TesChor'}
+                </span>
+                <span
+                  className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors duration-200 ${
+                    transparent ? 'text-white/80' : 'text-orange-600'
                   }`}
                 >
                   Siem Reap
@@ -212,116 +205,121 @@ export default function Navbar({ onOpenSearch }) {
               </div>
             </Link>
 
-            {/* ── DESKTOP NAV LINKS (centered) ── */}
-            <nav className="hidden lg:flex items-center gap-0.5">
+            {/* ── 2. CENTER DESKTOP NAV LINKS ── */}
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
               {navLinks.map((link) => {
                 const Icon = link.icon;
-                const isActive = location.pathname === link.path || location.pathname.startsWith(link.path + '/');
+                const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path + '/'));
                 return (
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-semibold whitespace-nowrap transition-all duration-200 group ${
+                    className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all duration-200 group ${
                       isActive
                         ? transparent
-                          ? 'text-white bg-white/15 backdrop-blur-sm'
-                          : 'text-orange-600 bg-orange-50'
+                          ? 'text-white bg-white/20 backdrop-blur-md shadow-xs ring-1 ring-white/30'
+                          : 'text-orange-600 bg-orange-50/90 border border-orange-200/80 shadow-xs'
                         : transparent
-                        ? 'text-white/85 hover:text-white hover:bg-white/10'
+                        ? 'text-white/90 hover:text-white hover:bg-white/10'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
                     <Icon
                       className={`w-3.5 h-3.5 shrink-0 transition-colors ${
-                        isActive ? 'text-orange-500' : 'opacity-60 group-hover:opacity-100'
+                        isActive ? 'text-orange-600' : transparent ? 'text-white/70' : 'text-slate-400 group-hover:text-slate-700'
                       }`}
                     />
                     <span>{link.name}</span>
-                    {isActive && (
-                      <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-orange-500" />
+                    {link.badge && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase bg-orange-600 text-white animate-pulse">
+                        {link.badge}
+                      </span>
                     )}
                   </Link>
                 );
               })}
             </nav>
 
-            {/* ── RIGHT SIDE ACTIONS ── */}
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* ── 3. RIGHT SIDE CONTROLS & USER PORTAL ── */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
 
               {/* Hidden Google Translate Target */}
-              <div id="google_translate_element" className="hidden"></div>
+              <div id="google_translate_element" style={{ display: 'none' }}></div>
 
-              {/* Custom Language Dropdown */}
+              {/* Search Pill Button */}
+              <button
+                onClick={onOpenSearch}
+                title="Search destinations & businesses"
+                className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  transparent
+                    ? 'bg-white/10 border-white/20 text-white/90 hover:bg-white/20 backdrop-blur-md'
+                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-white hover:text-slate-900 shadow-xs'
+                }`}
+              >
+                <Search className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                <span className="whitespace-nowrap hidden xl:inline">Search places...</span>
+              </button>
+
+              {/* Search Mobile Icon */}
+              <button
+                onClick={onOpenSearch}
+                className={`md:hidden p-2 rounded-xl transition-colors cursor-pointer ${
+                  transparent ? 'text-white hover:bg-white/10' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+                aria-label="Search"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+
+              {/* Language Switcher Dropdown */}
               <div className="relative notranslate" translate="no" ref={langRef}>
                 <button
                   onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                  className={`flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl border transition-all duration-200 hover:scale-[1.02] cursor-pointer ${
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-extrabold transition-all cursor-pointer ${
                     transparent
-                      ? 'border-white/25 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white'
-                      : 'border-slate-200 bg-white hover:border-orange-300 shadow-2xs text-slate-700'
+                      ? 'border-white/25 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white'
+                      : 'border-slate-200 bg-white hover:bg-slate-50 shadow-xs text-slate-700'
                   }`}
                 >
-                  <span className="text-xs sm:text-[13px] font-bold">{currentLang.short}</span>
-                  <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform duration-200 ${langDropdownOpen ? 'rotate-180' : ''} ${
-                    transparent ? 'text-white/70' : 'text-slate-400'
-                  }`} />
+                  <Globe className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                  <span>{currentLang.short}</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${langDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {langDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-36 bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right py-1.5">
+                  <div className="absolute right-0 top-full mt-2 w-40 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right p-1.5">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
                         onClick={() => handleTranslate(lang)}
-                        className={`w-full text-left px-4 py-2 text-[13px] font-semibold transition-colors cursor-pointer ${
-                          currentLang.code === lang.code ? 'text-orange-600 bg-orange-50' : 'text-slate-700 hover:bg-slate-50'
+                        className={`w-full text-left px-3 py-2 text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-between ${
+                          currentLang.code === lang.code ? 'text-orange-600 bg-orange-50 font-black' : 'text-slate-700 hover:bg-slate-50'
                         }`}
                       >
-                        {lang.name}
+                        <span className="flex items-center gap-2">
+                          <span>{lang.flag}</span>
+                          <span>{lang.name}</span>
+                        </span>
+                        {currentLang.code === lang.code && <span className="w-1.5 h-1.5 rounded-full bg-orange-600" />}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* Search Pill (Desktop) */}
-              <button
-                onClick={onOpenSearch}
-                title="Search (⌘K)"
-                className={`hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
-                  transparent
-                    ? 'bg-white/10 border-white/20 text-white/90 hover:bg-white/20 backdrop-blur-sm'
-                    : 'bg-slate-50 border-slate-200 text-slate-400 hover:border-orange-300 hover:bg-white hover:text-slate-700 shadow-2xs'
-                }`}
-              >
-                <Search className="w-3.5 h-3.5 text-orange-500 shrink-0" />
-                <span className="whitespace-nowrap">Search...</span>
-              </button>
-
-              {/* Search Icon (Mobile / Tablet) */}
-              <button
-                onClick={onOpenSearch}
-                className={`xl:hidden p-1.5 sm:p-2 rounded-xl transition-colors cursor-pointer ${
-                  transparent ? 'text-white hover:bg-white/10' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-                aria-label="Search"
-              >
-                <Search className="w-[18px] h-[18px]" />
-              </button>
-
-              {/* Favorites Heart (Hidden on small mobile, present in BottomNav) */}
+              {/* Favorites Wishlist Icon */}
               <Link
                 to="/favorites"
                 title="Saved Favorites"
-                className={`hidden sm:flex relative p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
+                className={`hidden sm:flex relative p-2 rounded-xl border transition-all ${
                   transparent
-                    ? 'text-white hover:bg-white/10'
-                    : 'text-slate-500 hover:text-rose-500 hover:bg-rose-50'
+                    ? 'border-white/20 bg-white/10 hover:bg-white/20 text-white'
+                    : 'border-slate-200 bg-white hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 shadow-xs'
                 }`}
               >
-                <Heart className={`w-[18px] h-[18px] transition-all ${totalFavorites > 0 ? 'fill-rose-500 text-rose-500' : ''}`} />
+                <Heart className={`w-4 h-4 transition-colors ${totalFavorites > 0 ? 'fill-rose-500 text-rose-500' : ''}`} />
                 {totalFavorites > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-rose-500 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center shadow-xs ring-2 ring-white">
+                  <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-rose-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-xs ring-2 ring-white">
                     {totalFavorites > 99 ? '99+' : totalFavorites}
                   </span>
                 )}
@@ -332,62 +330,43 @@ export default function Navbar({ onOpenSearch }) {
                 <div className="relative" ref={notifRef}>
                   <button
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className={`relative p-1.5 sm:p-2 rounded-xl transition-all duration-200 hover:scale-105 cursor-pointer ${
+                    className={`relative p-2 rounded-xl border transition-all cursor-pointer ${
                       transparent
-                        ? 'text-white hover:bg-white/10'
-                        : 'text-slate-600 hover:text-amber-600 hover:bg-amber-50'
+                        ? 'border-white/20 bg-white/10 hover:bg-white/20 text-white'
+                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-xs'
                     }`}
                     aria-label="Notifications"
                   >
-                    <Bell className="w-[18px] h-[18px]" />
+                    <Bell className="w-4 h-4" />
                     {unreadCount > 0 && (
-                      <span className="absolute 0 top-0 right-0 sm:-top-0.5 sm:-right-0.5 min-w-[16px] h-[16px] sm:min-w-[18px] sm:h-[18px] px-0.5 sm:px-1 bg-orange-500 text-white text-[9px] sm:text-[10px] font-extrabold rounded-full flex items-center justify-center shadow-xs ring-2 ring-white animate-pulse z-10">
+                      <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-orange-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-xs ring-2 ring-white animate-pulse">
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
                     )}
                   </button>
 
-                  {/* Notifications Dropdown */}
+                  {/* Notifications Dropdown Modal */}
                   {notificationsOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
-                      {/* Header */}
-                      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
-                        <div>
-                          <h4 className="font-extrabold text-sm text-slate-900">Notifications</h4>
-                          {unreadCount > 0 && (
-                            <p className="text-[10px] text-orange-600 font-semibold">{unreadCount} unread messages</p>
-                          )}
-                        </div>
-                        <Link
-                          to="/notifications"
-                          onClick={() => setNotificationsOpen(false)}
-                          className="text-xs font-bold text-orange-600 hover:underline"
-                        >
-                          View All
-                        </Link>
+                    <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+                      <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-xs font-black text-slate-900 flex items-center gap-1.5">
+                          <Bell className="w-3.5 h-3.5 text-orange-600" /> Notifications
+                        </span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+                          {unreadCount} unread
+                        </span>
                       </div>
 
-                      <div className="max-h-72 overflow-y-auto">
+                      <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                         {notifications.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center py-10 gap-2 text-slate-400">
-                            <Bell className="w-6 h-6 opacity-30" />
-                            <p className="text-xs">No notifications yet</p>
+                          <div className="p-8 text-center text-xs text-slate-400">
+                            No notifications yet
                           </div>
                         ) : (
-                          notifications.slice(0, 6).map((n) => (
-                            <div
-                              key={n.id}
-                              className={`px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 transition-colors ${
-                                !n.is_read ? 'bg-orange-50/40' : ''
-                              }`}
-                            >
-                              <div className="flex items-start gap-2.5">
-                                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.is_read ? 'bg-orange-500' : 'bg-slate-200'}`} />
-                                <div>
-                                  <p className="text-xs font-bold text-slate-900 leading-tight">{n.title}</p>
-                                  <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">{n.message}</p>
-                                </div>
-                              </div>
+                          notifications.slice(0, 5).map((n) => (
+                            <div key={n.id} className="p-3.5 hover:bg-slate-50 transition-colors">
+                              <p className="text-xs font-bold text-slate-900">{n.title}</p>
+                              <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">{n.message}</p>
                             </div>
                           ))
                         )}
@@ -397,19 +376,19 @@ export default function Navbar({ onOpenSearch }) {
                 </div>
               )}
 
-              {/* ── USER AVATAR / DROPDOWN ── */}
+              {/* ── 4. USER PROFILE & AUTH CONTROLS ── */}
               {isAuthenticated ? (
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className={`flex items-center gap-1 sm:gap-1.5 p-0.5 sm:px-2 sm:py-1.5 rounded-full sm:rounded-xl border transition-all duration-200 hover:scale-[1.02] cursor-pointer ${
+                    className={`flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1 rounded-xl border transition-all cursor-pointer ${
                       transparent
-                        ? 'border-white/25 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white'
-                        : 'border-slate-200 bg-white hover:border-orange-300 shadow-2xs text-slate-800'
+                        ? 'border-white/25 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white'
+                        : 'border-slate-200 bg-white hover:bg-slate-50 shadow-xs text-slate-800'
                     }`}
                   >
                     <UserAvatar user={user} size="sm" />
-                    <span translate="no" className="notranslate hidden lg:block text-xs font-bold max-w-[64px] truncate">
+                    <span translate="no" className="notranslate hidden md:block text-xs font-black max-w-[80px] truncate">
                       {user?.name?.split(' ')[0]}
                     </span>
                     <ChevronDown
@@ -419,38 +398,46 @@ export default function Navbar({ onOpenSearch }) {
                     />
                   </button>
 
-                  {/* User Dropdown */}
+                  {/* User Profile Dropdown Menu */}
                   {userDropdownOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right p-2">
 
-                      {/* User Identity */}
-                      <div className="px-4 py-3 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-slate-100">
-                        <div className="flex items-center gap-3">
-                          <UserAvatar user={user} size="lg" />
+                      {/* User Header Identity */}
+                      <div className="px-3.5 py-3 rounded-2xl bg-slate-50 border border-slate-200/80 mb-1.5">
+                        <div className="flex items-center gap-2.5">
+                          <UserAvatar user={user} size="md" />
                           <div className="min-w-0">
-                            <p translate="no" className="notranslate text-sm font-extrabold text-slate-900 truncate">{user?.name}</p>
+                            <p translate="no" className="notranslate text-xs font-black text-slate-900 truncate">{user?.name}</p>
                             <p className="text-[10px] text-slate-500 truncate">{user?.email}</p>
                           </div>
                         </div>
-                        <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-700 border border-orange-200">
+                        <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-white text-slate-700 border border-slate-200 shadow-xs">
                           {user?.role === 'admin' ? '🛡️ Admin' : user?.role === 'business' ? '🏢 Business' : '🌍 Traveler'}
                         </span>
                       </div>
 
                       {/* Menu Items */}
-                      <div className="py-1.5">
+                      <div className="space-y-0.5">
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-orange-600 shrink-0" />
+                          <span>Traveler Dashboard</span>
+                        </Link>
                         <Link
                           to="/profile"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                         >
-                          <User className="w-4 h-4 text-orange-500 shrink-0" />
+                          <User className="w-4 h-4 text-slate-400 shrink-0" />
                           <span>My Profile & Settings</span>
                         </Link>
                         <Link
                           to="/bookings"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                         >
                           <BookOpen className="w-4 h-4 text-slate-400 shrink-0" />
                           <span>My Bookings</span>
@@ -458,7 +445,7 @@ export default function Navbar({ onOpenSearch }) {
                         <Link
                           to="/my-trips"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                         >
                           <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
                           <span>My Trips Planner</span>
@@ -466,49 +453,50 @@ export default function Navbar({ onOpenSearch }) {
                         <Link
                           to="/favorites"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                         >
-                          <Heart className="w-4 h-4 text-rose-400 shrink-0" />
+                          <Heart className="w-4 h-4 text-rose-500 shrink-0" />
                           <span>Saved Favorites</span>
                         </Link>
                       </div>
 
-                      {/* Role-based Portals */}
+                      {/* Role Portals */}
                       {(user?.role === 'business' || user?.role === 'admin') && (
-                        <div className="py-1.5 border-t border-slate-100">
-                          {(user?.role === 'business' || user?.role === 'admin') && (
+                        <div className="pt-1.5 mt-1 border-t border-slate-100 space-y-0.5">
+                          {user?.role === 'business' && (
                             <Link
                               to="/business/dashboard"
                               onClick={() => setUserDropdownOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-emerald-700 hover:bg-emerald-50 transition-colors"
+                              className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors"
                             >
-                              <Building2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                              Business Portal
+                              <Building2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                              <span>Business Partner Portal</span>
                             </Link>
                           )}
                           {user?.role === 'admin' && (
                             <Link
                               to="/admin/dashboard"
                               onClick={() => setUserDropdownOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-purple-700 hover:bg-purple-50 transition-colors"
+                              className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-purple-700 hover:bg-purple-50 rounded-xl transition-colors"
                             >
-                              <ShieldCheck className="w-4 h-4 text-purple-500 shrink-0" />
-                              Admin Control Panel
+                              <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0" />
+                              <span>Admin Control Panel</span>
                             </Link>
                           )}
                         </div>
                       )}
 
-                      {/* Logout */}
-                      <div className="py-1.5 border-t border-slate-100">
+                      {/* Sign Out */}
+                      <div className="pt-1.5 mt-1 border-t border-slate-100">
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
                         >
                           <LogOut className="w-4 h-4 shrink-0" />
-                          Sign Out
+                          <span>Sign Out</span>
                         </button>
                       </div>
+
                     </div>
                   )}
                 </div>
@@ -516,56 +504,57 @@ export default function Navbar({ onOpenSearch }) {
                 <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                   <Link
                     to="/login"
-                    className={`text-xs font-bold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-200 whitespace-nowrap ${
+                    className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all whitespace-nowrap ${
                       transparent
-                        ? 'text-white hover:bg-white/10 border border-white/20'
-                        : 'text-slate-700 hover:text-orange-600 hover:bg-slate-50 border border-slate-200 sm:border-transparent'
+                        ? 'text-white hover:bg-white/10 border border-white/25'
+                        : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
                     Log In
                   </Link>
                   <Link
                     to="/register"
-                    className="hidden sm:inline-flex text-xs font-extrabold px-4 py-2.5 rounded-xl bg-orange-600 text-white shadow-md shadow-sm hover:bg-orange-700 hover:shadow-sm hover:scale-105 transition-all duration-200 whitespace-nowrap"
+                    className="hidden sm:inline-flex text-xs font-black px-3.5 py-1.5 rounded-xl bg-orange-600 text-white shadow-xs hover:bg-orange-700 transition-all whitespace-nowrap"
                   >
-                    Sign Up Free
+                    Sign Up
                   </Link>
                 </div>
               )}
 
-              {/* Mobile Hamburger */}
+              {/* Mobile Menu Hamburger Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`p-2.5 rounded-xl lg:hidden ml-1 transition-all duration-200 ${
+                className={`p-2 rounded-xl lg:hidden transition-colors cursor-pointer ${
                   transparent ? 'text-white hover:bg-white/10' : 'text-slate-700 hover:bg-slate-100'
                 }`}
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
+
             </div>
+
           </div>
         </div>
 
-        {/* ── MOBILE DRAWER ── */}
+        {/* ── 5. MOBILE DRAWER MENU ── */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white text-slate-900 border-t border-slate-100 shadow-md animate-in slide-in-from-top-2 duration-200">
-            {/* Search */}
-            <div className="px-4 pt-4 pb-2">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenSearch?.();
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-500 hover:border-orange-300 transition-colors"
-              >
-                <Search className="w-4 h-4 text-orange-500 shrink-0" />
-                <span>Search destinations, hotels...</span>
-              </button>
-            </div>
+          <div className="lg:hidden bg-white text-slate-900 border-b border-slate-200 shadow-xl rounded-b-3xl animate-in slide-in-from-top-2 duration-200 p-4 space-y-3">
+            
+            {/* Search Input for Mobile */}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenSearch?.();
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-500 hover:border-slate-300 transition-colors cursor-pointer"
+            >
+              <Search className="w-4 h-4 text-orange-600 shrink-0" />
+              <span>Search destinations, hotels & restaurants...</span>
+            </button>
 
             {/* Nav links */}
-            <div className="px-4 py-2 space-y-1">
+            <div className="space-y-1">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 const isActive = location.pathname === link.path;
@@ -574,50 +563,76 @@ export default function Navbar({ onOpenSearch }) {
                     key={link.path}
                     to={link.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-colors ${
                       isActive
-                        ? 'bg-orange-50 text-orange-600'
+                        ? 'bg-orange-50 text-orange-600 border border-orange-200/80 font-black'
                         : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-orange-500' : 'text-slate-400'}`} />
-                    {link.name}
+                    <div className="flex items-center gap-3">
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-orange-600' : 'text-slate-400'}`} />
+                      <span>{link.name}</span>
+                    </div>
+                    {link.badge && (
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-orange-600 text-white">
+                        {link.badge}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
             </div>
 
-            {/* For Business CTA */}
-            <div className="px-4 py-3 border-t border-slate-100">
+            {/* Business Partner Promotion */}
+            <div className="pt-2 border-t border-slate-100">
               <Link
                 to="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-extrabold text-orange-600 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black text-orange-700 bg-orange-50 border border-orange-200 shadow-xs"
               >
-                <Sparkles className="w-5 h-5 text-orange-500" />
-                List Your Business on Tes Chor
+                <Sparkles className="w-4 h-4 text-orange-600" />
+                <span>List Your Business on Tes Chor</span>
               </Link>
             </div>
 
-            {/* Auth buttons if not logged in */}
-            {!isAuthenticated && (
-              <div className="px-4 pb-4 pt-2 flex gap-2">
+            {/* Auth Buttons or User Controls for Mobile */}
+            {isAuthenticated ? (
+              <div className="pt-2 border-t border-slate-100 space-y-2">
+                <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <UserAvatar user={user} size="sm" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-black text-slate-900 truncate">{user?.name}</p>
+                      <p className="text-[10px] text-slate-500 truncate">{user?.email}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 font-bold text-xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="pt-2 flex gap-2">
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 text-center text-sm font-bold py-3 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50"
+                  className="flex-1 text-center text-xs font-bold py-2.5 rounded-2xl border border-slate-200 text-slate-700 hover:bg-slate-50"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 text-center text-sm font-extrabold py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-sm"
+                  className="flex-1 text-center text-xs font-black py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white shadow-xs"
                 >
                   Sign Up Free
                 </Link>
               </div>
             )}
+
           </div>
         )}
       </header>

@@ -26,13 +26,10 @@ import {
 import { Link, useSearchParams } from 'react-router-dom';
 
 export default function AdminBusinesses() {
-  const [businesses, setBusinesses] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [pagination, setPagination] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [submittedSearch, setSubmittedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
   const [verificationFilter, setVerificationFilter] = useState(searchParams.get('verification') || '');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -46,47 +43,57 @@ export default function AdminBusinesses() {
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  // 1. Fetch categories instantly with TanStack Query (0ms)
+  const { data: categories = [] } = useQuery({
+    queryKey: ['admin', 'categories'],
+    queryFn: () => adminApi.getCategories().then(r => r.data || []),
+    staleTime: 1000 * 60 * 5,
+  });
 
-  useEffect(() => {
-    fetchBusinesses(1);
-  }, [statusFilter, verificationFilter, categoryFilter]);
-
-  const fetchCategories = async () => {
-    try {
-      const res = await adminApi.getCategories();
-      setCategories(res.data || []);
-    } catch (err) {}
-  };
-
-  const fetchBusinesses = async (page = 1) => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getBusinesses({
+  // 2. Fetch businesses instantly with TanStack Query (0ms from cache on page open)
+  const {
+    data: bizResponse,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: [
+      'admin',
+      'businesses',
+      {
         page,
-        search,
-        status: statusFilter || undefined,
-        verification_status: verificationFilter || undefined,
-        category_id: categoryFilter || undefined,
-      });
-      setBusinesses(res.data.data || []);
-      setPagination({
-        current_page: res.data.current_page,
-        last_page: res.data.last_page,
-        total: res.data.total,
-      });
-    } catch (err) {
-      toast.error('Failed to load businesses list.');
-    } finally {
-      setIsLoading(false);
-    }
+        search: submittedSearch,
+        status: statusFilter,
+        verification_status: verificationFilter,
+        category_id: categoryFilter,
+      },
+    ],
+    queryFn: () =>
+      adminApi
+        .getBusinesses({
+          page,
+          search: submittedSearch || undefined,
+          status: statusFilter || undefined,
+          verification_status: verificationFilter || undefined,
+          category_id: categoryFilter || undefined,
+        })
+        .then(r => r.data),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
+
+  const businesses = bizResponse?.data || [];
+  const pagination = {
+    current_page: bizResponse?.current_page || page,
+    last_page: bizResponse?.last_page || 1,
+    total: bizResponse?.total || 0,
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchBusinesses(1);
+    setPage(1);
+    setSubmittedSearch(search);
   };
 
   const handleApprove = async (biz) => {
@@ -95,7 +102,7 @@ export default function AdminBusinesses() {
       await adminApi.approveBusiness(biz.id, { admin_notes: adminNotes || 'Verified by Admin' });
       toast.success(`Business '${biz.name}' approved & published.`);
       setIsReviewOpen(false);
-      fetchBusinesses(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error('Failed to approve business.');
     } finally {
@@ -109,7 +116,7 @@ export default function AdminBusinesses() {
       await adminApi.rejectBusiness(biz.id, { admin_notes: adminNotes || 'Information requires updates' });
       toast.warning(`Business '${biz.name}' rejected with notes.`);
       setIsReviewOpen(false);
-      fetchBusinesses(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error('Failed to reject business.');
     } finally {
@@ -122,7 +129,7 @@ export default function AdminBusinesses() {
       setActionLoading(true);
       await adminApi.suspendBusiness(biz.id);
       toast.success(`Business status toggled.`);
-      fetchBusinesses(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error('Failed to update business status.');
     } finally {
@@ -137,7 +144,7 @@ export default function AdminBusinesses() {
       await adminApi.deleteBusiness(bizToDelete.id);
       toast.success(`Business '${bizToDelete.name}' removed.`);
       setBizToDelete(null);
-      fetchBusinesses(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error('Failed to delete business.');
     } finally {
@@ -273,7 +280,7 @@ export default function AdminBusinesses() {
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <img
-                            src={getFullImageUrl(biz.logo, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80')}
+                            src={getFullImageUrl(biz.logo || biz.cover_image || (biz.gallery_images && biz.gallery_images[0]), 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80')}
                             alt={biz.name}
                             className="w-10 h-10 rounded-xl object-cover border border-slate-200"
                             onError={(e) => {
@@ -393,14 +400,14 @@ export default function AdminBusinesses() {
             <div className="flex items-center gap-2">
               <button
                 disabled={pagination.current_page <= 1}
-                onClick={() => fetchBusinesses(pagination.current_page - 1)}
+                onClick={() => setPage(pagination.current_page - 1)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 text-slate-900"
               >
                 Previous
               </button>
               <button
                 disabled={pagination.current_page >= pagination.last_page}
-                onClick={() => fetchBusinesses(pagination.current_page + 1)}
+                onClick={() => setPage(pagination.current_page + 1)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 text-slate-900"
               >
                 Next
@@ -423,7 +430,7 @@ export default function AdminBusinesses() {
 
             <div className="flex items-center gap-4 pb-4 border-b border-slate-200">
               <img
-                src={getFullImageUrl(selectedBiz.logo, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80')}
+                src={getFullImageUrl(selectedBiz.logo || selectedBiz.cover_image || (selectedBiz.gallery_images && selectedBiz.gallery_images[0]), 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80')}
                 alt={selectedBiz.name}
                 className="w-14 h-14 rounded-xl object-cover border border-slate-200"
                 onError={(e) => {

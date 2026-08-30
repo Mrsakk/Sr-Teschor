@@ -25,10 +25,9 @@ import {
 import UserAvatar from '../../components/common/UserAvatar';
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState([]);
-  const [pagination, setPagination] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [submittedSearch, setSubmittedSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -51,35 +50,48 @@ export default function AdminUsers() {
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchUsers(1);
-  }, [roleFilter, statusFilter]);
-
-  const fetchUsers = async (page = 1) => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getUsers({
+  // Fetch users with TanStack Query (instant 0ms cached display)
+  const {
+    data: userResponse,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: [
+      'admin',
+      'users',
+      {
         page,
-        search,
-        role: roleFilter || undefined,
-        status: statusFilter || undefined,
-      });
-      setUsers(res.data.data || []);
-      setPagination({
-        current_page: res.data.current_page,
-        last_page: res.data.last_page,
-        total: res.data.total,
-      });
-    } catch (err) {
-      toast.error('Failed to fetch users.');
-    } finally {
-      setIsLoading(false);
-    }
+        search: submittedSearch,
+        role: roleFilter,
+        status: statusFilter,
+      },
+    ],
+    queryFn: () =>
+      adminApi
+        .getUsers({
+          page,
+          search: submittedSearch || undefined,
+          role: roleFilter || undefined,
+          status: statusFilter || undefined,
+        })
+        .then(r => r.data),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
+
+  const users = userResponse?.data || [];
+  const pagination = {
+    current_page: userResponse?.current_page || page,
+    last_page: userResponse?.last_page || 1,
+    total: userResponse?.total || 0,
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchUsers(1);
+    setPage(1);
+    setSubmittedSearch(search);
   };
 
   const handleToggleStatus = async (user) => {
@@ -87,7 +99,7 @@ export default function AdminUsers() {
       setActionLoading(true);
       await adminApi.toggleUserStatus(user.id);
       toast.success(`User ${user.name} status updated.`);
-      fetchUsers(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error('Failed to update status.');
     } finally {
@@ -102,7 +114,7 @@ export default function AdminUsers() {
       await adminApi.deleteUser(userToDelete.id);
       toast.success(`User ${userToDelete.name} deleted.`);
       setUserToDelete(null);
-      fetchUsers(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to delete user.');
     } finally {
@@ -125,7 +137,7 @@ export default function AdminUsers() {
         role: 'customer',
         status: 'active',
       });
-      fetchUsers(1);
+      refetch();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create user.');
     } finally {
@@ -382,14 +394,14 @@ export default function AdminUsers() {
             <div className="flex items-center gap-2">
               <button
                 disabled={pagination.current_page <= 1}
-                onClick={() => fetchUsers(pagination.current_page - 1)}
+                onClick={() => setPage(pagination.current_page - 1)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 text-slate-900"
               >
                 Previous
               </button>
               <button
                 disabled={pagination.current_page >= pagination.last_page}
-                onClick={() => fetchUsers(pagination.current_page + 1)}
+                onClick={() => setPage(pagination.current_page + 1)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 text-slate-900"
               >
                 Next

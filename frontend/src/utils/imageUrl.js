@@ -12,11 +12,12 @@ export function getFullImageUrl(url, fallback = 'https://images.unsplash.com/pho
 
   // Detect dev vs production environment
   const isDev = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const devHost = `http://${window.location.hostname || 'localhost'}:8000`;
   const liveStorage = isDev
-    ? 'http://localhost:8000/storage'
+    ? `${devHost}/api/storage`
     : 'https://sr-teschor-api.vercel.app/api/storage';
   const liveBase = isDev
-    ? 'http://localhost:8000'
+    ? devHost
     : 'https://sr-teschor-api.vercel.app';
 
   let resolved = url
@@ -24,7 +25,9 @@ export function getFullImageUrl(url, fallback = 'https://images.unsplash.com/pho
     .replace(/https?:\/\/sr-teschor-api\.vercel\.app\/api\/storage/g, liveStorage)
     .replace(/https?:\/\/sr-teschor-api\.vercel\.app\/storage/g, liveStorage)
     .replace(/https?:\/\/sr-teschor-api\.vercel\.app/g, liveBase)
+    .replace(/https?:\/\/localhost:8000\/api\/storage/g, liveStorage)
     .replace(/https?:\/\/localhost:8000\/storage/g, liveStorage)
+    .replace(/https?:\/\/127\.0\.0\.1:8000\/api\/storage/g, liveStorage)
     .replace(/https?:\/\/127\.0\.0\.1:8000\/storage/g, liveStorage)
     .replace(/https?:\/\/localhost:8000/g, liveBase)
     .replace(/https?:\/\/127\.0\.0\.1:8000/g, liveBase);

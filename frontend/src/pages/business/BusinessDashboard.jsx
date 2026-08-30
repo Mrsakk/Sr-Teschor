@@ -54,7 +54,6 @@ export default function BusinessDashboard() {
   const toast = useToastStore();
   const [data, setData] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Modals state
   const [addBusinessModal, setAddBusinessModal] = useState(false);
@@ -140,8 +139,8 @@ export default function BusinessDashboard() {
         <Marker position={[newBiz.latitude, newBiz.longitude]}>
           <Popup>
             <div className="text-center font-sans">
-              <span className="font-bold text-slate-800 text-xs block">{newBiz.name || 'ទីតាំងអាជីវកម្មថ្មី'}</span>
-              <p className="text-[10px] text-slate-500 mt-0.5 font-khmer">{newBiz.khmer_name || newBiz.address || 'ទីតាំងដែលបានជ្រើសរើស'}</p>
+              <span className="font-bold text-slate-800 text-xs block">{newBiz.name || 'New Business Location'}</span>
+              <p className="text-[10px] text-slate-500 mt-0.5 font-khmer">{newBiz.khmer_name || newBiz.address || 'Selected Location'}</p>
             </div>
           </Popup>
         </Marker>
@@ -221,6 +220,8 @@ export default function BusinessDashboard() {
     queryKey: ['categories', { type: 'business' }],
     queryFn: () => categoryApi.getAll({ type: 'business' }).then(r => r.data),
     staleTime: 1000 * 60 * 10,
+    placeholderData: prev => prev,
+    refetchOnMount: true,
   });
 
   const { data: dashboardData } = useQuery({
@@ -236,12 +237,16 @@ export default function BusinessDashboard() {
       return { ...statsRes.data, businesses: combinedBiz };
     },
     staleTime: 1000 * 60 * 5,
+    placeholderData: prev => prev,
+    refetchOnMount: true,
   });
 
   const { data: fetchedAdsData } = useQuery({
     queryKey: ['myAdvertisements'],
     queryFn: () => advertisementApi.getMyAdvertisements().then(r => r.data),
     staleTime: 1000 * 60 * 5,
+    placeholderData: prev => prev,
+    refetchOnMount: true,
   });
 
   const fetchAds = async () => {
@@ -260,7 +265,6 @@ export default function BusinessDashboard() {
   const fetchData = async () => {
     // Kept for manual refresh button if needed
     try {
-      setLoading(true);
       const [statsRes, catRes, allBizRes] = await Promise.all([
         businessApi.getDashboardStats(),
         categoryApi.getAll({ type: 'business' }),
@@ -279,8 +283,6 @@ export default function BusinessDashboard() {
       fetchAds();
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -292,7 +294,6 @@ export default function BusinessDashboard() {
         setSelectedBizForAction(combinedBiz[0]);
         setNewAd(prev => ({ ...prev, business_id: combinedBiz[0].id }));
       }
-      setLoading(false);
     }
   }, [dashboardData, selectedBizForAction]);
 
@@ -326,7 +327,7 @@ export default function BusinessDashboard() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('ទំហំរូបភាពត្រូវតែតូចជាង 5MB');
+      alert('Image size must be less than 5MB');
       return;
     }
 
@@ -390,10 +391,10 @@ export default function BusinessDashboard() {
     try {
       if (adPaymentPayload.type === 'purchase') {
         const res = await advertisementApi.purchase(adPaymentPayload.data);
-        toast.success(res.data?.message || '🎉 យុទ្ធនាការ Ad ត្រូវបានដាក់បង្ហាញលើវេបសាយជោគជ័យ!');
+        toast.success(res.data?.message || 'Ad campaign has been successfully displayed on the website!');
       } else if (adPaymentPayload.type === 'renew') {
         const res = await advertisementApi.renew(adPaymentPayload.adId, adPaymentPayload.data);
-        toast.success(res.data?.message || '✅ បានបន្តកុងត្រាផ្សព្វផ្សាយជោគជ័យ!');
+        toast.success(res.data?.message || 'Successfully renewed advertisement contract!');
       }
       setNewAd({
         business_id: businesses[0]?.id || '',
@@ -411,7 +412,7 @@ export default function BusinessDashboard() {
       await fetchData();
     } catch (err) {
       console.error('Ad payment execution failed', err);
-      toast.error(err.response?.data?.message || 'បរាជ័យក្នុងការដំណើរការ Ad');
+      toast.error(err.response?.data?.message || 'Failed to process Ad payment');
     } finally {
       setKhqrAdModal(false);
       setAdPaymentPayload(null);
@@ -475,7 +476,7 @@ export default function BusinessDashboard() {
   };
 
   const handleDeleteBusiness = async (id) => {
-    if (window.confirm('តើអ្នកពិតជាចង់លុបអាជីវកម្មនេះមែនទេ? (សេវាកម្ម និងការកក់ទាំងអស់របស់វានឹងត្រូវលុបផងដែរ)')) {
+    if (window.confirm('Are you sure you want to delete this business? (All its services and bookings will be deleted too)')) {
       try {
         await businessApi.delete(id);
         fetchData();
@@ -527,6 +528,9 @@ export default function BusinessDashboard() {
     }
   };
 
+  const activeData = data || dashboardData;
+  const loading = !activeData;
+
   if (loading) {
     return (
       <div className="pt-28 pb-20 max-w-7xl mx-auto px-4 text-center">
@@ -536,10 +540,10 @@ export default function BusinessDashboard() {
     );
   }
 
-  const summary = data?.summary || {};
-  const businesses = data?.businesses || [];
-  const recentBookings = data?.recent_bookings || [];
-  const chartData = data?.monthly_trends || [];
+  const summary = activeData?.summary || {};
+  const businesses = activeData?.businesses || [];
+  const recentBookings = activeData?.recent_bookings || [];
+  const chartData = activeData?.monthly_trends || [];
 
   return (
     <div className="pt-20 sm:pt-28 pb-36 sm:pb-24 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
@@ -548,13 +552,13 @@ export default function BusinessDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4 pb-4 sm:pb-6 border-b border-slate-200">
         <div>
           <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
-            <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> ផ្ទាំងគ្រប់គ្រងម្ចាស់អាជីវកម្ម (Merchant Panel)
+            <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Business Partner Panel
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading mt-0.5 sm:mt-1">
             Business Partner Dashboard
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 sm:mt-1">
-            គ្រប់គ្រងព័ត៌មានអាជីវកម្ម សេវាកម្ម ការកក់របស់ភ្ញៀវ និងការផ្សព្វផ្សាយពាណិជ្ជកម្ម
+            Manage business information, services, customer bookings, and advertisements
           </p>
         </div>
 
@@ -778,7 +782,7 @@ export default function BusinessDashboard() {
                     {b.contact_name} — {b.guests} Guests ({b.service?.name || 'General Inquiry'})
                   </h4>
                   <p className="text-[11px] sm:text-xs text-slate-500">
-                    📅 {b.booking_date} at {b.booking_time || 'Flexible'} • 📞 {b.contact_phone} • ✉️ {b.contact_email}
+                    {b.booking_date} at {b.booking_time || 'Flexible'} {b.contact_phone}  {b.contact_email}
                   </p>
                   {b.notes && (
                     <p className="text-xs text-slate-600 italic">"{b.notes}"</p>
@@ -860,7 +864,7 @@ export default function BusinessDashboard() {
               className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-xl bg-amber-600 bg-[length:200%_auto] hover:bg-right text-slate-950 font-black text-xs shadow-lg shadow-sm hover:scale-102 transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               <Plus className="w-4 h-4 shrink-0" />
-              <span>ទិញយុទ្ធនាការផ្សព្វផ្សាយថ្មី (Buy Ad)</span>
+              <span>Buy Ads</span>
             </button>
           </div>
         </div>
@@ -869,7 +873,7 @@ export default function BusinessDashboard() {
         <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
           <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <Megaphone className="w-3.5 h-3.5 text-amber-400 shrink-0" /> យុទ្ធនាការសកម្ម
+              <Megaphone className="w-3.5 h-3.5 text-amber-400 shrink-0" /> Active Ads
             </span>
             <p className="text-xl sm:text-2xl font-black text-white mt-1">
               {adsData.summary?.active_ads || 0} <span className="text-xs font-normal text-slate-400">/ {adsData.summary?.total_ads || 0}</span>
@@ -878,7 +882,7 @@ export default function BusinessDashboard() {
 
           <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5 text-sky-400 shrink-0" /> ចំនួនមើល Ad
+              <Eye className="w-3.5 h-3.5 text-sky-400 shrink-0" /> Ad Views
             </span>
             <p className="text-xl sm:text-2xl font-black text-sky-400 mt-1">
               {Number(adsData.summary?.total_impressions || 0).toLocaleString()}
@@ -887,7 +891,7 @@ export default function BusinessDashboard() {
 
           <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <MousePointer className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> ចុចលើ Ad
+              <MousePointer className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Ad Clicks
             </span>
             <p className="text-xl sm:text-2xl font-black text-emerald-400 mt-1">
               {Number(adsData.summary?.total_clicks || 0).toLocaleString()}
@@ -896,7 +900,7 @@ export default function BusinessDashboard() {
 
           <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-xl bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" /> អត្រាចុច (CTR)
+              <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" /> CTR
             </span>
             <p className="text-xl sm:text-2xl font-black text-amber-400 mt-1">
               {adsData.summary?.avg_ctr || 0}%
@@ -912,9 +916,9 @@ export default function BusinessDashboard() {
                 <Megaphone className="w-6 h-6" />
               </div>
               <div className="space-y-1 max-w-md mx-auto">
-                <h4 className="text-sm font-bold text-white font-heading">មិនទាន់មានយុទ្ធនាការផ្សាយពាណិជ្ជកម្មនៅឡើយទេ</h4>
+                <h4 className="text-sm font-bold text-white font-heading">No Active Campaigns</h4>
                 <p className="text-xs text-slate-400">
-                  ចាប់ផ្តើមដាក់បដាផ្សព្វផ្សាយដើម្បីទាក់ទាញភ្ញៀវទេសចររាប់ពាន់នាក់នៅសៀមរាប។
+                  Start running banner ads to reach thousands of tourists in Siem Reap.
                 </p>
               </div>
               <button
@@ -926,7 +930,7 @@ export default function BusinessDashboard() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
               >
-                <Plus className="w-4 h-4" /> ចាប់ផ្តើមយុទ្ធនាការដំបូងរបស់អ្នក
+                <Plus className="w-4 h-4" /> Start Your First Campaign
               </button>
             </div>
           ) : (
@@ -956,16 +960,16 @@ export default function BusinessDashboard() {
                         {ad.status === 'active' ? (
                           ad.is_expiring_soon ? (
                             <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse">
-                              ⚠️ នៅសល់ {ad.days_remaining} ថ្ងៃទៀត
+                              Expiring in {ad.days_remaining} days
                             </span>
                           ) : (
                             <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                              🟢 សកម្ម (នៅសល់ {ad.days_remaining} ថ្ងៃ)
+                              Active ({ad.days_remaining} days left)
                             </span>
                           )
                         ) : (
                           <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                            🛑 ផុតកំណត់
+                            Expired
                           </span>
                         )}
                       </div>
@@ -981,19 +985,19 @@ export default function BusinessDashboard() {
                   {/* 3-Column Metrics Bar */}
                   <div className="grid grid-cols-3 gap-1 py-1.5 px-2 rounded-xl bg-slate-950/50 border border-slate-800 text-center">
                     <div>
-                      <span className="text-[9px] text-slate-400 block font-semibold">👁️ មើល (Views)</span>
+                      <span className="text-[9px] text-slate-400 block font-semibold">Views</span>
                       <span className="font-extrabold text-xs text-white">
                         {Number(ad.impressions || 0).toLocaleString()}
                       </span>
                     </div>
                     <div className="border-x border-slate-800">
-                      <span className="text-[9px] text-slate-400 block font-semibold">🖱️ ចុច (Clicks)</span>
+                      <span className="text-[9px] text-slate-400 block font-semibold">Clicks</span>
                       <span className="font-extrabold text-xs text-emerald-400">
                         {Number(ad.clicks || 0).toLocaleString()}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[9px] text-slate-400 block font-semibold">📈 អត្រា CTR</span>
+                      <span className="text-[9px] text-slate-400 block font-semibold">CTR</span>
                       <span className="font-extrabold text-xs text-amber-400">
                         {ad.ctr || 0}%
                       </span>
@@ -1009,7 +1013,7 @@ export default function BusinessDashboard() {
                     className="w-full py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/35 text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                   >
                     <RefreshCw className="w-3 h-3 shrink-0" />
-                    <span>បន្តការផ្សាយពាណិជ្ជកម្ម (Renew Ad)</span>
+                    <span>Renew Ad</span>
                   </button>
                 </div>
               ))}
@@ -1195,7 +1199,7 @@ export default function BusinessDashboard() {
 
               <div className="pt-2 border-t border-slate-100">
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-2">Pinpoint Location on Map (Required for Map Display)</label>
-                <p className="text-[10px] text-slate-500 mb-2">ចុចលើផែនទីដើម្បីកំណត់ទីតាំង (Latitude / Longitude) ដោយស្វ័យប្រវត្តិ។ ទីតាំងនេះចាំបាច់ណាស់ដើម្បីឲ្យហាងរបស់អ្នកបង្ហាញលើទំព័រផែនទី (Map Page)។</p>
+                <p className="text-[10px] text-slate-500 mb-2">Click on the map to set your location (Latitude / Longitude) automatically. This location is required for your business to appear on the Map Page.</p>
                 <div className="h-[300px] w-full rounded-xl overflow-hidden border border-slate-200 mb-3 z-0 relative">
                   <MapContainer 
                     center={[13.3615, 103.8596]} // Default Siem Reap

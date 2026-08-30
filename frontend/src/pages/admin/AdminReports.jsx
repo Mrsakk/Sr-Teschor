@@ -14,10 +14,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminReports() {
-  const [reports, setReports] = useState([]);
-  const [pagination, setPagination] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedReport, setSelectedReport] = useState(null);
   const [adminNotes, setAdminNotes] = useState('');
@@ -25,28 +22,30 @@ export default function AdminReports() {
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchReports(1);
-  }, [statusFilter]);
+  const {
+    data: reportsResponse,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin', 'reports', { page, status: statusFilter }],
+    queryFn: () =>
+      adminApi
+        .getReports({
+          page,
+          status: statusFilter || undefined,
+        })
+        .then(r => r.data),
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+  });
 
-  const fetchReports = async (page = 1) => {
-    try {
-      setIsLoading(true);
-      const res = await adminApi.getReports({
-        page,
-        status: statusFilter || undefined,
-      });
-      setReports(res.data.data || []);
-      setPagination({
-        current_page: res.data.current_page,
-        last_page: res.data.last_page,
-        total: res.data.total,
-      });
-    } catch (err) {
-      toast.error('Failed to load reports.');
-    } finally {
-      setIsLoading(false);
-    }
+  const reports = reportsResponse?.data || [];
+  const pagination = {
+    current_page: reportsResponse?.current_page || page,
+    last_page: reportsResponse?.last_page || 1,
+    total: reportsResponse?.total || 0,
   };
 
   const handleUpdateStatus = async (reportId, newStatus) => {
@@ -58,7 +57,7 @@ export default function AdminReports() {
       });
       toast.success(`Report #${reportId} status marked as ${newStatus}.`);
       setSelectedReport(null);
-      fetchReports(pagination.current_page);
+      refetch();
     } catch (err) {
       toast.error('Failed to update report status.');
     } finally {

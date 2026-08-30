@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useToastStore } from '../../store/useToastStore';
+import { systemApi } from '../../api/endpoints';
+import { getFullImageUrl } from '../../utils/imageUrl';
 import { Compass, Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 
 export default function AdminLogin() {
@@ -11,10 +14,18 @@ export default function AdminLogin() {
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [logoError, setLogoError] = useState(false);
 
   const { login } = useAuthStore();
   const toast = useToastStore();
   const navigate = useNavigate();
+
+  const { data: settings = {} } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => systemApi.getSettings().then(r => r.data),
+    staleTime: 1000 * 60 * 10,
+    placeholderData: prev => prev,
+  });
 
   const handleAutofill = (adminEmail) => {
     setEmail(adminEmail);
@@ -63,13 +74,24 @@ export default function AdminLogin() {
       <div className="max-w-md w-full relative z-10">
         {/* Brand Logo & Heading */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-md shadow-emerald-600/30 mb-4">
-            <Compass className="w-9 h-9" />
-          </div>
+          {settings.site_logo && !logoError ? (
+            <div className="flex justify-center mb-4">
+              <img
+                src={getFullImageUrl(settings.site_logo)}
+                alt={settings.site_name || "Logo"}
+                className="h-16 sm:h-20 w-auto max-w-[200px] object-contain drop-shadow-md transition-transform hover:scale-105"
+                onError={() => setLogoError(true)}
+              />
+            </div>
+          ) : (
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-md shadow-emerald-600/30 mb-4">
+              <Compass className="w-9 h-9" />
+            </div>
+          )}
           <h1 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Tes Chor Control Center
+            {settings.site_name ? `${settings.site_name} Control Center` : 'Tes Chor Control Center'}
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Tourism & Local Business Management Portal
           </p>
         </div>

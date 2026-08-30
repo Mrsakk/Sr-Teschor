@@ -14,38 +14,38 @@ import {
 } from 'lucide-react';
 
 export default function AdminSettings() {
-  const [settingsGrouped, setSettingsGrouped] = useState({});
   const [formData, setFormData] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
 
   const toast = useToastStore();
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
-    try {
-      setIsLoading(true);
+  const {
+    data: settingsGrouped = {},
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin', 'settings'],
+    queryFn: async () => {
       const res = await adminApi.getSettings();
-      setSettingsGrouped(res.data || {});
-
-      // Flatten settings into simple key-value state
+      const grouped = res.data || {};
+      // Flatten settings into key-value pairs
       const flat = {};
-      Object.values(res.data || {}).forEach((group) => {
-        group.forEach((item) => {
-          flat[item.key] = item.value;
-        });
+      Object.values(grouped).forEach((group) => {
+        if (Array.isArray(group)) {
+          group.forEach((item) => {
+            flat[item.key] = item.value;
+          });
+        }
       });
-      setFormData(flat);
-    } catch (err) {
-      toast.error('Failed to load system settings.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setFormData(prev => ({ ...flat, ...prev }));
+      return grouped;
+    },
+    placeholderData: prev => prev,
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: true,
+  });
 
   const handleChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -68,6 +68,7 @@ export default function AdminSettings() {
       setIsSaving(true);
       await adminApi.updateSettings({ settings: formData });
       toast.success('System settings saved successfully.');
+      refetch();
     } catch (err) {
       toast.error('Failed to update system settings.');
     } finally {

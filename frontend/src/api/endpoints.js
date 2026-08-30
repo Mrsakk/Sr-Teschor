@@ -102,14 +102,14 @@ export const promotionApi = {
   delete: (id) => api.delete(`/promotions/${id}`),
 };
 
-// Advertisements (Public & Merchant Self-Service)
+// Advertisements / Promoted Partner Highlights (Renamed to avoid AdBlockers)
 export const advertisementApi = {
-  getAll: (params) => api.get('/advertisements', { params }),
-  trackClick: (id) => api.post(`/advertisements/${id}/click`),
+  getAll: (params) => api.get('/featured-placements', { params }),
+  trackClick: (id) => api.post(`/featured-placements/${id}/click`),
   getMyAdvertisements: () => api.get('/my-advertisements'),
-  purchase: (data) => api.post('/advertisements/purchase', data),
-  renew: (id, data) => api.post(`/advertisements/${id}/renew`, data),
-  checkExpiry: () => api.post('/advertisements/check-expiry'),
+  purchase: (data) => api.post('/my-advertisements/purchase', data),
+  renew: (id, data) => api.post(`/my-advertisements/${id}/renew`, data),
+  checkExpiry: () => api.post('/my-advertisements/check-expiry'),
 };
 
 // Trips
@@ -144,7 +144,7 @@ export const notificationApi = {
 // Admin Complete API Service
 export const adminApi = {
   // 1. Dashboard
-  getDashboard: () => api.get('/admin/dashboard'),
+  getDashboard: (params) => api.get('/admin/dashboard', { params }),
 
   // 2. Users
   getUsers: (params) => api.get('/admin/users', { params }),

@@ -103,7 +103,7 @@ export default function KhqrPaymentModal({
             KHQR
           </div>
           <h3 className="font-extrabold text-sm text-white">Bakong Universal QR Payment</h3>
-          <p className="text-[11px] text-rose-100">ស្កេនទូទាត់ជាមួយគ្រប់ App ធនាគារនៅកម្ពុជា</p>
+          <p className="text-[11px] text-rose-100">Scan to pay with any bank app in Cambodia</p>
         </div>
 
         {/* Modal Body */}
@@ -115,10 +115,10 @@ export default function KhqrPaymentModal({
                 <CheckCircle2 className="w-10 h-10 animate-bounce" />
               </div>
               <div className="space-y-1">
-                <h4 className="text-xl font-black text-slate-900">ទូទាត់ប្រាក់ជោគជ័យ!</h4>
+                <h4 className="text-xl font-black text-slate-900">Payment Completed Successfully!</h4>
                 <p className="text-xs text-slate-500 font-medium">Payment Completed Successfully</p>
                 <div className="text-xs font-bold text-emerald-700 bg-emerald-50 py-2 px-3 rounded-xl mt-3 inline-block">
-                  {planName} ត្រូវបាន Activate រួចរាល់
+                  {planName} has been activated successfully
                 </div>
               </div>
             </div>
@@ -160,7 +160,7 @@ export default function KhqrPaymentModal({
 
                 <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-500 mt-2">
                   <Clock className="w-3.5 h-3.5 text-rose-500" />
-                  <span>ផុតកំណត់ក្នុង: <strong className="text-rose-600">{formattedTime}</strong></span>
+                  <span>Expires in: <strong className="text-rose-600">{formattedTime}</strong></span>
                 </div>
               </div>
 
@@ -177,11 +177,11 @@ export default function KhqrPaymentModal({
                 className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg shadow-sm flex items-center justify-center gap-2 transition-all hover:scale-102 cursor-pointer"
               >
                 {isProcessing ? (
-                  <span>កំពុងផ្ទៀងផ្ទាត់ការទូទាត់...</span>
+                  <span>Checking Payment...</span>
                 ) : (
                   <>
                     <Smartphone className="w-4 h-4" />
-                    <span>ស្កេនសាកល្បង (Simulate KHQR Pay)</span>
+                    <span>Simulate KHQR Pay</span>
                   </>
                 )}
               </button>
