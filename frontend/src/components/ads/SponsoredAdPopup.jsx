@@ -15,37 +15,6 @@ import {
 import { advertisementApi } from '../../api/endpoints';
 import { getFullImageUrl } from '../../utils/imageUrl';
 
-const DEFAULT_FALLBACK_ADS = [
-  {
-    id: 'default-popup-1',
-    title: 'កុំខកខានទស្សនា Phare Circus – កម្មវិធីសម្ដែងពេលល្ងាចដែលកម្ពុជាត្រូវតែទស្សនា!',
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/businesses',
-    badge: 'ការផ្តល់ជូនពិសេស',
-    business: {
-      name: 'ហ្វារ សៀកកម្ពុជា',
-      short_description: 'សៀកល្បីល្បាញលើពិភពលោក ដែលរួមបញ្ចូលគ្នានូវកាយសម្ព័ន្ធដ៏ស្ទាត់ជំនាញ តន្ត្រី និងរឿងព្រេងនិទានខ្មែរ។',
-      rating: '4.97',
-      address: 'ផ្លូវរង្វង់មូល ខាងត្បូងផ្សារក្រោម សៀមរាប',
-      slug: 'phare-circus'
-    }
-  },
-  {
-    id: 'default-popup-2',
-    title: 'Angkor Heritage Luxury Resort & Spa Experience',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/businesses',
-    badge: 'Exclusive Offer',
-    business: {
-      name: 'Angkor Heritage Resort',
-      short_description: 'Exclusive 5-star colonial boutique resort with private salt-water pools and spa retreats in Siem Reap.',
-      rating: '4.9',
-      address: 'Charles de Gaulle Avenue, Siem Reap',
-      slug: 'angkor-heritage-resort'
-    }
-  }
-];
-
 export default function SponsoredAdPopup() {
   const [ads, setAds] = useState(() => {
     try {
@@ -62,7 +31,7 @@ export default function SponsoredAdPopup() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. Fetch Ads
+  // 1. Fetch ONLY real Ads from Database via API
   useEffect(() => {
     let isMounted = true;
     const fetchAds = async () => {
@@ -73,14 +42,21 @@ export default function SponsoredAdPopup() {
           : Array.isArray(res.data)
           ? res.data
           : [];
-        if (isMounted && fetchedAds.length > 0) {
-          try {
-            localStorage.setItem('popupAdsCache', JSON.stringify(fetchedAds));
-          } catch {}
-          setAds(fetchedAds);
+        if (isMounted) {
+          if (fetchedAds.length > 0) {
+            try {
+              localStorage.setItem('popupAdsCache', JSON.stringify(fetchedAds));
+            } catch {}
+            setAds(fetchedAds);
+          } else {
+            setAds([]);
+            localStorage.removeItem('popupAdsCache');
+          }
         }
       } catch (err) {
-        // Silently fallback to DEFAULT_FALLBACK_ADS on Vercel deployment
+        if (isMounted && ads.length === 0) {
+          setAds([]);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -98,7 +74,7 @@ export default function SponsoredAdPopup() {
       location.pathname === '/' || 
       location.pathname.startsWith('/destinations');
 
-    if (isAllowedPage) {
+    if (isAllowedPage && ads.length > 0) {
       const timer = setTimeout(() => {
         setIsOpen(true);
       }, 500);
@@ -106,30 +82,30 @@ export default function SponsoredAdPopup() {
     } else {
       setIsOpen(false);
     }
-  }, [location.pathname]);
+  }, [location.pathname, ads.length]);
 
-  const displayAds = ads.length > 0 ? ads : DEFAULT_FALLBACK_ADS;
-
-  // 3. Auto-scroll / rotate every 3 seconds (3000ms)
+  // 3. Auto-scroll / rotate every 3 seconds (3000ms) if multiple ads exist
   useEffect(() => {
-    if (!isOpen || displayAds.length <= 1 || isHovered) return;
+    if (!isOpen || ads.length <= 1 || isHovered) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % displayAds.length);
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
     }, 3000);
 
     return () => clearInterval(timer);
-  }, [isOpen, displayAds.length, isHovered]);
+  }, [isOpen, ads.length, isHovered]);
 
-  if (!isOpen || displayAds.length === 0) return null;
+  // If no real ads in database or popup is closed, do not render
+  if (!isOpen || ads.length === 0) return null;
 
-  const currentAd = displayAds[currentIndex % displayAds.length] || displayAds[0];
+  const currentAd = ads[currentIndex % ads.length] || ads[0];
+  if (!currentAd) return null;
 
   const handleAction = () => {
     setIsOpen(false);
     if (!currentAd) return;
 
-    if (currentAd.id && !currentAd.id.toString().startsWith('default-')) {
+    if (currentAd.id) {
       advertisementApi.trackClick(currentAd.id).catch(() => {});
     }
 
@@ -176,9 +152,9 @@ export default function SponsoredAdPopup() {
 
           <div className="flex items-center gap-2">
             {/* 3s Auto-scroll Indicator */}
-            {displayAds.length > 1 && (
+            {ads.length > 1 && (
               <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
-                {currentIndex + 1} / {displayAds.length}
+                {currentIndex + 1} / {ads.length}
               </span>
             )}
             <button
@@ -223,13 +199,13 @@ export default function SponsoredAdPopup() {
           )}
 
           {/* Prev/Next Quick Controls */}
-          {displayAds.length > 1 && (
+          {ads.length > 1 && (
             <div className="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev === 0 ? displayAds.length - 1 : prev - 1));
+                  setCurrentIndex((prev) => (prev === 0 ? ads.length - 1 : prev - 1));
                 }}
                 className="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer backdrop-blur-sm"
                 aria-label="Previous Ad"
@@ -240,7 +216,7 @@ export default function SponsoredAdPopup() {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev + 1) % displayAds.length);
+                  setCurrentIndex((prev) => (prev + 1) % ads.length);
                 }}
                 className="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer backdrop-blur-sm"
                 aria-label="Next Ad"
@@ -271,9 +247,9 @@ export default function SponsoredAdPopup() {
         {/* Content Body */}
         <div className="space-y-3 px-1">
           {/* Carousel Dots Indicator */}
-          {displayAds.length > 1 && (
+          {ads.length > 1 && (
             <div className="flex items-center gap-1.5 justify-start pb-1">
-              {displayAds.map((_, idx) => (
+              {ads.map((_, idx) => (
                 <button
                   key={idx}
                   type="button"

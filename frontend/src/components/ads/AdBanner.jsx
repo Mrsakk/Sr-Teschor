@@ -14,48 +14,6 @@ import {
 } from 'lucide-react';
 import { getFullImageUrl } from '../../utils/imageUrl';
 
-const DEFAULT_FALLBACK_ADS = [
-  {
-    id: 'default-ad-1',
-    title: 'Angkor Heritage Luxury Resort & Spa',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/businesses/angkor-heritage-resort',
-    business: {
-      name: 'Angkor Heritage Resort',
-      short_description: 'Exclusive 5-star colonial boutique resort with private salt-water pools and spa retreats in Siem Reap.',
-      rating: '4.9',
-      address: 'Charles de Gaulle Avenue, Siem Reap',
-      slug: 'angkor-heritage-resort'
-    }
-  },
-  {
-    id: 'default-ad-2',
-    title: 'Siem Reap Sunset Countryside Quad Bike Safari',
-    image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/packages',
-    business: {
-      name: 'Siem Reap Quad Adventures',
-      short_description: 'Ride through scenic ancient paddy fields and secluded villages during golden hour.',
-      rating: '4.8',
-      address: 'Wat Bo Road, Siem Reap',
-      slug: 'siem-reap-quad-adventures'
-    }
-  },
-  {
-    id: 'default-ad-3',
-    title: 'Phare, The Cambodian Circus & Theater Experience',
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/businesses',
-    business: {
-      name: 'Phare Circus Siem Reap',
-      short_description: 'World-renowned Cambodian contemporary circus blending theater, music, dance and acrobats.',
-      rating: '5.0',
-      address: 'Ring Road, Svay Dangkum, Siem Reap',
-      slug: 'phare-circus'
-    }
-  }
-];
-
 export default function AdBanner({
   placement = 'all',
   className = '',
@@ -93,14 +51,21 @@ export default function AdBanner({
           : Array.isArray(res.data)
           ? res.data
           : [];
-        if (isMounted && fetchedAds.length > 0) {
-          try {
-            localStorage.setItem(`ads_${placement}`, JSON.stringify(fetchedAds));
-          } catch {}
-          setAds(fetchedAds);
+        if (isMounted) {
+          if (fetchedAds.length > 0) {
+            try {
+              localStorage.setItem(`ads_${placement}`, JSON.stringify(fetchedAds));
+            } catch {}
+            setAds(fetchedAds);
+          } else {
+            setAds([]);
+            localStorage.removeItem(`ads_${placement}`);
+          }
         }
       } catch (err) {
-        // Silently fallback to defaults if offline or API unreachable on Vercel
+        if (isMounted && ads.length === 0) {
+          setAds([]);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -112,23 +77,22 @@ export default function AdBanner({
     };
   }, [placement]);
 
-  // Active ads list (Database ads if available, otherwise high-quality verified default ads)
-  const displayAds = ads.length > 0 ? ads : DEFAULT_FALLBACK_ADS;
-
   // Auto-scroll / rotate every 3 seconds (3000ms) if multiple ads exist
   useEffect(() => {
-    if (displayAds.length <= 1 || isHovered) return;
+    if (ads.length <= 1 || isHovered) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % displayAds.length);
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
     }, 3000);
 
     return () => clearInterval(timer);
-  }, [displayAds.length, isHovered]);
+  }, [ads.length, isHovered]);
 
-  if (!isAllowedPage) return null;
+  // Show only real ads from database
+  if (!isAllowedPage || ads.length === 0) return null;
 
-  const currentAd = displayAds[currentIndex % displayAds.length] || displayAds[0];
+  const currentAd = ads[currentIndex % ads.length] || ads[0];
+  if (!currentAd) return null;
 
   const handleClick = (e) => {
     if (e && typeof e.stopPropagation === 'function') {
@@ -136,13 +100,13 @@ export default function AdBanner({
     }
     if (!currentAd) return;
 
-    if (currentAd.id && !currentAd.id.toString().startsWith('default-')) {
+    if (currentAd.id) {
       advertisementApi.trackClick(currentAd.id).catch(() => {});
     }
 
     let targetUrl = currentAd.link_url || '';
 
-    // Smart fallback if link_url is missing, empty, or dummy test url
+    // Smart fallback if link_url is missing
     if (!targetUrl || targetUrl === '/test-ad-url' || targetUrl === '#' || targetUrl.trim() === '') {
       if (currentAd.business?.slug) {
         targetUrl = `/businesses/${currentAd.business.slug}`;
@@ -184,9 +148,9 @@ export default function AdBanner({
           </div>
 
           <div className="flex items-center gap-2">
-            {displayAds.length > 1 && (
+            {ads.length > 1 && (
               <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md">
-                {currentIndex + 1}/{displayAds.length} (3s)
+                {currentIndex + 1}/{ads.length} (3s)
               </span>
             )}
             {currentAd.business?.rating && (
@@ -230,9 +194,9 @@ export default function AdBanner({
         )}
 
         {/* Carousel Dots if multiple ads */}
-        {displayAds.length > 1 && (
+        {ads.length > 1 && (
           <div className="flex items-center justify-center gap-1.5 mt-3 pt-2 border-t border-slate-100">
-            {displayAds.map((_, i) => (
+            {ads.map((_, i) => (
               <button
                 key={i}
                 type="button"
@@ -312,13 +276,13 @@ export default function AdBanner({
           )}
 
           {/* Prev/Next Quick Controls on Image hover if multiple ads */}
-          {displayAds.length > 1 && (
+          {ads.length > 1 && (
             <div className="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev === 0 ? displayAds.length - 1 : prev - 1));
+                  setCurrentIndex((prev) => (prev === 0 ? ads.length - 1 : prev - 1));
                 }}
                 className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer"
                 aria-label="Previous Ad"
@@ -329,7 +293,7 @@ export default function AdBanner({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev + 1) % displayAds.length);
+                  setCurrentIndex((prev) => (prev + 1) % ads.length);
                 }}
                 className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer"
                 aria-label="Next Ad"
@@ -350,9 +314,9 @@ export default function AdBanner({
               <span>SPONSORED</span>
             </span>
 
-            {displayAds.length > 1 && (
+            {ads.length > 1 && (
               <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-                ⚡ 3s Auto-Scroll ({currentIndex + 1}/{displayAds.length})
+                ⚡ 3s Auto-Scroll ({currentIndex + 1}/{ads.length})
               </span>
             )}
 
@@ -392,9 +356,9 @@ export default function AdBanner({
         <div className="flex sm:flex-col md:flex-col items-center md:items-end justify-between sm:justify-center gap-2.5 sm:gap-3 shrink-0 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
 
           {/* Carousel dots indicator if multiple ads */}
-          {displayAds.length > 1 && (
+          {ads.length > 1 && (
             <div className="flex items-center gap-1.5 md:mb-1">
-              {displayAds.map((_, i) => (
+              {ads.map((_, i) => (
                 <button
                   key={i}
                   type="button"
