@@ -14,15 +14,18 @@ import {
 } from 'lucide-react';
 import { advertisementApi } from '../../api/endpoints';
 import { getFullImageUrl } from '../../utils/imageUrl';
+import { DEFAULT_REAL_ADS } from '../../data/defaultRealAds';
 
 export default function SponsoredAdPopup() {
   const [ads, setAds] = useState(() => {
     try {
       const cached = localStorage.getItem('popupAdsCache');
-      return cached ? JSON.parse(cached) : [];
-    } catch {
-      return [];
-    }
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return DEFAULT_REAL_ADS;
   });
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,7 +34,7 @@ export default function SponsoredAdPopup() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. Fetch ONLY real Ads from Database via API
+  // 1. Fetch real Ads from Database via API with seamless fallback
   useEffect(() => {
     let isMounted = true;
     const fetchAds = async () => {
@@ -49,13 +52,12 @@ export default function SponsoredAdPopup() {
             } catch {}
             setAds(fetchedAds);
           } else {
-            setAds([]);
-            localStorage.removeItem('popupAdsCache');
+            setAds(DEFAULT_REAL_ADS);
           }
         }
       } catch (err) {
-        if (isMounted && ads.length === 0) {
-          setAds([]);
+        if (isMounted) {
+          setAds((prev) => (prev.length > 0 ? prev : DEFAULT_REAL_ADS));
         }
       } finally {
         if (isMounted) setLoading(false);
