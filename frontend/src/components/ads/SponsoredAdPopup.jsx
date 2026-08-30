@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { advertisementApi } from '../../api/endpoints';
 import { getFullImageUrl } from '../../utils/imageUrl';
-import { DEFAULT_REAL_ADS } from '../../data/defaultRealAds';
 
 export default function SponsoredAdPopup() {
   const [ads, setAds] = useState(() => {
@@ -25,7 +24,7 @@ export default function SponsoredAdPopup() {
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
     } catch {}
-    return DEFAULT_REAL_ADS;
+    return [];
   });
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,7 +33,7 @@ export default function SponsoredAdPopup() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. Fetch real Ads from Database via API with seamless fallback
+  // 1. Fetch ONLY real Ads from Database via API
   useEffect(() => {
     let isMounted = true;
     const fetchAds = async () => {
@@ -52,12 +51,13 @@ export default function SponsoredAdPopup() {
             } catch {}
             setAds(fetchedAds);
           } else {
-            setAds(DEFAULT_REAL_ADS);
+            setAds([]);
+            localStorage.removeItem('popupAdsCache');
           }
         }
       } catch (err) {
-        if (isMounted) {
-          setAds((prev) => (prev.length > 0 ? prev : DEFAULT_REAL_ADS));
+        if (isMounted && ads.length === 0) {
+          setAds([]);
         }
       } finally {
         if (isMounted) setLoading(false);

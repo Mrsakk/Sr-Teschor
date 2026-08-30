@@ -13,7 +13,6 @@ import {
   Flame,
 } from 'lucide-react';
 import { getFullImageUrl } from '../../utils/imageUrl';
-import { DEFAULT_REAL_ADS } from '../../data/defaultRealAds';
 
 export default function AdBanner({
   placement = 'all',
@@ -28,7 +27,7 @@ export default function AdBanner({
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
     } catch {}
-    return DEFAULT_REAL_ADS;
+    return [];
   });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -75,12 +74,13 @@ export default function AdBanner({
             } catch {}
             setAds(fetchedAds);
           } else {
-            setAds(DEFAULT_REAL_ADS);
+            setAds([]);
+            localStorage.removeItem(`ads_${placement}`);
           }
         }
       } catch (err) {
-        if (isMounted) {
-          setAds((prev) => (prev.length > 0 ? prev : DEFAULT_REAL_ADS));
+        if (isMounted && ads.length === 0) {
+          setAds([]);
         }
       } finally {
         if (isMounted) setLoading(false);
