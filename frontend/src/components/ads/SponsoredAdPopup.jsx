@@ -15,7 +15,50 @@ import {
 import { advertisementApi } from '../../api/endpoints';
 import { getFullImageUrl } from '../../utils/imageUrl';
 
-let popupAdsCache = null;
+const DEFAULT_FALLBACK_ADS = [
+  {
+    id: 'default-popup-1',
+    title: 'Angkor Heritage Luxury Resort & Spa Experience',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80',
+    link_url: '/businesses/angkor-heritage-resort',
+    badge: 'Exclusive 20% Off',
+    business: {
+      name: 'Angkor Heritage Resort',
+      short_description: 'Exclusive 5-star colonial boutique resort with private salt-water pools and spa retreats in Siem Reap.',
+      rating: '4.9',
+      address: 'Charles de Gaulle Avenue, Siem Reap',
+      slug: 'angkor-heritage-resort'
+    }
+  },
+  {
+    id: 'default-popup-2',
+    title: 'Siem Reap Sunset Countryside Quad Bike Safari',
+    image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&auto=format&fit=crop&q=80',
+    link_url: '/packages',
+    badge: 'Best Sunset Tour',
+    business: {
+      name: 'Siem Reap Quad Adventures',
+      short_description: 'Ride through scenic ancient paddy fields and secluded villages during golden hour.',
+      rating: '4.8',
+      address: 'Wat Bo Road, Siem Reap',
+      slug: 'siem-reap-quad-adventures'
+    }
+  },
+  {
+    id: 'default-popup-3',
+    title: 'Phare, The Cambodian Circus & Theater Night',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
+    link_url: '/businesses',
+    badge: 'Top Rated Show',
+    business: {
+      name: 'Phare Circus Siem Reap',
+      short_description: 'World-renowned Cambodian contemporary circus blending theater, music, dance and acrobats.',
+      rating: '5.0',
+      address: 'Ring Road, Svay Dangkum, Siem Reap',
+      slug: 'phare-circus'
+    }
+  }
+];
 
 export default function SponsoredAdPopup() {
   const [ads, setAds] = useState(() => {
@@ -28,44 +71,29 @@ export default function SponsoredAdPopup() {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(() => {
-    return ads.length === 0;
-  });
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. Fetch Ads
+  // 1. Fetch Ads from backend if available
   useEffect(() => {
     let isMounted = true;
     const fetchAds = async () => {
       try {
-        if (ads.length === 0) setLoading(true);
         const res = await advertisementApi.getAll({ placement: 'all' });
-        // Backend returns { status: 'success', data: [...] }
         const fetchedAds = Array.isArray(res.data?.data)
           ? res.data.data
           : Array.isArray(res.data)
           ? res.data
           : [];
-        if (isMounted) {
-          if (fetchedAds.length > 0) {
-            try {
-              localStorage.setItem('popupAdsCache', JSON.stringify(fetchedAds));
-            } catch {}
-            setAds(fetchedAds);
-            if (ads.length === 0) {
-               // Only auto-open if it wasn't already opened by the location effect
-               setIsOpen(true);
-            }
-          }
+        if (isMounted && fetchedAds.length > 0) {
+          try {
+            localStorage.setItem('popupAdsCache', JSON.stringify(fetchedAds));
+          } catch {}
+          setAds(fetchedAds);
         }
       } catch (err) {
-        if (isMounted && ads.length === 0) {
-          setAds([]);
-        }
-      } finally {
-        if (isMounted) setLoading(false);
+        // Silently use defaults
       }
     };
 
@@ -75,42 +103,51 @@ export default function SponsoredAdPopup() {
     };
   }, []);
 
-  // 2. Show popup on specific allowed pages
+  // 2. Show popup on specific allowed pages after initial delay
   useEffect(() => {
     const isAllowedPage = 
       location.pathname === '/' || 
       location.pathname.startsWith('/destinations');
 
-    if (isAllowedPage) {
+    const hasDismissed = sessionStorage.getItem('popup_dismissed_session');
+
+    if (isAllowedPage && !hasDismissed) {
       const timer = setTimeout(() => {
         setIsOpen(true);
-      }, 300);
+      }, 1000);
       return () => clearTimeout(timer);
     } else {
       setIsOpen(false);
     }
   }, [location.pathname]);
 
+  const displayAds = ads.length > 0 ? ads : DEFAULT_FALLBACK_ADS;
+
   // 3. Auto-scroll / rotate every 3 seconds (3000ms)
   useEffect(() => {
-    if (!isOpen || ads.length <= 1 || isHovered) return;
+    if (!isOpen || displayAds.length <= 1 || isHovered) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setCurrentIndex((prev) => (prev + 1) % displayAds.length);
     }, 3000);
 
     return () => clearInterval(timer);
-  }, [isOpen, ads.length, isHovered]);
+  }, [isOpen, displayAds.length, isHovered]);
 
-  if (!isOpen || ads.length === 0) return null;
+  if (!isOpen) return null;
 
-  const currentAd = ads[currentIndex] || ads[0];
+  const currentAd = displayAds[currentIndex % displayAds.length] || displayAds[0];
+
+  const handleClose = () => {
+    setIsOpen(false);
+    sessionStorage.setItem('popup_dismissed_session', 'true');
+  };
 
   const handleAction = () => {
-    setIsOpen(false);
+    handleClose();
     if (!currentAd) return;
 
-    if (currentAd.id) {
+    if (currentAd.id && !currentAd.id.toString().startsWith('default-')) {
       advertisementApi.trackClick(currentAd.id).catch(() => {});
     }
 
@@ -135,12 +172,17 @@ export default function SponsoredAdPopup() {
     }
   };
 
+  const adImage = getFullImageUrl(
+    currentAd.image,
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80'
+  );
+
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-300">
       <div 
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative w-full max-w-lg bg-white p-5 sm:p-6 rounded-[2rem] shadow-xl border border-slate-200 flex flex-col my-auto animate-in zoom-in-95 duration-200 space-y-5"
+        className="relative w-full max-w-lg bg-white p-5 sm:p-6 rounded-[2rem] shadow-xl border border-slate-200 flex flex-col my-auto animate-in zoom-in-95 duration-200 space-y-4"
       >
         
         {/* Top Header Bar (Inline) */}
@@ -152,14 +194,14 @@ export default function SponsoredAdPopup() {
 
           <div className="flex items-center gap-2">
             {/* 3s Auto-scroll Indicator */}
-            {ads.length > 1 && (
+            {displayAds.length > 1 && (
               <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
-                {currentIndex + 1} / {ads.length}
+                {currentIndex + 1} / {displayAds.length} (3s)
               </span>
             )}
             <button
               type="button"
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
               className="p-1.5 rounded-full bg-slate-50 text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
               aria-label="Close"
             >
@@ -168,11 +210,11 @@ export default function SponsoredAdPopup() {
           </div>
         </div>
 
-        {/* Ad Image Container (Inset and Rounded) */}
+        {/* Ad Image Container */}
         <div className="relative h-48 sm:h-56 w-full bg-slate-50 rounded-2xl overflow-hidden group border border-slate-100 shadow-sm">
           <img
             key={currentAd.id || currentIndex}
-            src={getFullImageUrl(currentAd.image, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80')}
+            src={adImage}
             alt={currentAd.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 animate-in fade-in"
             onError={(e) => {
@@ -199,13 +241,13 @@ export default function SponsoredAdPopup() {
           )}
 
           {/* Prev/Next Quick Controls */}
-          {ads.length > 1 && (
+          {displayAds.length > 1 && (
             <div className="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev === 0 ? ads.length - 1 : prev - 1));
+                  setCurrentIndex((prev) => (prev === 0 ? displayAds.length - 1 : prev - 1));
                 }}
                 className="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer backdrop-blur-sm"
                 aria-label="Previous Ad"
@@ -216,7 +258,7 @@ export default function SponsoredAdPopup() {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev + 1) % ads.length);
+                  setCurrentIndex((prev) => (prev + 1) % displayAds.length);
                 }}
                 className="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer backdrop-blur-sm"
                 aria-label="Next Ad"
@@ -245,11 +287,11 @@ export default function SponsoredAdPopup() {
         </div>
 
         {/* Content Body */}
-        <div className="space-y-3 px-1">
+        <div className="space-y-2 px-1">
           {/* Carousel Dots Indicator */}
-          {ads.length > 1 && (
+          {displayAds.length > 1 && (
             <div className="flex items-center gap-1.5 justify-start pb-1">
-              {ads.map((_, idx) => (
+              {displayAds.map((_, idx) => (
                 <button
                   key={idx}
                   type="button"
@@ -278,7 +320,7 @@ export default function SponsoredAdPopup() {
         <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
           <button
             type="button"
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
             className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-bold text-sm transition-colors cursor-pointer"
           >
             Not Now
