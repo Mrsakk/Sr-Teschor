@@ -231,8 +231,8 @@ export default function Destinations() {
         </div>
       </div>
 
-      {/* Sponsored Search Top Ad Banner */}
-      <AdBanner placement="search_top" className="mb-4 sm:mb-6" />
+      {/* Sponsored Ad Banner */}
+      <AdBanner placement="all" className="mb-4 sm:mb-6" />
 
       {/* Destinations Listing Grid */}
       {isFetching && !loading && (
@@ -293,6 +293,9 @@ export default function Destinations() {
           })}
         </div>
       )}
+
+      {/* Bottom Sponsored Ad Banner */}
+      <AdBanner placement="all" className="mt-6" />
 
     </div>
   );

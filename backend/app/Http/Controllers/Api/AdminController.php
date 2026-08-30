@@ -1051,16 +1051,29 @@ class AdminController extends Controller
         $this->authorizeAdmin($request);
 
         $validated = $request->validate([
-            'business_id' => 'required|exists:businesses,id',
+            'business_id' => 'nullable',
             'title' => 'required|string|max:255',
             'image' => 'required|string',
-            'link_url' => 'required|string',
-            'placement' => 'required|in:hero_banner,search_top,destination_sidebar,business_sidebar',
-            'price' => 'required|numeric|min:0',
+            'link_url' => 'nullable|string',
+            'placement' => 'nullable|string',
+            'price' => 'nullable|numeric|min:0',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'status' => 'required|in:pending,active,expired,rejected',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'nullable|in:pending,active,expired,rejected',
         ]);
+
+        if (empty($validated['business_id'])) {
+            $validated['business_id'] = null;
+        }
+        if (empty($validated['status'])) {
+            $validated['status'] = 'active';
+        }
+        if (!isset($validated['price'])) {
+            $validated['price'] = 0;
+        }
+        if (empty($validated['placement'])) {
+            $validated['placement'] = 'hero_banner';
+        }
 
         $validated['image'] = $this->processImageValue($validated['image']);
         $ad = Advertisement::create($validated);
@@ -1068,7 +1081,7 @@ class AdminController extends Controller
 
         AdminActivityLog::log('Created Advertisement', 'advertisements', $ad->title);
 
-        return response()->json(['message' => 'Advertisement created', 'advertisement' => $ad], 201);
+        return response()->json(['message' => 'Advertisement created successfully', 'advertisement' => $ad], 201);
     }
 
     public function deleteAdvertisement(Request $request, $id)

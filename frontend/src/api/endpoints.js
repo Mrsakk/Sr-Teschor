@@ -102,14 +102,14 @@ export const promotionApi = {
   delete: (id) => api.delete(`/promotions/${id}`),
 };
 
-// Advertisements / Promoted Partner Highlights (Renamed to avoid AdBlockers)
+// Advertisements / Promoted Partner Highlights
 export const advertisementApi = {
   getAll: (params) => api.get('/featured-placements', { params }),
   trackClick: (id) => api.post(`/featured-placements/${id}/click`),
   getMyAdvertisements: () => api.get('/my-advertisements'),
-  purchase: (data) => api.post('/my-advertisements/purchase', data),
-  renew: (id, data) => api.post(`/my-advertisements/${id}/renew`, data),
-  checkExpiry: () => api.post('/my-advertisements/check-expiry'),
+  purchase: (data) => api.post('/advertisements/purchase', data),
+  renew: (id, data) => api.post(`/advertisements/${id}/renew`, data),
+  checkExpiry: () => api.post('/advertisements/check-expiry'),
 };
 
 // Trips

@@ -45,12 +45,26 @@ export default function AdBanner({
     let isMounted = true;
     const fetchAds = async () => {
       try {
+        // First try to get ads for the specific placement
         const res = await advertisementApi.getAll({ placement });
-        const fetchedAds = Array.isArray(res.data?.data)
+        let fetchedAds = Array.isArray(res.data?.data)
           ? res.data.data
           : Array.isArray(res.data)
           ? res.data
           : [];
+
+        // If no ads for this specific placement, fall back to all active ads
+        if (fetchedAds.length === 0 && placement !== 'all') {
+          try {
+            const fallbackRes = await advertisementApi.getAll({ placement: 'all' });
+            fetchedAds = Array.isArray(fallbackRes.data?.data)
+              ? fallbackRes.data.data
+              : Array.isArray(fallbackRes.data)
+              ? fallbackRes.data
+              : [];
+          } catch {}
+        }
+
         if (isMounted) {
           if (fetchedAds.length > 0) {
             try {

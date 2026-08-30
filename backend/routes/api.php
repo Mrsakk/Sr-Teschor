@@ -202,6 +202,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Self-Service Advertisements & Marketing Engine
     Route::get('/my-advertisements', [AdvertisementController::class, 'myAdvertisements']);
+    Route::post('/my-advertisements/purchase', [AdvertisementController::class, 'purchase']);
+    Route::post('/my-advertisements/{id}/renew', [AdvertisementController::class, 'renew']);
+    Route::post('/my-advertisements/check-expiry', [AdvertisementController::class, 'checkAndExpireAds']);
     Route::post('/advertisements/purchase', [AdvertisementController::class, 'purchase']);
     Route::post('/advertisements/{id}/renew', [AdvertisementController::class, 'renew']);
     Route::post('/advertisements/check-expiry', [AdvertisementController::class, 'checkAndExpireAds']);

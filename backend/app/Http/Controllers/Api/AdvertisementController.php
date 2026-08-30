@@ -22,26 +22,30 @@ class AdvertisementController extends Controller
     public function index(Request $request)
     {
         $today = now()->toDateString();
-        $cacheKey = 'active_ads_' . md5(json_encode($request->all())) . '_' . $today;
 
-        $ads = \Illuminate\Support\Facades\Cache::remember($cacheKey, 1800, function () use ($request, $today) {
-            $query = Advertisement::with('business')
-                ->where('status', 'active')
-                ->where('start_date', '<=', $today)
-                ->where('end_date', '>=', $today);
+        $query = Advertisement::with('business')
+            ->where('status', 'active')
+            ->where(function ($q) use ($today) {
+                $q->whereNull('start_date')->orWhere('start_date', '<=', $today);
+            })
+            ->where(function ($q) use ($today) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', $today);
+            });
 
-            if ($request->filled('placement') && $request->input('placement') !== 'all') {
-                $placements = explode(',', $request->input('placement'));
-                $query->whereIn('placement', $placements);
+        if ($request->filled('placement') && $request->input('placement') !== 'all') {
+            $placements = explode(',', $request->input('placement'));
+            $matchedQuery = (clone $query)->whereIn('placement', $placements);
+            if ($matchedQuery->exists()) {
+                $query = $matchedQuery;
             }
+        }
 
-            if ($request->filled('business_id')) {
-                $query->where('business_id', $request->input('business_id'));
-            }
+        if ($request->filled('business_id')) {
+            $query->where('business_id', $request->input('business_id'));
+        }
 
-            $limit = min((int)$request->input('limit', 10), 50);
-            return $query->take($limit)->get()->toArray();
-        });
+        $limit = min((int)$request->input('limit', 20), 50);
+        $ads = $query->latest()->take($limit)->get();
 
         return response()->json([
             'status' => 'success',
@@ -97,9 +101,9 @@ class AdvertisementController extends Controller
             'title' => 'required|string|max:255',
             'image' => 'required|string',
             'link_url' => 'nullable|string',
-            'placement' => 'required|in:hero_banner,sidebar,destination_footer,search_top',
-            'duration_days' => 'required|integer|in:7,15,30,60,90',
-            'price' => 'required|numeric|min:1',
+            'placement' => 'required|string|max:100',
+            'duration_days' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
             'payment_reference' => 'nullable|string',
         ]);
 
@@ -179,8 +183,8 @@ class AdvertisementController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'duration_days' => 'required|integer|in:7,15,30,60,90',
-            'price' => 'required|numeric|min:1',
+            'duration_days' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
             'payment_reference' => 'nullable|string',
         ]);
 
