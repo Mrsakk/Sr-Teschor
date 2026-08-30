@@ -13,6 +13,7 @@ import {
   ArrowRight 
 } from 'lucide-react';
 import { advertisementApi } from '../../api/endpoints';
+import { getFullImageUrl } from '../../utils/imageUrl';
 
 let popupAdsCache = null;
 
@@ -171,9 +172,12 @@ export default function SponsoredAdPopup() {
         <div className="relative h-48 sm:h-56 w-full bg-slate-50 rounded-2xl overflow-hidden group border border-slate-100 shadow-sm">
           <img
             key={currentAd.id || currentIndex}
-            src={currentAd.image}
+            src={getFullImageUrl(currentAd.image, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80')}
             alt={currentAd.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 animate-in fade-in"
+            onError={(e) => {
+              e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80';
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent pointer-events-none opacity-80" />
 

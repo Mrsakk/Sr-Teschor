@@ -171,7 +171,7 @@ export default function BusinessDetail() {
           className="h-9 sm:h-10 px-3 sm:px-4 rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-slate-50 flex items-center gap-1.5 transition-all shadow-2xs shrink-0 whitespace-nowrap"
         >
           <ArrowLeft className="w-4 h-4 shrink-0" />
-          <span className="whitespace-nowrap">ត្រឡប់ក្រោយ</span>
+          <span className="whitespace-nowrap">Back</span>
         </Link>
 
         {/* Action Buttons */}

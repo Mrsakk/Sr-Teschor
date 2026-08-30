@@ -12,8 +12,49 @@ import {
   MapPin,
   Flame,
 } from 'lucide-react';
+import { getFullImageUrl } from '../../utils/imageUrl';
 
-const adsCache = {};
+const DEFAULT_FALLBACK_ADS = [
+  {
+    id: 'default-ad-1',
+    title: 'Angkor Heritage Luxury Resort & Spa',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80',
+    link_url: '/businesses/angkor-heritage-resort',
+    business: {
+      name: 'Angkor Heritage Resort',
+      short_description: 'Exclusive 5-star colonial boutique resort with private salt-water pools and spa retreats in Siem Reap.',
+      rating: '4.9',
+      address: 'Charles de Gaulle Avenue, Siem Reap',
+      slug: 'angkor-heritage-resort'
+    }
+  },
+  {
+    id: 'default-ad-2',
+    title: 'Siem Reap Sunset Countryside Quad Bike Safari',
+    image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&auto=format&fit=crop&q=80',
+    link_url: '/packages',
+    business: {
+      name: 'Siem Reap Quad Adventures',
+      short_description: 'Ride through scenic ancient paddy fields and secluded villages during golden hour.',
+      rating: '4.8',
+      address: 'Wat Bo Road, Siem Reap',
+      slug: 'siem-reap-quad-adventures'
+    }
+  },
+  {
+    id: 'default-ad-3',
+    title: 'Phare, The Cambodian Circus & Theater Experience',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
+    link_url: '/businesses',
+    business: {
+      name: 'Phare Circus Siem Reap',
+      short_description: 'World-renowned Cambodian contemporary circus blending theater, music, dance and acrobats.',
+      rating: '5.0',
+      address: 'Ring Road, Svay Dangkum, Siem Reap',
+      slug: 'phare-circus'
+    }
+  }
+];
 
 export default function AdBanner({
   placement = 'all',
@@ -29,9 +70,7 @@ export default function AdBanner({
     }
   });
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(() => {
-    return ads.length === 0;
-  });
+  const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,26 +87,20 @@ export default function AdBanner({
     let isMounted = true;
     const fetchAds = async () => {
       try {
-        if (ads.length === 0) {
-          setLoading(true);
-        }
         const res = await advertisementApi.getAll({ placement });
-        // Backend returns { status: 'success', data: [...] }
         const fetchedAds = Array.isArray(res.data?.data)
           ? res.data.data
           : Array.isArray(res.data)
           ? res.data
           : [];
-        if (isMounted) {
+        if (isMounted && fetchedAds.length > 0) {
           try {
             localStorage.setItem(`ads_${placement}`, JSON.stringify(fetchedAds));
           } catch {}
           setAds(fetchedAds);
         }
       } catch (err) {
-        if (isMounted && ads.length === 0) {
-          setAds([]);
-        }
+        // Silently fallback to defaults if offline or API unreachable on Vercel
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -79,22 +112,23 @@ export default function AdBanner({
     };
   }, [placement]);
 
+  // Active ads list (Database ads if available, otherwise high-quality verified default ads)
+  const displayAds = ads.length > 0 ? ads : DEFAULT_FALLBACK_ADS;
+
   // Auto-scroll / rotate every 3 seconds (3000ms) if multiple ads exist
   useEffect(() => {
-    if (ads.length <= 1 || isHovered) return;
+    if (displayAds.length <= 1 || isHovered) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setCurrentIndex((prev) => (prev + 1) % displayAds.length);
     }, 3000);
 
     return () => clearInterval(timer);
-  }, [ads.length, isHovered]);
+  }, [displayAds.length, isHovered]);
 
   if (!isAllowedPage) return null;
-  if (loading && ads.length === 0) return null;
-  if (ads.length === 0) return null;
 
-  const currentAd = ads[currentIndex] || ads[0];
+  const currentAd = displayAds[currentIndex % displayAds.length] || displayAds[0];
 
   const handleClick = (e) => {
     if (e && typeof e.stopPropagation === 'function') {
@@ -102,7 +136,7 @@ export default function AdBanner({
     }
     if (!currentAd) return;
 
-    if (currentAd.id) {
+    if (currentAd.id && !currentAd.id.toString().startsWith('default-')) {
       advertisementApi.trackClick(currentAd.id).catch(() => {});
     }
 
@@ -127,6 +161,11 @@ export default function AdBanner({
     }
   };
 
+  const adImage = getFullImageUrl(
+    currentAd.image,
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80'
+  );
+
   // ──────────────────────────────────────────────
   // SIDEBAR VARIANT
   // ──────────────────────────────────────────────
@@ -145,9 +184,9 @@ export default function AdBanner({
           </div>
 
           <div className="flex items-center gap-2">
-            {ads.length > 1 && (
+            {displayAds.length > 1 && (
               <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md">
-                {currentIndex + 1}/{ads.length} (3s)
+                {currentIndex + 1}/{displayAds.length} (3s)
               </span>
             )}
             {currentAd.business?.rating && (
@@ -159,13 +198,16 @@ export default function AdBanner({
           </div>
         </div>
 
-        {currentAd.image && (
+        {adImage && (
           <div className="relative h-36 w-full rounded-xl overflow-hidden mb-3.5 bg-slate-100 border border-slate-200">
             <img
               key={currentAd.id || currentIndex}
-              src={currentAd.image}
+              src={adImage}
               alt={currentAd.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500 ease-out animate-in fade-in"
+              onError={(e) => {
+                e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80';
+              }}
             />
             {currentAd.business?.name && (
               <div className="absolute bottom-2 left-2 right-2 flex items-center gap-1.5 text-xs font-semibold text-white bg-slate-900/80 backdrop-blur-sm px-2 py-1 rounded-lg truncate">
@@ -188,9 +230,9 @@ export default function AdBanner({
         )}
 
         {/* Carousel Dots if multiple ads */}
-        {ads.length > 1 && (
+        {displayAds.length > 1 && (
           <div className="flex items-center justify-center gap-1.5 mt-3 pt-2 border-t border-slate-100">
-            {ads.map((_, i) => (
+            {displayAds.map((_, i) => (
               <button
                 key={i}
                 type="button"
@@ -236,9 +278,12 @@ export default function AdBanner({
         <div className="relative w-full md:w-56 lg:w-64 h-36 sm:h-44 md:h-36 shrink-0 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group-hover:border-slate-300 transition-colors">
           <img
             key={currentAd.id || currentIndex}
-            src={currentAd.image}
+            src={adImage}
             alt={currentAd.title}
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-500 ease-out animate-in fade-in"
+            onError={(e) => {
+              e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80';
+            }}
           />
 
           {/* Floating Tag over Image */}
@@ -267,13 +312,13 @@ export default function AdBanner({
           )}
 
           {/* Prev/Next Quick Controls on Image hover if multiple ads */}
-          {ads.length > 1 && (
+          {displayAds.length > 1 && (
             <div className="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev === 0 ? ads.length - 1 : prev - 1));
+                  setCurrentIndex((prev) => (prev === 0 ? displayAds.length - 1 : prev - 1));
                 }}
                 className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer"
                 aria-label="Previous Ad"
@@ -284,7 +329,7 @@ export default function AdBanner({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentIndex((prev) => (prev + 1) % ads.length);
+                  setCurrentIndex((prev) => (prev + 1) % displayAds.length);
                 }}
                 className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center pointer-events-auto transition-transform active:scale-95 shadow-md cursor-pointer"
                 aria-label="Next Ad"
@@ -305,9 +350,9 @@ export default function AdBanner({
               <span>SPONSORED</span>
             </span>
 
-            {ads.length > 1 && (
+            {displayAds.length > 1 && (
               <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-                ⚡ 3s Auto-Scroll ({currentIndex + 1}/{ads.length})
+                ⚡ 3s Auto-Scroll ({currentIndex + 1}/{displayAds.length})
               </span>
             )}
 
@@ -347,9 +392,9 @@ export default function AdBanner({
         <div className="flex sm:flex-col md:flex-col items-center md:items-end justify-between sm:justify-center gap-2.5 sm:gap-3 shrink-0 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
 
           {/* Carousel dots indicator if multiple ads */}
-          {ads.length > 1 && (
+          {displayAds.length > 1 && (
             <div className="flex items-center gap-1.5 md:mb-1">
-              {ads.map((_, i) => (
+              {displayAds.map((_, i) => (
                 <button
                   key={i}
                   type="button"
