@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/:match*",
+      "destination": "https://sr-teschor-api.vercel.app/api/:match*"
+    },
+    {
+      "source": "/storage/:match*",
+      "destination": "https://sr-teschor-api.vercel.app/storage/:match*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
