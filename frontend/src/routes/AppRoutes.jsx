@@ -4,51 +4,71 @@ import PublicLayout from '../layouts/PublicLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import PageSkeletonLoader from '../components/common/PageSkeletonLoader';
 
+// Smart Lazy with auto-recovery on new version deployments
+function lazyRetry(factory) {
+  return lazy(async () => {
+    try {
+      return await factory();
+    } catch (error) {
+      const msg = error?.message || '';
+      if (
+        msg.includes('dynamically imported module') ||
+        msg.includes('Loading chunk') ||
+        error.name === 'ChunkLoadError'
+      ) {
+        window.location.reload();
+        return new Promise(() => {});
+      }
+      throw error;
+    }
+  });
+}
+
 // Public Pages (Lazy Loaded on Demand)
-const Home = lazy(() => import('../pages/Home'));
-const Destinations = lazy(() => import('../pages/Destinations'));
-const DestinationDetail = lazy(() => import('../pages/DestinationDetail'));
-const Businesses = lazy(() => import('../pages/Businesses'));
-const BusinessDetail = lazy(() => import('../pages/BusinessDetail'));
-const MapExplorer = lazy(() => import('../pages/MapExplorer'));
-const Favorites = lazy(() => import('../pages/Favorites'));
-const TripPlanner = lazy(() => import('../pages/TripPlanner'));
-const Bookings = lazy(() => import('../pages/Bookings'));
-const Checkout = lazy(() => import('../pages/Checkout'));
-const Confirmation = lazy(() => import('../pages/Confirmation'));
-const TravelPackages = lazy(() => import('../pages/TravelPackages'));
-const Promotions = lazy(() => import('../pages/Promotions'));
-const Pricing = lazy(() => import('../pages/Pricing'));
-const Login = lazy(() => import('../pages/Login'));
-const Register = lazy(() => import('../pages/Register'));
-const Profile = lazy(() => import('../pages/Profile'));
-const CustomerDashboard = lazy(() => import('../pages/CustomerDashboard'));
+const Home = lazyRetry(() => import('../pages/Home'));
+const Destinations = lazyRetry(() => import('../pages/Destinations'));
+const DestinationDetail = lazyRetry(() => import('../pages/DestinationDetail'));
+const Businesses = lazyRetry(() => import('../pages/Businesses'));
+const BusinessDetail = lazyRetry(() => import('../pages/BusinessDetail'));
+const MapExplorer = lazyRetry(() => import('../pages/MapExplorer'));
+const Favorites = lazyRetry(() => import('../pages/Favorites'));
+const TripPlanner = lazyRetry(() => import('../pages/TripPlanner'));
+const Bookings = lazyRetry(() => import('../pages/Bookings'));
+const Checkout = lazyRetry(() => import('../pages/Checkout'));
+const Confirmation = lazyRetry(() => import('../pages/Confirmation'));
+const TravelPackages = lazyRetry(() => import('../pages/TravelPackages'));
+const Promotions = lazyRetry(() => import('../pages/Promotions'));
+const Pricing = lazyRetry(() => import('../pages/Pricing'));
+const Login = lazyRetry(() => import('../pages/Login'));
+const Register = lazyRetry(() => import('../pages/Register'));
+const Profile = lazyRetry(() => import('../pages/Profile'));
+const CustomerDashboard = lazyRetry(() => import('../pages/CustomerDashboard'));
 
 // Business Portal
-const BusinessDashboard = lazy(() => import('../pages/business/BusinessDashboard'));
+const BusinessDashboard = lazyRetry(() => import('../pages/business/BusinessDashboard'));
 
 // Admin Portal Pages
-const AdminLogin = lazy(() => import('../pages/admin/AdminLogin'));
-const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
-const AdminUsers = lazy(() => import('../pages/admin/AdminUsers'));
-const AdminBusinesses = lazy(() => import('../pages/admin/AdminBusinesses'));
-const AdminDestinations = lazy(() => import('../pages/admin/AdminDestinations'));
-const AdminCategories = lazy(() => import('../pages/admin/AdminCategories'));
-const AdminPackages = lazy(() => import('../pages/admin/AdminPackages'));
-const AdminReviews = lazy(() => import('../pages/admin/AdminReviews'));
-const AdminBookings = lazy(() => import('../pages/admin/AdminBookings'));
-const AdminPromotions = lazy(() => import('../pages/admin/AdminPromotions'));
-const AdminAdvertisements = lazy(() => import('../pages/admin/AdminAdvertisements'));
-const AdminSubscriptions = lazy(() => import('../pages/admin/AdminSubscriptions'));
-const AdminRevenue = lazy(() => import('../pages/admin/AdminRevenue'));
-const AdminPayments = lazy(() => import('../pages/admin/AdminPayments'));
-const AdminAnalytics = lazy(() => import('../pages/admin/AdminAnalytics'));
-const AdminReports = lazy(() => import('../pages/admin/AdminReports'));
-const AdminNotifications = lazy(() => import('../pages/admin/AdminNotifications'));
-const AdminMedia = lazy(() => import('../pages/admin/AdminMedia'));
-const AdminSettings = lazy(() => import('../pages/admin/AdminSettings'));
-const AdminAdmins = lazy(() => import('../pages/admin/AdminAdmins'));
-const AdminActivityLogs = lazy(() => import('../pages/admin/AdminActivityLogs'));
+const AdminLogin = lazyRetry(() => import('../pages/admin/AdminLogin'));
+const AdminDashboard = lazyRetry(() => import('../pages/admin/AdminDashboard'));
+const AdminUsers = lazyRetry(() => import('../pages/admin/AdminUsers'));
+const AdminBusinesses = lazyRetry(() => import('../pages/admin/AdminBusinesses'));
+const AdminDestinations = lazyRetry(() => import('../pages/admin/AdminDestinations'));
+const AdminCategories = lazyRetry(() => import('../pages/admin/AdminCategories'));
+const AdminPackages = lazyRetry(() => import('../pages/admin/AdminPackages'));
+const AdminReviews = lazyRetry(() => import('../pages/admin/AdminReviews'));
+const AdminBookings = lazyRetry(() => import('../pages/admin/AdminBookings'));
+const AdminPromotions = lazyRetry(() => import('../pages/admin/AdminPromotions'));
+const AdminAdvertisements = lazyRetry(() => import('../pages/admin/AdminAdvertisements'));
+const AdminSubscriptions = lazyRetry(() => import('../pages/admin/AdminSubscriptions'));
+const AdminRevenue = lazyRetry(() => import('../pages/admin/AdminRevenue'));
+const AdminPayments = lazyRetry(() => import('../pages/admin/AdminPayments'));
+const AdminAnalytics = lazyRetry(() => import('../pages/admin/AdminAnalytics'));
+const AdminReports = lazyRetry(() => import('../pages/admin/AdminReports'));
+const AdminNotifications = lazyRetry(() => import('../pages/admin/AdminNotifications'));
+const AdminMedia = lazyRetry(() => import('../pages/admin/AdminMedia'));
+const AdminSettings = lazyRetry(() => import('../pages/admin/AdminSettings'));
+const AdminAdmins = lazyRetry(() => import('../pages/admin/AdminAdmins'));
+const AdminActivityLogs = lazyRetry(() => import('../pages/admin/AdminActivityLogs'));
 
 import { useAuthStore } from '../store/useAuthStore';
 
