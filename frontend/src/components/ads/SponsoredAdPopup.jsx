@@ -18,44 +18,30 @@ import { getFullImageUrl } from '../../utils/imageUrl';
 const DEFAULT_FALLBACK_ADS = [
   {
     id: 'default-popup-1',
+    title: 'កុំខកខានទស្សនា Phare Circus – កម្មវិធីសម្ដែងពេលល្ងាចដែលកម្ពុជាត្រូវតែទស្សនា!',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
+    link_url: '/businesses',
+    badge: 'ការផ្តល់ជូនពិសេស',
+    business: {
+      name: 'ហ្វារ សៀកកម្ពុជា',
+      short_description: 'សៀកល្បីល្បាញលើពិភពលោក ដែលរួមបញ្ចូលគ្នានូវកាយសម្ព័ន្ធដ៏ស្ទាត់ជំនាញ តន្ត្រី និងរឿងព្រេងនិទានខ្មែរ។',
+      rating: '4.97',
+      address: 'ផ្លូវរង្វង់មូល ខាងត្បូងផ្សារក្រោម សៀមរាប',
+      slug: 'phare-circus'
+    }
+  },
+  {
+    id: 'default-popup-2',
     title: 'Angkor Heritage Luxury Resort & Spa Experience',
     image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/businesses/angkor-heritage-resort',
-    badge: 'Exclusive 20% Off',
+    link_url: '/businesses',
+    badge: 'Exclusive Offer',
     business: {
       name: 'Angkor Heritage Resort',
       short_description: 'Exclusive 5-star colonial boutique resort with private salt-water pools and spa retreats in Siem Reap.',
       rating: '4.9',
       address: 'Charles de Gaulle Avenue, Siem Reap',
       slug: 'angkor-heritage-resort'
-    }
-  },
-  {
-    id: 'default-popup-2',
-    title: 'Siem Reap Sunset Countryside Quad Bike Safari',
-    image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/packages',
-    badge: 'Best Sunset Tour',
-    business: {
-      name: 'Siem Reap Quad Adventures',
-      short_description: 'Ride through scenic ancient paddy fields and secluded villages during golden hour.',
-      rating: '4.8',
-      address: 'Wat Bo Road, Siem Reap',
-      slug: 'siem-reap-quad-adventures'
-    }
-  },
-  {
-    id: 'default-popup-3',
-    title: 'Phare, The Cambodian Circus & Theater Night',
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
-    link_url: '/businesses',
-    badge: 'Top Rated Show',
-    business: {
-      name: 'Phare Circus Siem Reap',
-      short_description: 'World-renowned Cambodian contemporary circus blending theater, music, dance and acrobats.',
-      rating: '5.0',
-      address: 'Ring Road, Svay Dangkum, Siem Reap',
-      slug: 'phare-circus'
     }
   }
 ];
@@ -71,11 +57,12 @@ export default function SponsoredAdPopup() {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. Fetch Ads from backend if available
+  // 1. Fetch Ads
   useEffect(() => {
     let isMounted = true;
     const fetchAds = async () => {
@@ -93,7 +80,9 @@ export default function SponsoredAdPopup() {
           setAds(fetchedAds);
         }
       } catch (err) {
-        // Silently use defaults
+        // Silently fallback to DEFAULT_FALLBACK_ADS on Vercel deployment
+      } finally {
+        if (isMounted) setLoading(false);
       }
     };
 
@@ -103,18 +92,16 @@ export default function SponsoredAdPopup() {
     };
   }, []);
 
-  // 2. Show popup on specific allowed pages after initial delay
+  // 2. Show popup on specific allowed pages (Home & Destinations)
   useEffect(() => {
     const isAllowedPage = 
       location.pathname === '/' || 
       location.pathname.startsWith('/destinations');
 
-    const hasDismissed = sessionStorage.getItem('popup_dismissed_session');
-
-    if (isAllowedPage && !hasDismissed) {
+    if (isAllowedPage) {
       const timer = setTimeout(() => {
         setIsOpen(true);
-      }, 1000);
+      }, 500);
       return () => clearTimeout(timer);
     } else {
       setIsOpen(false);
@@ -134,17 +121,12 @@ export default function SponsoredAdPopup() {
     return () => clearInterval(timer);
   }, [isOpen, displayAds.length, isHovered]);
 
-  if (!isOpen) return null;
+  if (!isOpen || displayAds.length === 0) return null;
 
   const currentAd = displayAds[currentIndex % displayAds.length] || displayAds[0];
 
-  const handleClose = () => {
-    setIsOpen(false);
-    sessionStorage.setItem('popup_dismissed_session', 'true');
-  };
-
   const handleAction = () => {
-    handleClose();
+    setIsOpen(false);
     if (!currentAd) return;
 
     if (currentAd.id && !currentAd.id.toString().startsWith('default-')) {
@@ -153,7 +135,7 @@ export default function SponsoredAdPopup() {
 
     let targetUrl = currentAd.link_url || '';
 
-    // Smart fallback if link_url is missing, empty, or dummy test url
+    // Smart fallback if link_url is missing
     if (!targetUrl || targetUrl === '/test-ad-url' || targetUrl === '#' || targetUrl.trim() === '') {
       if (currentAd.business?.slug) {
         targetUrl = `/businesses/${currentAd.business.slug}`;
@@ -172,9 +154,9 @@ export default function SponsoredAdPopup() {
     }
   };
 
-  const adImage = getFullImageUrl(
+  const adImageUrl = getFullImageUrl(
     currentAd.image,
-    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80'
+    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80'
   );
 
   return (
@@ -182,7 +164,7 @@ export default function SponsoredAdPopup() {
       <div 
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative w-full max-w-lg bg-white p-5 sm:p-6 rounded-[2rem] shadow-xl border border-slate-200 flex flex-col my-auto animate-in zoom-in-95 duration-200 space-y-4"
+        className="relative w-full max-w-lg bg-white p-5 sm:p-6 rounded-[2rem] shadow-xl border border-slate-200 flex flex-col my-auto animate-in zoom-in-95 duration-200 space-y-5"
       >
         
         {/* Top Header Bar (Inline) */}
@@ -196,12 +178,12 @@ export default function SponsoredAdPopup() {
             {/* 3s Auto-scroll Indicator */}
             {displayAds.length > 1 && (
               <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
-                {currentIndex + 1} / {displayAds.length} (3s)
+                {currentIndex + 1} / {displayAds.length}
               </span>
             )}
             <button
               type="button"
-              onClick={handleClose}
+              onClick={() => setIsOpen(false)}
               className="p-1.5 rounded-full bg-slate-50 text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
               aria-label="Close"
             >
@@ -210,15 +192,15 @@ export default function SponsoredAdPopup() {
           </div>
         </div>
 
-        {/* Ad Image Container */}
+        {/* Ad Image Container (Inset and Rounded) */}
         <div className="relative h-48 sm:h-56 w-full bg-slate-50 rounded-2xl overflow-hidden group border border-slate-100 shadow-sm">
           <img
             key={currentAd.id || currentIndex}
-            src={adImage}
+            src={adImageUrl}
             alt={currentAd.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 animate-in fade-in"
             onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80';
+              e.target.src = 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80';
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent pointer-events-none opacity-80" />
@@ -287,7 +269,7 @@ export default function SponsoredAdPopup() {
         </div>
 
         {/* Content Body */}
-        <div className="space-y-2 px-1">
+        <div className="space-y-3 px-1">
           {/* Carousel Dots Indicator */}
           {displayAds.length > 1 && (
             <div className="flex items-center gap-1.5 justify-start pb-1">
@@ -320,7 +302,7 @@ export default function SponsoredAdPopup() {
         <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
           <button
             type="button"
-            onClick={handleClose}
+            onClick={() => setIsOpen(false)}
             className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-bold text-sm transition-colors cursor-pointer"
           >
             Not Now
